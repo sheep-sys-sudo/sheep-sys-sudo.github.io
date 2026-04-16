@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言我们在ctf赛题中不乏看到这样的判定 12345678910111213141516171819&lt;?php$a &#x3D; $_POST[&#x27;a&#x27;];$b &#x3D; $_POST[&#x27;b&#x27;];if($a !&#x3D; $b)&#123;    if(md5($a) &#x3D;&#x3D; md5($b))&#123;        echo &#x27;弱类型比较ok  &#x27;;&amp;#1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php回顾之md5">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言我们在ctf赛题中不乏看到这样的判定 12345678910111213141516171819&lt;?php$a &#x3D; $_POST[&#x27;a&#x27;];$b &#x3D; $_POST[&#x27;b&#x27;];if($a !&#x3D; $b)&#123;    if(md5($a) &#x3D;&#x3D; md5($b))&#123;        echo &#x27;弱类型比较ok  &#x27;;&amp;#1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-05T00:11:54.000Z">
+<meta property="article:modified_time" content="2025-10-26T11:10:57.648Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="php">
+<meta property="article:tag" content="回顾">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>php回顾之md5</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/CBC-Bit-Flipping-Attack/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/Shiro-unserialize-learn/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&text=php回顾之md5"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&is_video=false&description=php回顾之md5"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=php回顾之md5&body=Check out this article: https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&name=php回顾之md5&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&t=php回顾之md5"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#md5%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">md5简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E8%A1%8C%E7%9A%84%E6%89%8B%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">可行的手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83"><span class="toc-number">3.1.</span> <span class="toc-text">弱比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0e%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.1.</span> <span class="toc-text">0e绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#sha1%E7%9A%840e%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">sha1的0e绕过</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E8%BA%AB%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.2.</span> <span class="toc-text">自身绕过</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E6%AF%94%E8%BE%83"><span class="toc-number">3.2.</span> <span class="toc-text">强比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-number">3.2.1.</span> <span class="toc-text">数组绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E7%B1%BB%E7%BB%95%E8%BF%87"><span class="toc-number">3.2.2.</span> <span class="toc-text">内置类绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">应用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%99%90%E5%88%B6"><span class="toc-number">3.2.2.2.</span> <span class="toc-text">限制</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%A9%E9%80%89payload"><span class="toc-number">3.2.3.</span> <span class="toc-text">天选payload</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%93%E5%B1%95"><span class="toc-number">4.</span> <span class="toc-text">拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#md5%E7%A2%B0%E6%92%9E%E7%94%9F%E6%88%90%EF%BC%9Afastcoll%E5%B7%A5%E5%85%B7"><span class="toc-number">4.1.</span> <span class="toc-text">md5碰撞生成：fastcoll工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.1.1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">4.1.2.</span> <span class="toc-text">使用方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E9%87%8C%E7%9A%84MD5"><span class="toc-number">4.2.</span> <span class="toc-text">sql里的MD5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB%EF%BC%88%E5%8A%A0%E7%9B%90%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">哈希长度扩展攻击（加盐）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.3.1.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7"><span class="toc-number">4.3.2.</span> <span class="toc-text">工具</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        php回顾之md5
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-05T00:11:54.000Z" class="dt-published" itemprop="datePublished">2025-09-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/php/">php</a> › <a class="category-link" href="/categories/php/trick/">trick</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/php/" rel="tag">php</a>, <a class="p-category" href="/tags/%E5%9B%9E%E9%A1%BE/" rel="tag">回顾</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们在ctf赛题中不乏看到这样的判定</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="variable">$b</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$a</span> != <span class="variable">$b</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;弱类型比较ok  &#x27;</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;弱类型比较no  &#x27;</span>;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) === <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;强类型比较ok  &#x27;</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;强类型比较no  &#x27;</span>;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;不能输入相同的值  &#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>我们可以看到这是一个典型的md5碰撞题目，题目中判定了a和b的md5值是否相等，所以我们可以构造a和b的md5值相等，但是a和b不相等的情况，从而绕过判定。sha1也存在这样的问题,这里会稍微牵扯一下。</p>
+<h2 id="md5简介"><a href="#md5简介" class="headerlink" title="md5简介"></a>md5简介</h2><p>MD5（Message-Digest Algorithm 5）是一种广泛使用的哈希函数，它将任意长度的消息压缩成一个128位的哈希值。<br>MD5算法由Ronald Rivest在1991年设计，旨在提供一种快速且高效的消息摘要生成方法。MD5主要用于验证数据完整性和数字签名，但由于其安全性问题，现已被认为不适合用于密码学应用。<br>我院王小云院士之前的研究就与md5碰撞相关……</p>
+<h2 id="可行的手段"><a href="#可行的手段" class="headerlink" title="可行的手段"></a>可行的手段</h2><h3 id="弱比较"><a href="#弱比较" class="headerlink" title="弱比较"></a>弱比较</h3><h4 id="0e绕过"><a href="#0e绕过" class="headerlink" title="0e绕过"></a>0e绕过</h4><p>在php中，使用<code>==</code>进行比较时，会进行类型转换，这就导致了一些意想不到的结果。<br>我们知道，md5格式为32位16进制数，必然存在一些特殊的md5长这个样子:<code>0e830400451993494058024219903391</code><br>0e开头，在弱比较中，0e表示科学计数法中的0乘以10的某次方，因此无论后面的数字是什么，都会被认为是0。    （此时要求0e后面纯数字）<br>所以，当我们构造a和b的md5值相等，但是a和b不相等的情况时，a和b的md5值都会被认为是0，从而绕过判定。</p>
+<h5 id="sha1的0e绕过"><a href="#sha1的0e绕过" class="headerlink" title="sha1的0e绕过"></a>sha1的0e绕过</h5><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">aaroZmOk</span><br><span class="line">aaK1STfY</span><br></pre></td></tr></table></figure></div>
+<h4 id="自身绕过"><a href="#自身绕过" class="headerlink" title="自身绕过"></a>自身绕过</h4><p>存在这样一个判断</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$a</span>==<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>)</span><br></pre></td></tr></table></figure></div>
+<p>这就要求我们找到一个0e开头的$a，MD5后也是0e开头</p>
+<p><code>$a=0e215962017</code></p>
+<h3 id="强比较"><a href="#强比较" class="headerlink" title="强比较"></a>强比较</h3><p>一般来说强比较能行的也能过弱比较（）<br>因此我们就直接来谈它吧</p>
+<h4 id="数组绕过"><a href="#数组绕过" class="headerlink" title="数组绕过"></a>数组绕过</h4><p>MD5一个数组返回了null，这样null&#x3D;&#x3D;&#x3D;null就成立了  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">array</span>();</span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">array</span>();</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$a</span> === <span class="variable">$b</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;ok&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>就进去了()</p>
+<h4 id="内置类绕过"><a href="#内置类绕过" class="headerlink" title="内置类绕过"></a>内置类绕过</h4><p>我们知道当一个对象被转换为字符串时，会调用__toString()方法，而当一个对象被转换为整数时，会调用__intval()方法。<br>我们可以利用这两个方法，来绕过强比较。<br>比如这样</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&#x27;12&#x27;</span>,<span class="string">&#x27;123&#x27;</span>);<span class="variable">$b</span>=<span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&#x27;12&#x27;</span>,<span class="string">&#x27;321&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>)===<span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;ok&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;not ok&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>这里面有很多需要注意，否则就会像我一样开始进不去()</p>
+<ol>
+<li>Exception的第一个参数是message，第二个参数是code，code必须是整数，否则会报错</li>
+<li>Exception第一个参数message必须一样，否则会报错</li>
+<li>最关键的是，必须在一行，不能换行，否则会报错，这个时候可能牵扯到适用性问题，注意即可，小trick</li>
+</ol>
+<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><p>当然，比起它可以绕过的作用，我认为可以关注一种具体情形<br>详细可见<br><code>[极客大挑战 2020]Greatphp</code><br>即在反序列的情景下，既可以满足不可换行，绕过md5验证，又可以控制message的值，从而实现RCE，第一次见还是很惊讶的</p>
+<h5 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h5><p>目前有两种内置类可供使用</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error(只在php7)</span><br><span class="line">Exception(php5、7都可)</span><br></pre></td></tr></table></figure></div>
+<h4 id="天选payload"><a href="#天选payload" class="headerlink" title="天选payload"></a>天选payload</h4><p>有可打印字符鉴定，就无法使用fastcoll工具(后续会讲到)<br>如果有字符串鉴定，就无法使用数组绕过<br>有换行，也不能内置类绕过<br>没招了（）<br>可以使用这个payload</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TEXTCOLLBYfGiJUETHQ4hAcKSMd5zYpgqf1YRDhkmxHkhPWptrkoyz28wnI9V0aHeAuaKnak</span><br><span class="line">TEXTCOLLBYfGiJUETHQ4hEcKSMd5zYpgqf1YRDhkmxHkhPWptrkoyz28wnI9V0aHeAuaKnak</span><br></pre></td></tr></table></figure></div>
+<p>如果看到这个，你之前不知道，那你绝对没白来()<br>两个字符串中间只有一个字符的差异，为何会MD5相等，它们是 一对 MD5 碰撞样本，等待大佬解释</p>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><h3 id="md5碰撞生成：fastcoll工具"><a href="#md5碰撞生成：fastcoll工具" class="headerlink" title="md5碰撞生成：fastcoll工具"></a>md5碰撞生成：fastcoll工具</h3><p>fastcoll是一个用于生成MD5碰撞的工具。它利用了MD5算法的弱点，能够在短时间内找到两个不同的输入数据，这些数据在经过MD5哈希函数处理后会产生相同的哈希值。</p>
+<h4 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h4><p>如果一道题目会对你上传的两张图片进行md5验证，而你上传的两张图片的md5值相等，但是它们的内容不相等，这时候就可以使用fastcoll工具生成碰撞样本，从而绕过md5验证。<br><a target="_blank" rel="noopener" href="http://www.win.tue.nl/hashclash/fastcoll_v1.0.0.5_source.zip">fastcoll工具下载</a></p>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h4><p>详细见工具说明<br>一般我们根据一个文件生成两个md5值一样的不同文件，这个时候可以</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;1.txt&#x27;</span>);</span><br><span class="line"><span class="variable">$b</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;2.txt&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$a</span>).<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$b</span>).<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>).<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>).<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br></pre></td></tr></table></figure></div>
+<p>即可得到urlencode后的字符串，直接提交即可</p>
+<h3 id="sql里的MD5"><a href="#sql里的MD5" class="headerlink" title="sql里的MD5"></a>sql里的MD5</h3><p>如果大家了解到sql的万能密码就可以继续看下去了<br>使用 <code>md5($val, true)</code> 计算的 md5 转换为字符串时会被以16进制数据解析为字符串<br>即，如果实现了<code>md5($val, true)</code>,那么只要我们传入一个字符，它的md5值被解析为16进制数时，正好可以实现这种效果</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$sql = &quot;SELECT * FROM admin WHERE username = &#x27;admin&#x27; and password = &#x27;&#x27; or true&quot;;</span><br></pre></td></tr></table></figure></div>
+<p>那么就可以万能密码登录<br>比如如下字符</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffifdyop</span><br><span class="line"></span><br><span class="line">129581926211651571912466741651878684928</span><br></pre></td></tr></table></figure></div>
+<h3 id="哈希长度扩展攻击（加盐）"><a href="#哈希长度扩展攻击（加盐）" class="headerlink" title="哈希长度扩展攻击（加盐）"></a>哈希长度扩展攻击（加盐）</h3><p><a target="_blank" rel="noopener" href="https://wiki.wgpsec.org/knowledge/ctf/Hash-Leng-Extension.html">介绍</a></p>
+<p>哈希长度扩展攻击（Hash Length Extension Attack）是一种针对某些哈希函数的攻击方法，允许攻击者在不知道原始消息内容的情况下，计算出一个新的消息及其对应的哈希值。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="variable">$secretKey</span> = <span class="string">&#x27;xxxxxx&#x27;</span>; <span class="comment">#xxx为未知内容，但长度已知为6。</span></span><br><span class="line"><span class="variable">$v1</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;str&#x27;</span>];</span><br><span class="line"><span class="variable">$sign</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;sign&#x27;</span>];</span><br><span class="line"><span class="variable">$token</span> = <span class="title function_ invoke__">md5</span>(<span class="variable">$secretKey</span>.<span class="variable">$v1</span>);<span class="comment">#$secretKey只知道位数而不知道具体字符</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$v1</span> === <span class="string">&#x27;test&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="variable">$token</span>); <span class="comment">#token=2df51a84abc64a28740d6d2ae8cd7b16</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$token</span> === <span class="variable">$sign</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="variable">$flag</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>基于此，可以进行哈希拓展攻击<br>具体需要了解md5的实现，当然网上有很多文章，我这里简述一下<br>MD5会把字符转化为512位的二进制块<br>填充的逻辑在这</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">明文数据的二进制数据长度&lt;=448，填充padding(无意义占位)数据使其长度为448，再添加原始明文数据的二进制长度信息（64位）使其长度为512位即可。</span><br><span class="line">448&lt;明文数据的二进制数据长度&lt;=512，填充padding数据至下一块的448位，而后再添加原始明文数据的二进制长度信息（64位）使其长度为512位即可。</span><br></pre></td></tr></table></figure></div>
+<p>这样的话，我们在$v1这一部分操作一下<br>即<br>md5($secret.$v1)<br>v1&#x3D;<code>&quot;test&quot; + padding数据 + 长度数据 + &quot;abc&quot;</code><br>逻辑是，知道位数之后就可以知道padding数据和长度数据，这样的话可以生成</p>
+<p><code>$secret.&quot;test&quot;.padding数据 + 长度数据</code>—&gt;md5<br>这样的话可以从md5推出最后的一个向量串<br>因为我们知道</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">而最后的MD5值就是这最后的向量串经过如下转换的结果。</span><br><span class="line"></span><br><span class="line">如向量串：</span><br><span class="line"></span><br><span class="line">A=<span class="number">0xab45bc01</span></span><br><span class="line">B=<span class="number">0x6a64bb53</span></span><br><span class="line">C=<span class="number">0x23ba8afe</span></span><br><span class="line">D=<span class="number">0x46847a62</span></span><br><span class="line"></span><br><span class="line">先两两为一组进行组合，得到如下数据：</span><br><span class="line"></span><br><span class="line">ab <span class="number">45</span> bc <span class="number">01</span></span><br><span class="line"><span class="number">6</span>a <span class="number">64</span> bb <span class="number">53</span></span><br><span class="line"><span class="number">23</span> ba <span class="number">8</span>a fe</span><br><span class="line"><span class="number">46</span> <span class="number">84</span> <span class="number">7</span>a <span class="number">62</span></span><br><span class="line"></span><br><span class="line">再进行高低位互换，得到如下数据：</span><br><span class="line"></span><br><span class="line"><span class="number">01</span> bc <span class="number">45</span> ab</span><br><span class="line"><span class="number">53</span> bb <span class="number">64</span> <span class="number">6</span>a</span><br><span class="line">fe <span class="number">8</span>a ba <span class="number">23</span></span><br><span class="line"><span class="number">62</span> <span class="number">7</span>a <span class="number">84</span> <span class="number">46</span></span><br><span class="line"></span><br><span class="line">最终拼接得到MD5值：<span class="number">01</span>bc45ab53bb646afe8aba23627a8446。</span><br></pre></td></tr></table></figure></div>
+<p>我们根据服务回显出的md5反推出最后一个向量串<br>再回到<br><code>v1=&quot;test&quot; + padding数据 + 长度数据 + &quot;abc&quot;</code><br>这里前部分是完整的若干512块，会生成一个向量串<br>然后倒数第二个向量串和abc那块512位进行运算，得到最后的md5</p>
+<h4 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h4><p><a target="_blank" rel="noopener" href="https://github.com/bwall/HashPump">hashdump</a><br>详细见文档</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>ctf里面有关md5的考点（我见过）大抵如此，如果有其他考点，欢迎补充</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#md5%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">md5简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E8%A1%8C%E7%9A%84%E6%89%8B%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">可行的手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83"><span class="toc-number">3.1.</span> <span class="toc-text">弱比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0e%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.1.</span> <span class="toc-text">0e绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#sha1%E7%9A%840e%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">sha1的0e绕过</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E8%BA%AB%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.2.</span> <span class="toc-text">自身绕过</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E6%AF%94%E8%BE%83"><span class="toc-number">3.2.</span> <span class="toc-text">强比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-number">3.2.1.</span> <span class="toc-text">数组绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E7%B1%BB%E7%BB%95%E8%BF%87"><span class="toc-number">3.2.2.</span> <span class="toc-text">内置类绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">应用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%99%90%E5%88%B6"><span class="toc-number">3.2.2.2.</span> <span class="toc-text">限制</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%A9%E9%80%89payload"><span class="toc-number">3.2.3.</span> <span class="toc-text">天选payload</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%93%E5%B1%95"><span class="toc-number">4.</span> <span class="toc-text">拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#md5%E7%A2%B0%E6%92%9E%E7%94%9F%E6%88%90%EF%BC%9Afastcoll%E5%B7%A5%E5%85%B7"><span class="toc-number">4.1.</span> <span class="toc-text">md5碰撞生成：fastcoll工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.1.1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">4.1.2.</span> <span class="toc-text">使用方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E9%87%8C%E7%9A%84MD5"><span class="toc-number">4.2.</span> <span class="toc-text">sql里的MD5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB%EF%BC%88%E5%8A%A0%E7%9B%90%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">哈希长度扩展攻击（加盐）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.3.1.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7"><span class="toc-number">4.3.2.</span> <span class="toc-text">工具</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&text=php回顾之md5"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&is_video=false&description=php回顾之md5"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=php回顾之md5&body=Check out this article: https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&title=php回顾之md5"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&name=php回顾之md5&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/&t=php回顾之md5"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

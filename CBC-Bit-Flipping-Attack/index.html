@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="CBC字节翻转攻击CBC模式简介现代密码中的加密体制一般分为对称加密体制(Symmetric Key Encryption)和非对称加密体制(Asymmetric Key Encryption)。对称加密又分为分组加密和序列密码。分组密码，也叫块密码；序列密码，也叫流密码而CBC模式，属于块密码的一种，为密码分组链接模式模式中每一个分组要先和前一个分组加密后的数据进行XOR异或操作，然后再进行加密">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CBC字节翻转攻击">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="CBC字节翻转攻击CBC模式简介现代密码中的加密体制一般分为对称加密体制(Symmetric Key Encryption)和非对称加密体制(Asymmetric Key Encryption)。对称加密又分为分组加密和序列密码。分组密码，也叫块密码；序列密码，也叫流密码而CBC模式，属于块密码的一种，为密码分组链接模式模式中每一个分组要先和前一个分组加密后的数据进行XOR异或操作，然后再进行加密">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/1.png">
+<meta property="article:published_time" content="2025-09-05T11:39:46.000Z">
+<meta property="article:modified_time" content="2025-09-09T07:41:04.064Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="CBC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CBC字节翻转攻击</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1awd%E8%AE%AD%E7%BB%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/php%E5%9B%9E%E9%A1%BE%E4%B9%8Bmd5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&text=CBC字节翻转攻击"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&is_video=false&description=CBC字节翻转攻击"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CBC字节翻转攻击&body=Check out this article: https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&name=CBC字节翻转攻击&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&t=CBC字节翻转攻击"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB"><span class="toc-number">1.</span> <span class="toc-text">CBC字节翻转攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">CBC模式简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%9B%A0"><span class="toc-number">1.2.</span> <span class="toc-text">成因</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">加密</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86"><span class="toc-number">1.2.2.</span> <span class="toc-text">解密</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">攻击原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">数学实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">1.4.</span> <span class="toc-text">后记</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        CBC字节翻转攻击
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-05T11:39:46.000Z" class="dt-published" itemprop="datePublished">2025-09-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0ing/">学习ing</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CBC/" rel="tag">CBC</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="CBC字节翻转攻击"><a href="#CBC字节翻转攻击" class="headerlink" title="CBC字节翻转攻击"></a>CBC字节翻转攻击</h2><h3 id="CBC模式简介"><a href="#CBC模式简介" class="headerlink" title="CBC模式简介"></a>CBC模式简介</h3><p>现代密码中的加密体制一般分为对称加密体制(Symmetric Key Encryption)和非对称加密体制(Asymmetric Key Encryption)。对称加密又分为分组加密和序列密码。<br>分组密码，也叫块密码；序列密码，也叫流密码<br>而CBC模式，属于块密码的一种，为密码分组链接模式<br>模式中每一个分组要先和前一个分组加密后的数据进行XOR异或操作，然后再进行加密。<br>CBC模式是一种最常用的加密模式，它主要缺点是加密是连续的，不能并行处理，并且与ECB一样消息块必须填充到块大小的整倍数。</p>
+<h3 id="成因"><a href="#成因" class="headerlink" title="成因"></a>成因</h3><p>刚刚只是简述，要了解成因得先理解解密，要理解解密，先好好认识加密逻辑</p>
+<h4 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h4><p><img src="/./CBC-Bit-Flipping-Attack/1.png"><br>我们可以看到，把数据分为若干明文块之后，位数不足的使用特殊字符填充<br>导入随机化初始向量与一个密钥<br>初始向量与块1进行异或，再加入key值进行加密<br>将生成的密文1，继续重复初始操作，以此往复，得到最后的完整密文</p>
+<h4 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h4><p>将密文分为若干块，位数不足用字符填充<br>同样的初始向量与密钥<br>第一块解密之后，与初始向量进行异或，得到明文1<br>再将第一块密文作为下一块密文解密的初始向量</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">(加密的逆过程)</span><br><span class="line"></span><br><span class="line">设明文为X，密文为Y，解密函数为k。</span><br><span class="line"></span><br><span class="line">X[i] = k(Y[i]) Xor Y[i-1]</span><br></pre></td></tr></table></figure></div>
+<h4 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h4><p>核心原理：通过破坏一个比特的密文来篡改一个比特的明文<br>举个例子，如果我们改变第一块密文里的一个比特，那么它和下一块密文解密后的数据异或生成的第二块明文就会改变一个比特，但是改变了第一块密文之后哪怕是一个比特，经过解密函数也会变一个样子，这个时候就需要我们也能控制初始化向量，这样尽量维持第一块明文不变，这样，成功翻转一个比特的内容<br>而我们知道，在CBC模式中，分组长度必须是128Byte，一个字符为8byte，这样一块密文对应着16个字符<br>为什么我们会特地来学习CBC字节翻转？<br>我们要知道，在实际的鉴权系统中，假如运用了CBC，那么我们可以控制一个字符的内容<br>比如我们的身份是<code>&#123;&quot;user&quot;:&quot;Admin&quot;</code>，但是我们想要变成<code>&#123;&quot;user&quot;:&quot;admin&quot;&#125;</code>，那么我们就可以通过CBC字节翻转来实现，把A变成a,因为他们只有一个比特的差异<br>但是我们知道如果我们控制的字符在第一块明文(第一组16个字符)，我们可以通过控制初始向量来控制第一块明文<br>但是如果控制的字符在n&gt;&#x3D;2块时，我们就不能通过控制初始向量来控制明文了，因为初始向量只对第一块明文有效<br>这时候我们就需要通过控制第n-1块密文来控制第n块明文了<br>但是，如果我们改变n-1块密文来修改第n块明文，确实可以修改第n块明文，但是，第n-1块明文将会沦为完全的乱码，因为哪怕改变一个比特的第n-1块密文，解密后也会有个极其大的改变  </p>
+<h4 id="数学实现"><a href="#数学实现" class="headerlink" title="数学实现"></a>数学实现</h4><p>了解了基本原理之后，我们来看具体如何调整第n块密文(或者初始向量)</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">设第n-1块密文为C[n-1]，第n块密文为C[n]，第n块明文为P[n]，第n-1块明文为P[n-1]，初始向量为vl,有@encrypt函数与@decrypt函数   </span><br><span class="line">假设明文=&#123;&quot;user&quot;:&quot;Admin&quot;,&quot;password&quot;:&quot;1234566666&quot;,&quot;role&quot;:&quot;test&quot;&#125;</span><br><span class="line">P=&#123;&quot;user&quot;:&quot;Admin&quot;,&quot;password&quot;:&quot;1234566666&quot;,&quot;role&quot;:&quot;test&quot;&#125;</span><br><span class="line">C=@encrypt(P)</span><br><span class="line">P[1]=&#123;&quot;user&quot;:&quot;Admin&quot;,</span><br><span class="line">令Q=&#123;&quot;user&quot;:&quot;admin&quot;,</span><br><span class="line">设函数magic把字符转化为二进制</span><br><span class="line">我们需要改变Admin-&gt;为admin，但是不知道key，因此要字节翻转</span><br><span class="line">知我们要改变第十个字符，即P[1][9],说明第一块明文偏移量为9的字符</span><br><span class="line">得到公式</span><br><span class="line">vl&#x27;=vl^magic(C[1])^magic(Q)</span><br><span class="line">具体到某个字符就是</span><br><span class="line">vl[9] = chr(ord(C[1][9]) ^ ord(&quot;a&quot;) ^ ord (&quot;A&quot;));</span><br><span class="line">而对于这个公式需要经历一个异或证明</span><br><span class="line">设攻击者希望将 Pi​ 改为 Pi′。当前解密过程为：</span><br><span class="line">Pi=Ii⊕Ci−1</span><br><span class="line">攻击者修改 Ci−1 为 Ci−1′，则解密后得到：</span><br><span class="line">Pi′=Ii⊕Ci−1′</span><br><span class="line">Pi′​=Ii​⊕Ci−1′​</span><br><span class="line">攻击者希望 Pi′ 是特定值，因此：</span><br><span class="line">Pi′=Ii⊕Ci−1′</span><br><span class="line"></span><br><span class="line">由于 Ii​ 是解密 Ci​ 的结果，而攻击者不修改 Ci​（只修改 Ci−1​），所以 Ii​ 保持不变。因此，我们可以写出：</span><br><span class="line">Pi=Ii⊕Ci−1</span><br><span class="line">Pi′=Ii⊕Ci−1′</span><br><span class="line">将两式异或：</span><br><span class="line">Pi⊕Pi′=(Ii⊕Ci−1)⊕(Ii⊕Ci−1′)=Ci−1⊕Ci−1′</span><br><span class="line"></span><br><span class="line">因此：</span><br><span class="line">Ci−1′=Ci−1⊕Pi⊕Pi′</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p>不止时在鉴权系统上可以通过字节翻转获取权限用户，在特定情形比如php反序列化也可以通过字节翻转来获取注入恶意字符<br>比如这一道题</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">ini_set</span>(<span class="string">&#x27;display_errors&#x27;</span>, <span class="number">1</span>);</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(E_ALL);</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">define</span>(<span class="string">&#x27;MY_AES_KEY&#x27;</span>, <span class="string">&quot;abcdef0123456789&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">define</span>(<span class="string">&#x27;MY_HMAC_KEY&#x27;</span>, <span class="string">&quot;1234567890123456&quot;</span>);</span><br><span class="line"><span class="comment">#define(&quot;FLAG&quot;,&quot;CENSORED&quot;);</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aes</span>(<span class="params"><span class="variable">$data</span>, <span class="variable">$encrypt</span></span>) </span>&#123;</span><br><span class="line">    <span class="variable">$aes</span> = <span class="title function_ invoke__">mcrypt_module_open</span>(MCRYPT_RIJNDAEL_128, <span class="string">&#x27;&#x27;</span>, MCRYPT_MODE_CBC, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    <span class="variable">$iv</span> = <span class="title function_ invoke__">mcrypt_create_iv</span>(<span class="title function_ invoke__">mcrypt_enc_get_iv_size</span>(<span class="variable">$aes</span>), MCRYPT_RAND);</span><br><span class="line">    <span class="variable">$iv</span> = <span class="string">&quot;1234567891234567&quot;</span>;</span><br><span class="line">    <span class="title function_ invoke__">mcrypt_generic_init</span>(<span class="variable">$aes</span>, MY_AES_KEY, <span class="variable">$iv</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$encrypt</span> ? <span class="title function_ invoke__">mcrypt_generic</span>(<span class="variable">$aes</span>, <span class="variable">$data</span>) : <span class="title function_ invoke__">mdecrypt_generic</span>(<span class="variable">$aes</span>, <span class="variable">$data</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">define</span>(<span class="string">&#x27;MY_MAC_LEN&#x27;</span>, <span class="number">40</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hmac</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">hash_hmac</span>(<span class="string">&#x27;sha1&#x27;</span>, <span class="variable">$data</span>, MY_HMAC_KEY);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encrypt</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">aes</span>(<span class="variable">$data</span> . <span class="title function_ invoke__">hmac</span>(<span class="variable">$data</span>), <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">decrypt</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="variable">$data</span> = <span class="title function_ invoke__">rtrim</span>(<span class="title function_ invoke__">aes</span>(<span class="variable">$data</span>, <span class="literal">false</span>), <span class="string">&quot;\0&quot;</span>);</span><br><span class="line">    <span class="variable">$mac</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$data</span>, -MY_MAC_LEN);</span><br><span class="line">    <span class="variable">$data</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$data</span>, <span class="number">0</span>, -MY_MAC_LEN);</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">hmac</span>(<span class="variable">$data</span>) === <span class="variable">$mac</span> ? <span class="variable">$data</span> : <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$settings</span> = <span class="keyword">array</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (@<span class="variable">$_COOKIE</span>[<span class="string">&#x27;settings&#x27;</span>]) &#123;</span><br><span class="line">    <span class="keyword">echo</span> @<span class="title function_ invoke__">decrypt</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;settings&#x27;</span>]));</span><br><span class="line">    <span class="variable">$settings</span> = <span class="title function_ invoke__">unserialize</span>(@<span class="title function_ invoke__">decrypt</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;settings&#x27;</span>])));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (@<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>] &amp;&amp; <span class="title function_ invoke__">is_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]) &amp;&amp; <span class="title function_ invoke__">strlen</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]) &lt; <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="variable">$settings</span> = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span> =&gt; <span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;greeting&#x27;</span> =&gt; (<span class="string">&#x27;echo &#x27;</span> . <span class="title function_ invoke__">escapeshellarg</span>(<span class="string">&quot;Hello <span class="subst">&#123;$_POST[&#x27;name&#x27;]&#125;</span>!&quot;</span>)),</span><br><span class="line">    );</span><br><span class="line">    <span class="title function_ invoke__">setcookie</span>(<span class="string">&#x27;settings&#x27;</span>, <span class="title function_ invoke__">base64_encode</span>(@<span class="title function_ invoke__">encrypt</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$settings</span>))));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (@<span class="variable">$settings</span>[<span class="string">&#x27;greeting&#x27;</span>]) &#123;</span><br><span class="line">    <span class="title function_ invoke__">passthru</span>(<span class="variable">$settings</span>[<span class="string">&#x27;greeting&#x27;</span>]);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;/pre&gt;</span></span><br><span class="line"><span class="string">    &lt;form action=\&quot;\&quot; method=\&quot;POST\&quot;&gt;</span></span><br><span class="line"><span class="string">        What is your name?</span></span><br><span class="line"><span class="string">        &lt;input type=\&quot;text\&quot; name=\&quot;name\&quot; /&gt;</span></span><br><span class="line"><span class="string">        &lt;input type=\&quot;submit\&quot; name=\&quot;submit\&quot; value=\&quot;Submit\&quot; /&gt;</span></span><br><span class="line"><span class="string">    &lt;/form&gt;</span></span><br><span class="line"><span class="string">    &lt;pre&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>我们可以提交一个name，目的是为了改变greeting的值,闭合引号逃出echo，方可命令执行，但是无法绕过escapeshellarg函数，可以通过字节翻转来绕过，注意的是，反序列化时，尽量把乱码内容控制在字符串内，即得填充无用字符<br>比如我们提交的name为</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name = &#x27;z&#x27;*17 + &#x27;X&#x27; + &#x27;;cat *;#&#x27; + &#x27;z&#x27;*16</span><br></pre></td></tr></table></figure></div>
+<p>翻转攻击</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pos = ?;//找到字符偏移量</span><br><span class="line">val = chr(ord(&#x27;X&#x27;) ^ ord(&quot;&#x27;&quot;) ^ ord(cookie[pos]))</span><br><span class="line">exploit = cookie[0:pos] + val + cookie[pos + 1:]</span><br></pre></td></tr></table></figure></div>
+<p>最终成功逃逸命令执行</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>CBC字节翻转攻击，虽然看起来很简单，但是在实际的攻击或者做题中，还是非常实用的，尤其是对于鉴权系统和php反序列化等场景<br>类似的这种思想，也体现在md5长度拓展攻击上，学无止境</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB"><span class="toc-number">1.</span> <span class="toc-text">CBC字节翻转攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">CBC模式简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%9B%A0"><span class="toc-number">1.2.</span> <span class="toc-text">成因</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">加密</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86"><span class="toc-number">1.2.2.</span> <span class="toc-text">解密</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">攻击原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">数学实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">1.4.</span> <span class="toc-text">后记</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&text=CBC字节翻转攻击"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&is_video=false&description=CBC字节翻转攻击"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CBC字节翻转攻击&body=Check out this article: https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&title=CBC字节翻转攻击"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&name=CBC字节翻转攻击&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/CBC-Bit-Flipping-Attack/&t=CBC字节翻转攻击"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言受形式所迫，ai被污染的比较强，因此，很多东西，最佳的选择是去官方文档进行学习，搭配实战训练，新旧版本的差别较大，这里，尽量多用Codeql去分析代码，提炼习惯，纯英文，逼自己一句一句的好好读，好好理解java+python(以后会更) 此前学习过一遍Codeql的基本语法，但是不太满意，感觉没有完全学明白，且时常在新旧之间搞混，所以，为了提高熟练度，以及给后来者一些稍稍正确的方向，还是记录一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codeql学习一">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言受形式所迫，ai被污染的比较强，因此，很多东西，最佳的选择是去官方文档进行学习，搭配实战训练，新旧版本的差别较大，这里，尽量多用Codeql去分析代码，提炼习惯，纯英文，逼自己一句一句的好好读，好好理解java+python(以后会更) 此前学习过一遍Codeql的基本语法，但是不太满意，感觉没有完全学明白，且时常在新旧之间搞混，所以，为了提高熟练度，以及给后来者一些稍稍正确的方向，还是记录一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251121221858816.png">
+<meta property="article:published_time" content="2025-11-21T14:38:46.000Z">
+<meta property="article:modified_time" content="2025-11-23T04:27:22.934Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="Codeql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251121221858816.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Codeql学习一</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/%E5%8D%8E%E5%A4%8Ferp%E6%9C%AA%E6%8E%88%E6%9D%83rce-%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/rctf-maybe-easy/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&text=Codeql学习一"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&is_video=false&description=Codeql学习一"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Codeql学习一&body=Check out this article: https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&name=Codeql学习一&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&t=Codeql学习一"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.1.</span> <span class="toc-text">简单的例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">1.1.1.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.1.2.</span> <span class="toc-text">学习</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">一些数据类型的查询方式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Type"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">Type</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AST"><span class="toc-number">1.2.1.</span> <span class="toc-text">AST</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Expr%EF%BC%88%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%89%E4%B8%8E-Stmt%EF%BC%88%E8%AF%AD%E5%8F%A5%EF%BC%89"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">Expr（表达式）与 Stmt（语句）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">子节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%88%B6%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">父节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">例子</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9B%BE%EF%BC%88call-graph%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">调用图（call graph）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#MethodAccess-Call"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">MethodAccess&amp;Call</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E9%98%B6%E6%B1%A1%E7%82%B9%E8%BF%BD%E8%B8%AA"><span class="toc-number">1.3.</span> <span class="toc-text">初阶污点追踪</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">2.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Codeql学习一
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-21T14:38:46.000Z" class="dt-published" itemprop="datePublished">2025-11-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a> › <a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E5%B7%A5%E5%85%B7/">工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Codeql/" rel="tag">Codeql</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>受形式所迫，ai被污染的比较强，因此，很多东西，最佳的选择是去官方文档进行学习，搭配实战训练，新旧版本的差别较大，这里，尽量多用Codeql去分析代码，提炼习惯，纯英文，逼自己一句一句的好好读，好好理解<br>java+python(以后会更)</p>
+<p>此前学习过一遍Codeql的基本语法，但是不太满意，感觉没有完全学明白，且时常在新旧之间搞混，所以，为了提高熟练度，以及给后来者一些稍稍正确的方向，还是记录一下这个过程</p>
+<h3 id="简单的例子"><a href="#简单的例子" class="headerlink" title="简单的例子"></a>简单的例子</h3><h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><p>官方文档这个MethodAccess错了()之后已经重写为MethodCall了，望周知</p>
+<h4 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h4><p>嗯，打算好好推推进度，从一个例子开始学习</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from MethodCall ma</span><br><span class="line">where</span><br><span class="line">    ma.getMethod().hasName(<span class="string">&quot;equals&quot;</span>) and</span><br><span class="line">    ma.getArgument(<span class="number">0</span>).(StringLiteral).getValue() = <span class="string">&quot;&quot;</span></span><br><span class="line">select ma, <span class="string">&quot;This comparison to empty string is inefficient, use isEmpty() instead.&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>这是一个合法的查询语句<br>在初始导入语句之后，这个简单的查询包含三个部分，功能类似于SQL查询中的FROM、WHERE和SELECT部分，鄙人虽然sql没咋学，基本的还是能理解的<br><code>MethodCall</code>： 某个方法被调用的位置  ，可以通过它获得调用的目标方法 <code>getMethod() </code> ，表达式 <code>getQualifier()</code>  ，参数 <code>getArgument(i) </code> ，位置<code>getLocation()</code><br>在where处即进行进一步过滤<br><code>where ma.getMethod().hasName(&quot;equals&quot;) and ma.getArgument(0).(StringLiteral).getValue()=&quot;&quot;</code><br>可以看到，这里的过滤规则有两条  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首先，该调用的方法名是<span class="string">&quot;equals&quot;</span>；其次，该方法的第一个参数是字符串字面量，并且值为空</span><br></pre></td></tr></table></figure></div>
+
+<p>这里用的hasName是一个谓词：强调条件是否成立；而getName是返回一个字符值，需区分，明显用谓词更简洁方便  </p>
+<p><code>select ma,&quot;This comparison to empty string is in efficient,use isEmpty() instead.&quot;</code><br>这里就是输出了，ma是 代码位置（AST 节点）  ，后续是描述<br>这里我们知道，Codeql的结果必须是一个代码位置，一个相关信息描述，这是codeql的规范  </p>
+<p>如上，我们看到了，整个功能是在优化代码，找到<code>.equals(&quot;&quot;)</code>的冗余代码，转为<code>isEmpty()</code>    </p>
+<p>我们知道，我们现在只是 为了检测 _String.equals(“”) _</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestJava</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">myJavaFun</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">b</span> <span class="operator">=</span> o.equals(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里这种也会被检测，如何提高查询精度呢？<br>添加一句即可<code>ma.getQualifier().getType() instanceof TypeString_   __ _</code><br>继续介绍这几个新家伙 </p>
+<ul>
+<li>getQualifier()，我们知道ma是调用，getMethod()是方法，而这个，就是调用该方法的对象</li>
+<li>getType()，返回Java编译器看到的该对象的类型，String or Object  </li>
+<li>TypeString， Java 中的 java.lang.String 类型，是RefType（ Any reference type（类、接口）；Type是 any type  ）的一个特化</li>
+</ul>
+<p>上述，我们就完成了一个简短的ql查询，还是很简单的~学会这些，我们已经可以开始辅助我们的审计了</p>
+<h3 id="一些数据类型的查询方式"><a href="#一些数据类型的查询方式" class="headerlink" title="一些数据类型的查询方式"></a>一些数据类型的查询方式</h3><p>跟进第二讲，我们学习一下，在Codeql中，有哪些查询方式<br>算基础，帮助我们更精准的找到想要的结果 </p>
+<p>首先，关于Java库里，有五大类</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">用于表示“语言结构”的类</span><br><span class="line">Class;Method;Field;Packag;Parameter</span><br><span class="line">这些类用来查找“声明”。</span><br><span class="line"></span><br><span class="line">用于表示源代码结构（语法树）的类</span><br><span class="line">Expr（表达式）</span><br><span class="line">Stmt（语句）</span><br><span class="line">MethodCall（方法调用）</span><br><span class="line">AssignExpr（赋值）</span><br><span class="line">这是你写查询时最常用的部分</span><br><span class="line"></span><br><span class="line">表示注解、JavaDoc、源代码注释，例如：</span><br><span class="line">Annotation</span><br><span class="line">Comment</span><br><span class="line">DocComment</span><br><span class="line">用于分析代码标注或注解话题。</span><br><span class="line">用于计算代码指标，例如：</span><br><span class="line">CyclomaticComplexity（圈复杂度）</span><br><span class="line">CouplingBetweenObjects</span><br><span class="line">LinesOfCode</span><br><span class="line">适用于代码规范/质量分析。</span><br><span class="line"></span><br><span class="line">用于分析调用图（call graph），例如：</span><br><span class="line">Call</span><br><span class="line">Callable</span><br><span class="line">Method.getACall()</span><br><span class="line">Method.getACallee()</span><br><span class="line">适合做安全分析、寻找数据流路径（sources-to-sink）。</span><br></pre></td></tr></table></figure></div>
+
+<p>简单跟着学习一些，熟悉熟悉  </p>
+<h5 id="Type"><a href="#Type" class="headerlink" title="Type"></a>Type</h5><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PrimitiveType represents a primitive type, that is, one of <span class="type">boolean</span>, <span class="type">byte</span>, <span class="type">char</span>, <span class="type">double</span>, <span class="type">float</span>, <span class="type">int</span>, <span class="type">long</span>, <span class="type">short</span>; QL also classifies <span class="keyword">void</span> and &lt;nulltype&gt; (the type of the <span class="literal">null</span> literal) as primitive types.</span><br><span class="line">RefType represents a <span class="title function_">reference</span> <span class="params">(that is, non-primitive)</span> type; it in turn has several subclasses:</span><br><span class="line">    Class represents a Java class.</span><br><span class="line">    Interface represents a Java interface.</span><br><span class="line">    EnumType represents a Java <span class="keyword">enum</span> <span class="title class_">type</span>.</span><br><span class="line">    Array represents a Java array type.</span><br></pre></td></tr></table></figure></div>
+
+<p>查询int类型的值  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from Variable v, PrimitiveType pt</span><br><span class="line"><span class="type">where</span> <span class="variable">pt</span> <span class="operator">=</span> v.getType() and</span><br><span class="line">    pt.hasName(<span class="string">&quot;int&quot;</span>)</span><br><span class="line">select v</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>PrimitiveType为基本类型，可以对一个变量getType获取</li>
+</ul>
+<p>如果想要查询一些特定类呢？<br>这里，我们可以借助Codeql的查询</p>
+<table>
+<thead>
+<tr>
+<th>CodeQL 类</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>TopLevelClass</strong></td>
+<td>Java 文件里最外层的 class</td>
+</tr>
+<tr>
+<td><strong>NestedClass</strong></td>
+<td>在别的类里声明的 class</td>
+</tr>
+<tr>
+<td><strong>LocalClass</strong></td>
+<td>在方法或构造函数内部定义的 class</td>
+</tr>
+<tr>
+<td><strong>AnonymousClass</strong></td>
+<td>new 接口() 或 new 类() { … } 这种匿名类</td>
+</tr>
+</tbody></table>
+<p>我们也可以通过下述方法查询单例类<br>CodeQL 提供了如：</p>
+<ul>
+<li><code>TypeString</code></li>
+<li><code>TypeObject</code></li>
+<li><code>TypeCloneable</code></li>
+<li><code>TypeSerializable</code></li>
+<li><code>TypeSystem</code></li>
+<li><code>TypeClass</code></li>
+<li><code>TypeRuntime</code></li>
+</ul>
+<p>这些类是 <strong>单例（singleton）</strong>，每个都对应 Java 标准库中一个具体的类。</p>
+<p>例如：</p>
+<ul>
+<li><code>TypeString</code> ↔ <code>java.lang.String</code></li>
+<li><code>TypeObject</code> ↔ <code>java.lang.Object</code></li>
+</ul>
+<p>你不能 new 它们，但可以用它们做类型判断。 </p>
+<p>看几个例子</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from TopLevelType tl</span><br><span class="line">where tl.getName() != tl.getCompilationUnit().getName()</span><br><span class="line">select tl</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>getCompilationUnit()这个方法，很好用，就是，找到一个元素所在的源码文件</li>
+</ul>
+<p>我们知道一个类的public类和文件名一致，如果不一致,即</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">找所有不是与文件名相同的顶层类</span><br><span class="line">这些类一般是 非 <span class="keyword">public</span> 顶层类 或 额外定义的顶层类</span><br></pre></td></tr></table></figure></div>
+
+<p>下一个嘞</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from NestedClass nc</span><br><span class="line">where nc.getASupertype() <span class="keyword">instanceof</span> TypeObject</span><br><span class="line">select nc</span><br></pre></td></tr></table></figure></div>
+
+<p> 所有“嵌套类（NestedClass）”中，那些“直接继承 <code>Object</code>” 的类。    </p>
+<ul>
+<li>instanceof，判断前一个对象是否符合后面的类型</li>
+<li>getASupertype()，拿到这个类extends的那个父类</li>
+</ul>
+<p>我们学Java免不了泛型(Generics)吧，关于它的查询语句又是怎么样的呢？  </p>
+<ul>
+<li><code>Map</code> 这个泛型接口的声明 &#x3D; <code>GenericInterface</code></li>
+<li>或者如果是 class，就叫 <code>GenericClass</code></li>
+<li>二者合起来叫 GenericType&#x3D;&gt; 泛型类型的声明  </li>
+<li>TypeVariable（类型参数）：代表泛型参数本身</li>
+<li>ParameterizedType：参数化后的实例类型</li>
+</ul>
+<p>假设一个p，是 ParameterizedType  ,我们可以<code>.getSourceDeclaration()</code> 会返回它的 GenericType    </p>
+<p>现在有一个例子</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from GenericInterface map, ParameterizedType pt</span><br><span class="line">where map.hasQualifiedName(<span class="string">&quot;java.util&quot;</span>, <span class="string">&quot;Map&quot;</span>) and</span><br><span class="line">    pt.getSourceDeclaration() = map</span><br><span class="line">select pt</span><br></pre></td></tr></table></figure></div>
+
+<p>这里就是查找 all parameterized instances of <code>java.util.Map</code></p>
+<ul>
+<li>hasQualifiedName()：属于谓词， 检查某个类、方法、包的完全限定名是否匹配指定名称，此匹配更加唯一，限定路径名  </li>
+<li>getSourceDeclaration()：将一个参数实参拿到它的泛型并返回</li>
+</ul>
+<p>也会有些关于泛型的更为复杂的情况，其实学到这里思考，真的有必要学吗？不过我是强迫症，跟了跟了</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">StringToNumMap</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Number</span>&gt; <span class="keyword">implements</span> <span class="title class_">Map</span>&lt;String, N&gt; &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p> Java 中可以限制某个类型参数的上界  </p>
+<ul>
+<li><code>N</code> 是一个 <strong>TypeVariable（类型变量）</strong></li>
+<li>它有一个 <strong>上界（upper bound）Number</strong></li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"></span><br><span class="line">from TypeVariable tv, TypeBound tb</span><br><span class="line"><span class="type">where</span> <span class="variable">tb</span> <span class="operator">=</span> tv.getATypeBound() and</span><br><span class="line">    tb.getType().hasQualifiedName(<span class="string">&quot;java.lang&quot;</span>, <span class="string">&quot;Number&quot;</span>)</span><br><span class="line">select tv</span><br></pre></td></tr></table></figure></div>
+
+<p> 查找所有边界为 Number 的类型参数  </p>
+<p>到此为止，后面也是不太理解，且与实际不太符合  </p>
+<h4 id="AST"><a href="#AST" class="headerlink" title="AST"></a>AST</h4><p>这里介绍Codeql里操作AST的基本方法</p>
+<h5 id="Expr（表达式）与-Stmt（语句）"><a href="#Expr（表达式）与-Stmt（语句）" class="headerlink" title="Expr（表达式）与 Stmt（语句）"></a>Expr（表达式）与 Stmt（语句）</h5><p>这是 CodeQL 里“程序执行单位”的两个基类：</p>
+<ul>
+<li><strong>Expr</strong> → <code>x + y</code>, <code>foo()</code>, <code>o.equals(&quot;&quot;)</code>, 字面量等</li>
+<li><strong>Stmt</strong> → <code>if</code>, <code>while</code>, <code>return</code>, <code>&#123;&#125;</code>, 赋值语句等</li>
+</ul>
+<p>它们构成了整个 Java 程序的 AST。</p>
+<h5 id="子节点"><a href="#子节点" class="headerlink" title="子节点"></a>子节点</h5><p>Expr.getAChildExpr()</p>
+<p>Stmt.getAChild()</p>
+<h5 id="父节点"><a href="#父节点" class="headerlink" title="父节点"></a>父节点</h5><p>Expr.getParent()</p>
+<p>Stmt.getParent()</p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">from Expr e</span><br><span class="line">where e.getParent() <span class="keyword">instanceof</span> ReturnStmt</span><br><span class="line">select e</span><br></pre></td></tr></table></figure></div>
+
+<p>这里会返回return的子表达式</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">from Stmt s</span><br><span class="line">where s.getParent() <span class="keyword">instanceof</span> IfStmt</span><br><span class="line">select s</span><br></pre></td></tr></table></figure></div>
+
+<p>熟悉这么一些方法就行，也不是很会用到，实际感受还得在实战上</p>
+<h4 id="调用图（call-graph）"><a href="#调用图（call-graph）" class="headerlink" title="调用图（call graph）"></a>调用图（call graph）</h4><p>后续我们想打污点追踪就必须学会方法调用关系图，介绍一个元素</p>
+<ul>
+<li>Callable，表示所有可以被调用的东西，方法 &amp; 构造函数</li>
+<li>Call，表示所有调用的表达式，如obj.foo();new Foo();this(),super() </li>
+<li>getCallee(),根据调用找到被调用的方法</li>
+</ul>
+<p>例子</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from Call c, Method m</span><br><span class="line"><span class="type">where</span> <span class="variable">m</span> <span class="operator">=</span> c.getCallee() and</span><br><span class="line">      m.hasName(<span class="string">&quot;println&quot;</span>)</span><br><span class="line">select c</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>这里c是一个实际的调用，通过getCallee找到它的方法并匹配指定方法名，即可找到全部该方法被调用的位置</p>
+<p>反之，我们可以查找一个方法是否存在调用情况</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">from Callable c</span><br><span class="line">where not <span class="title function_">exists</span><span class="params">(c.getAReference()</span>)</span><br><span class="line">select c</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>getAReference()：根据Callable找到有哪些调用指向它</li>
+</ul>
+<h5 id="MethodAccess-Call"><a href="#MethodAccess-Call" class="headerlink" title="MethodAccess&amp;Call"></a>MethodAccess&amp;Call</h5><p>可以注意一下二者区别，Call表示一切调用，不局限于方法调用，可以是构造，方法引用，或者super调用等等<br>而前者仅限于方法调用<code>object.equals(&quot;&quot;)</code>这种<br> 所有 MethodAccess 都是 Call，但不是所有 Call 都是 MethodAccess。    </p>
+<h3 id="初阶污点追踪"><a href="#初阶污点追踪" class="headerlink" title="初阶污点追踪"></a>初阶污点追踪</h3><p>也是一口气学到这里了~<br>希望可以做一个漂亮的今日份收尾<br>学习Codeql我们肯定希望把它学通，而不是仅作为一个特定查询工具，学会污点，写好查询，刷的一下出了一个洞，这才是最有意思的地方</p>
+<p><a target="_blank" rel="noopener" href="https://github.blog/changelog/2023-08-14-new-dataflow-api-for-writing-custom-codeql-queries/">https://github.blog/changelog/2023-08-14-new-dataflow-api-for-writing-custom-codeql-queries/</a></p>
+<p>有更新，未免不必要的麻烦，我们在这个上面进行一些基础的修改，如下</p>
+<ul>
+<li>以前，数据流分析配置是通过继承类 <code>DataFlow::Configuration</code> 或 <code>TaintTracking::Configuration</code> 来实现的，现在用 模块（例如 <code>DataFlow::ConfigSig</code> 或 <code>TaintTracking::Global</code>）来定义配置。  </li>
+<li>移除了 <code>override</code> 关键字：新的 API 不需要像旧版那样使用 <code>override</code>。  </li>
+<li><code>isSanitizer</code> 和 <strong><code>isSanitizerIn</code></strong> 被 <strong><code>isBarrier</code></strong> 和 <strong><code>isBarrierIn</code></strong> 替代：这两个函数现在适用于数据流和污点跟踪配置。  </li>
+<li>不再需要“虚拟字符串值的特征谓词”。</li>
+</ul>
+<p>原文如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">To convert the query to the <span class="keyword">new</span> <span class="title class_">API</span>:</span><br><span class="line">You use a <span class="keyword">module</span> instead of a class. A CodeQL <span class="keyword">module</span> does not extend anything, it instead <span class="keyword">implements</span> <span class="title class_">a</span> signature. For both data flow and taint tracking configurations <span class="built_in">this</span> is DataFlow::ConfigSig or DataFlow::StateConfigSigif FlowState is needed.</span><br><span class="line">Previously, you would choose between data flow or taint tracking by extending DataFlow::Configuration or TaintTracking::Configuration. Instead, now you define your data or taint flow by instantiating either the DataFlow::Global&lt;..&gt; or TaintTracking::Global&lt;..&gt; parameterized modules with your implementation of the shared signature and <span class="built_in">this</span> is where the choice between data flow and taint tracking is made.</span><br><span class="line">Predicates no longer override anything, because you are defining a <span class="keyword">module</span>.</span><br><span class="line">The concepts of sanitizers and barriers are now unified under isBarrier and it applies to both taint tracking and data flow configurations. You must use isBarrier instead of isSanitizer and isBarrierIn instead of isSanitizerIn.</span><br><span class="line">Similarly, instead of the taint tracking predicate isAdditionalTaintStep you use isAdditionalFlowStep .</span><br><span class="line">A characteristic predicate with a dummy string value is no longer needed.</span><br><span class="line">Do not use the generic DataFlow::PathGraph. Instead, the PathGraph will be imported directly from the <span class="keyword">module</span> you are using. For example, SensitiveLoggerFlow::PathGraph in the updated version of the example query below.</span><br><span class="line">Similar to the above, you’ll use the PathNode type from the resulting <span class="keyword">module</span> and not from DataFlow.</span><br><span class="line">Since you no longer have a configuration class, you’ll use the <span class="keyword">module</span> directly in the from and where clauses. Instead of using e.g. cfg.hasFlowPath or cfg.hasFlow from a configuration object cfg, you’ll use flowPath or flow from the <span class="keyword">module</span> you’re working with.</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>旧版的查询语句是如何呢？</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SensitiveLoggerConfiguration</span> <span class="keyword">extends</span> <span class="title class_">TaintTracking</span>::Configuration &#123;</span><br><span class="line">  SensitiveLoggerConfiguration() &#123; <span class="built_in">this</span> = <span class="string">&quot;SensitiveLoggerConfiguration&quot;</span> &#125;  <span class="comment">// Characteristic predicate with a dummy string value (see below)</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define the source of taint flow</span></span><br><span class="line">  override predicate <span class="title function_">isSource</span><span class="params">(DataFlow::Node source)</span> &#123; source.asExpr() <span class="keyword">instanceof</span> CredentialExpr &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define the sink for taint flow</span></span><br><span class="line">  override predicate <span class="title function_">isSink</span><span class="params">(DataFlow::Node sink)</span> &#123; sinkNode(sink, <span class="string">&quot;log-injection&quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define sanitizers (which clean tainted data)</span></span><br><span class="line">  override predicate <span class="title function_">isSanitizer</span><span class="params">(DataFlow::Node sanitizer)</span> &#123;</span><br><span class="line">    sanitizer.asExpr() <span class="keyword">instanceof</span> LiveLiteral or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> PrimitiveType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> BoxedType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> NumberType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> TypeType</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define barrier conditions (where taint is stopped)</span></span><br><span class="line">  override predicate <span class="title function_">isSanitizerIn</span><span class="params">(DataFlow::Node node)</span> &#123; <span class="built_in">this</span>.isSource(node) &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> DataFlow::PathGraph</span><br><span class="line"></span><br><span class="line">from SensitiveLoggerConfiguration cfg, DataFlow::PathNode source, DataFlow::PathNode sink</span><br><span class="line">where cfg.hasFlowPath(source, sink)</span><br><span class="line">select sink.getNode(), source, sink, <span class="string">&quot;This $@ is written to a log file.&quot;</span>, source.getNode(), <span class="string">&quot;potentially sensitive information&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>新版的查询语句如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> SensitiveLoggerConfig <span class="keyword">implements</span> <span class="title class_">DataFlow</span>::ConfigSig &#123;  <span class="comment">// Module now implements the signature, no inheritance</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define the source of taint flow</span></span><br><span class="line">  predicate <span class="title function_">isSource</span><span class="params">(DataFlow::Node source)</span> &#123; source.asExpr() <span class="keyword">instanceof</span> CredentialExpr &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define the sink for taint flow</span></span><br><span class="line">  predicate <span class="title function_">isSink</span><span class="params">(DataFlow::Node sink)</span> &#123; sinkNode(sink, <span class="string">&quot;log-injection&quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define barrier conditions (sanitizers are now unified with barriers)</span></span><br><span class="line">  predicate <span class="title function_">isBarrier</span><span class="params">(DataFlow::Node sanitizer)</span> &#123;  <span class="comment">// &#x27;isBarrier&#x27; replaces &#x27;isSanitizer&#x27;</span></span><br><span class="line">    sanitizer.asExpr() <span class="keyword">instanceof</span> LiveLiteral or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> PrimitiveType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> BoxedType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> NumberType or</span><br><span class="line">    sanitizer.getType() <span class="keyword">instanceof</span> TypeType</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Define barrier conditions for source</span></span><br><span class="line">  predicate <span class="title function_">isBarrierIn</span><span class="params">(DataFlow::Node node)</span> &#123; isSource(node) &#125;  <span class="comment">// &#x27;isBarrierIn&#x27; replaces &#x27;isSanitizerIn&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Instantiate the module with the TaintTracking::Global type</span></span><br><span class="line"><span class="type">module</span> <span class="variable">SensitiveLoggerFlow</span> <span class="operator">=</span> TaintTracking::Global&lt;SensitiveLoggerConfig&gt;;  <span class="comment">// TaintTracking selected </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Import the PathGraph from the module</span></span><br><span class="line"><span class="keyword">import</span> SensitiveLoggerFlow::PathGraph</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using PathNode from the module and the flowPath predicate</span></span><br><span class="line">from SensitiveLoggerFlow::PathNode source, SensitiveLoggerFlow::PathNode sink  </span><br><span class="line">where SensitiveLoggerFlow::flowPath(source, sink)  <span class="comment">// Use the flowPath from the module </span></span><br><span class="line">select sink.getNode(), source, sink, <span class="string">&quot;This $@ is written to a log file.&quot;</span>, source.getNode(), <span class="string">&quot;potentially sensitive information&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>我们简单运行一下，看看效果  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java</span><br><span class="line"><span class="keyword">import</span> semmle.code.java.dataflow.DataFlow</span><br><span class="line"><span class="keyword">import</span> semmle.code.java.dataflow.TaintTracking</span><br></pre></td></tr></table></figure></div>
+
+<p>嗯，这里仍有四处错误</p>
+<ul>
+<li>CredentialExpr</li>
+<li>sinkNode</li>
+<li>LiveLiteral</li>
+<li>TypeType</li>
+</ul>
+<p>实际学习还是可以跟官方文章的，不过记得新版本的改变就行，这里切记，不要问ai，也减少翻阅太早的博客，基本只会误导自己，总之做好心理准备<br>上述报错我们直接进这个网站<a target="_blank" rel="noopener" href="https://codeql.github.com/codeql-standard-libraries/java/">https://codeql.github.com/codeql-standard-libraries/java/</a>,学python的分析也是同理噢<br>我们发现<code>CredentialExpr&amp;LiveLiteral</code>需要<code>import semmle.code.java.security.SensitiveLoggingQuery </code>  </p>
+<p>同理</p>
+<ul>
+<li>sinkNode： import semmle.code.java.dataflow.ExternalFlow  </li>
+<li>TypeType：这个没找到，直接删了吧（气急败坏</li>
+</ul>
+<p>如上，完成了修改，开始运行（时间稍微有点长）</p>
+<p><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251121221858816.png"></p>
+<p>效果还不错，揪住了一些可疑的地方~</p>
+<p>上述代码：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">旨在分析 敏感数据流，特别是检查是否有敏感数据（例如凭证、密码）被写入日志文件。</span><br><span class="line">它利用了 污点跟踪（Taint Tracking） 和 数据流分析，并结合 敏感日志查询（SensitiveLoggingQuery） 来识别潜在的安全风险。</span><br></pre></td></tr></table></figure></div>
+
+<p>上面我们用了一个例子进行了相关说明，但是真正查询语句的撰写还差了一些，不过没事，抓住几个要点就行了，多实战</p>
+<p>此处刚学了一点，介绍了一些查询语句以及基本的污点追踪，之后的内容还有很多，每天学一点点趴，bye~</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.dvkunion.cn/2022/03/24/CodeQL-%E8%B8%A9%E5%9D%91%E6%8C%87%E5%8D%97/">https://blog.dvkunion.cn/2022/03/24/CodeQL-%E8%B8%A9%E5%9D%91%E6%8C%87%E5%8D%97/</a></p>
+<p><a target="_blank" rel="noopener" href="https://codeql.github.com/docs/codeql-language-guides/analyzing-data-flow-in-java/">https://codeql.github.com/docs/codeql-language-guides/analyzing-data-flow-in-java/</a></p>
+<p><a target="_blank" rel="noopener" href="https://codeql.github.com/codeql-standard-libraries/java/">https://codeql.github.com/codeql-standard-libraries/java/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.blog/changelog/2023-08-14-new-dataflow-api-for-writing-custom-codeql-queries/">https://github.blog/changelog/2023-08-14-new-dataflow-api-for-writing-custom-codeql-queries/</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.1.</span> <span class="toc-text">简单的例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">1.1.1.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.1.2.</span> <span class="toc-text">学习</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">一些数据类型的查询方式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Type"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">Type</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AST"><span class="toc-number">1.2.1.</span> <span class="toc-text">AST</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Expr%EF%BC%88%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%89%E4%B8%8E-Stmt%EF%BC%88%E8%AF%AD%E5%8F%A5%EF%BC%89"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">Expr（表达式）与 Stmt（语句）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">子节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%88%B6%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">父节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">例子</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9B%BE%EF%BC%88call-graph%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">调用图（call graph）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#MethodAccess-Call"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">MethodAccess&amp;Call</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E9%98%B6%E6%B1%A1%E7%82%B9%E8%BF%BD%E8%B8%AA"><span class="toc-number">1.3.</span> <span class="toc-text">初阶污点追踪</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">2.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&text=Codeql学习一"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&is_video=false&description=Codeql学习一"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Codeql学习一&body=Check out this article: https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&title=Codeql学习一"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&name=Codeql学习一&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/&t=Codeql学习一"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

